@@ -134,6 +134,21 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .minimaps figure{margin:0;text-align:center}
 .minimaps .omap{margin:0}
 .minimaps figcaption{font-size:.85rem;line-height:1.2;margin-top:4px}
+/* ---------- Ukas kvissprep ---------- */
+.prose{padding:18px 18px 22px}
+.prose > :first-child{margin-top:0}
+.prose h1{font-size:1.65rem;margin:0 0 4px;letter-spacing:0}
+.prose h2{font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.3rem;margin:26px 0 8px;padding-bottom:6px;border-bottom:1.5px solid var(--line)}
+.prose h3{font-family:"Alegreya",Georgia,serif;font-weight:700;font-size:1.1rem;margin:18px 0 4px}
+.prose h4{font-weight:700;font-size:1rem;margin:12px 0 2px}
+.prose p{margin:7px 0}
+.prose ul{margin:6px 0 10px;padding-left:20px}
+.prose li{margin:3px 0}
+.prose a{color:var(--azure);word-break:break-word}
+.prose hr{border:0;border-top:1.5px solid var(--line);margin:20px 0}
+.prose code{font-size:.9em;background:var(--bg);border-radius:5px;padding:1px 5px}
+.prepsoon{text-align:center;color:var(--muted);padding:26px 6px 22px}
+.prepsoon strong{display:block;font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.4rem;color:var(--ink);margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -142,10 +157,17 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
     <h1>Kvisstreneren</h1>
     <p class="sub">Velg hva du vil øve på til onsdag.</p>
     <div class="modes">
+      <button class="mode" id="goPrep"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><rect x="11" y="9" width="54" height="68" rx="9" fill="var(--paper)" stroke="var(--azure)" stroke-width="3.5"/><path d="M23 27h30M23 39h30M23 51h20" stroke="var(--azure)" stroke-width="4.5" stroke-linecap="round"/><circle cx="62" cy="61" r="15" fill="var(--or)"/><path d="M55.5 61.5l4.5 4.5 9-10" stroke="#1B2733" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong>Ukas kvissprep</strong><span id="prepTeaser">Nyheter, navnedager og datoen</span></div></button>
       <button class="mode" id="goVapen"><div id="modeShieldIcon" aria-hidden="true"></div><div><strong>Våpenskjold</strong><span>Fylkesvåpen og kommunevåpen</span></div></button>
       <button class="mode" id="goBydel"><div class="omap" id="modeMapIcon" aria-hidden="true" style="margin:0"></div><div><strong>Oslos bydeler</strong><span>Dagens 15, eller de 8 fra 2028</span></div></button>
     </div>
   </section>
+
+  <div id="prepApp" hidden>
+    <button class="back" data-home>← Alle kvisser</button>
+    <article class="card prose" id="prepBody"></article>
+    <p class="note">Oppdateres hver uke med rapporten fra quizprep.</p>
+  </div>
 
   <div id="vapenApp" hidden>
   <button class="back" data-home>← Alle kvisser</button>
@@ -712,19 +734,66 @@ function bUse(key){
 b$('bSetOld').addEventListener('click',()=>bUse('old'));
 b$('bSetNew').addEventListener('click',()=>bUse('new'));
 
+// ---------- Ukas kvissprep ----------
+// Bytt ut dette hver uke: kjør quizprep-skillen og lim hele markdown-rapporten inn
+// mellom bakteksene under, og oppdater `uke`. Tom markdown gir «kommer snart».
+const PREP = {
+  uke: '',            // f.eks. 'onsdag 7. oktober 2026'
+  markdown: String.raw`
+`
+};
+
+function prepInline(t){
+  t = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const parked = [];
+  const park = html => { parked.push(html); return '\u0000' + (parked.length-1) + '\u0000'; };
+  const link = (url,text) => '<a href="'+url+'" target="_blank" rel="noopener">'+text+'</a>';
+  t = t.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, (m,text,url) => park(link(url,text)));
+  t = t.replace(/https?:\/\/[^\s<]+/g, url => {
+    const tail = url.match(/[.,;:)]+$/);
+    if(tail) url = url.slice(0, -tail[0].length);
+    return park(link(url,url)) + (tail ? tail[0] : '');
+  });
+  t = t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  t = t.replace(/`([^`]+)`/g,'<code>$1</code>');
+  return t.replace(/\u0000(\d+)\u0000/g, (m,i) => parked[+i]);
+}
+function prepMarkdown(md){
+  const out = []; let inList = false;
+  const closeList = () => { if(inList){ out.push('</ul>'); inList = false; } };
+  md.split(/\r?\n/).forEach(raw => {
+    const line = raw.trim(); let m;
+    if(!line){ closeList(); return; }
+    if(m = line.match(/^(#{1,4})\s+(.*)$/)){ closeList(); const n = m[1].length; out.push('<h'+n+'>'+prepInline(m[2])+'</h'+n+'>'); return; }
+    if(/^([-*_])\1{2,}$/.test(line)){ closeList(); out.push('<hr>'); return; }
+    if(m = line.match(/^[-*]\s+(.*)$/)){ if(!inList){ out.push('<ul>'); inList = true; } out.push('<li>'+prepInline(m[1])+'</li>'); return; }
+    closeList(); out.push('<p>'+prepInline(line)+'</p>');
+  });
+  closeList();
+  return out.join('');
+}
+function renderPrep(){
+  const md = (PREP.markdown||'').trim();
+  b$('prepBody').innerHTML = md ? prepMarkdown(md)
+    : '<div class="prepsoon"><strong>Ukas prep kommer snart</strong><p>Her dukker ferske nyhetssaker, navnedagene for uka og «på denne dagen» opp så snart ukas quizprep er kjørt.</p></div>';
+  b$('prepTeaser').textContent = md ? (PREP.uke ? 'Klar til ' + PREP.uke : 'Nyheter, navnedager og datoen') : 'Kommer snart';
+}
+
 // ---------- Mode switching ----------
 function goMode(m){
   clearTimeout(autoTimer); autoTimer=null; clearTimeout(bTimer); bTimer=null;
-  b$('home').hidden=m!=='home'; b$('vapenApp').hidden=m!=='vapen'; b$('bydelApp').hidden=m!=='bydel';
+  b$('home').hidden=m!=='home'; b$('prepApp').hidden=m!=='prep'; b$('vapenApp').hidden=m!=='vapen'; b$('bydelApp').hidden=m!=='bydel';
   if(m==='bydel' && !bDeck.length) bUse('old');
   window.scrollTo(0,0);
   try{ sessionStorage.setItem('mode',m); }catch(e){}
 }
+b$('goPrep').addEventListener('click',()=>goMode('prep'));
 b$('goVapen').addEventListener('click',()=>goMode('vapen'));
 b$('goBydel').addEventListener('click',()=>goMode('bydel'));
 document.querySelectorAll('[data-home]').forEach(el=>el.addEventListener('click',()=>goMode('home')));
 b$('modeShieldIcon').innerHTML=shield(R,'rogaland');
 b$('modeMapIcon').innerHTML=(()=>{const s=BS; BS=BSETS.new; const out=bMap(4); BS=s; return out;})();
+renderPrep();
 { let m='home'; try{ m=sessionStorage.getItem('mode')||'home'; }catch(e){} goMode(m); }
 </script>
 </body>
