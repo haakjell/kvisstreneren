@@ -95,6 +95,15 @@ Stoppfølgen er per retning fordi den ikke alltid er lik begge veier — Guller�
 plattform mot Frognerseteren. Sentrum forstørres med en fiskeøyeprojeksjon (`FISH_R`/`FISH_P`
 i skriptet). Linjefargene ligger i CSS som `--l1`…`--l5`, ikke i dataene.
 
+«Kart»-fanen har en bryter mellom to kart, som huskes i `localStorage` under `tMapKind`:
+«Geografisk» (SVG-en fra `TBANE`) og «Linjekart», Ruters eget schematiske linjekart. Linjekartet
+er et bilde som lenkes direkte fra Ruters CDN (`T_RUTER` i `<script>`), på samme måte som våpnene
+lenkes fra Wikimedia — det ligger ikke i repoet. Publiserer Ruter et nytt kart, får bildet ny
+adresse: hent den fra «Oversikt over alle t-banelinjer» på `T_RUTER.page` og bytt `T_RUTER.src`.
+Får ikke sida hentet bildet, vises en melding med lenke til ruter.no. Linjevelgeren skjules mens
+linjekartet vises, og stasjonene kan ikke trykkes på der. Kvissen bruker alltid det geografiske
+kartet, siden linjekartet viser alle stasjonsnavnene.
+
 Kvissen spør om neste stopp i en retning, og viser de to foregående stoppene. Spørsmål der de
 viste stoppene ikke avgjør svaret, droppes (linje 5 passerer Tøyen og Carl Berners plass to
 ganger). Er det skjulte stoppet en endestasjon, spørres det etter endestasjonen i stedet, siden

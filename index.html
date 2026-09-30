@@ -173,6 +173,8 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .tstudy{aspect-ratio:4/3;max-height:70vh;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .tstudy:active{cursor:grabbing}
 .tstudy svg{height:100%}
+.tstudy.ruter{background:#F0F0F0}
+.tinfo a{color:inherit}
 .tzoom{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:6px}
 .tzoom button{font:inherit;font-weight:700;font-size:1.2rem;width:38px;height:38px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;padding:0;line-height:1}
 .tinfo{min-height:4.2em;text-align:center;margin:0 0 6px}
@@ -393,6 +395,10 @@ Nyhetsvinduet er komplett. Navnedagene 1. og 2. oktober ligger fram i tid, men e
     </section>
   </main>
   <main id="tStudy" hidden>
+    <div class="setswitch" role="radiogroup" aria-label="Velg kart">
+      <button role="radio" id="tKindGeo" aria-checked="true">Geografisk</button>
+      <button role="radio" id="tKindRuter" aria-checked="false">Linjekart</button>
+    </div>
     <div class="tmap tstudy" id="tStudyMap">
       <div class="tzoom">
         <button id="tZoomIn" aria-label="Zoom inn">+</button>
@@ -402,7 +408,7 @@ Nyhetsvinduet er komplett. Navnedagene 1. og 2. oktober ligger fram i tid, men e
     </div>
     <div class="tinfo" id="tInfo" aria-live="polite"></div>
   </main>
-  <p class="note">Linjer og stopp: Ruter, via Entur (åpne data), september 2026. Kartet følger sporene, men sentrum er forstørret.</p>
+  <p class="note">Linjer og stopp: Ruter, via Entur (åpne data), september 2026. Det geografiske kartet følger sporene, men sentrum er forstørret.</p>
   </div>
 
   <div id="vapenApp" hidden>
@@ -1197,17 +1203,39 @@ t$('tLines').addEventListener('click',e=>{
 });
 
 // ---------- T-banen: kart ----------
-let tv=null, tStudySel=-1, tRaf=0;
+// Ruter's own schematic line map, linked from ruter.no like the coats of arms are linked from Commons.
+// If Ruter publishes a new map, the image gets a new address: copy it from T_RUTER.page.
+const T_RUTER={src:'https://cdn.sanity.io/images/5a84xxkm/prod/9a9d6e9ae2f93879355052feb1800a371ea7d2c9-2480x2480.png?auto=format',
+  w:2480, h:2480, page:'https://ruter.no/planlegg-reise/rutetabeller-og-linjekart/t-bane'};
+let tv=null, tStudySel=-1, tRaf=0, tKind='geo', tRuterFailed=false;
+try{ if(localStorage.getItem('tMapKind')==='ruter') tKind='ruter'; }catch(e){}
 const tBox=t$('tStudyMap');
+const tDim=()=>tKind==='ruter'?T_RUTER:TBANE;
 function tFit(){
-  const r=tBox.getBoundingClientRect(), a=r.width/r.height, W=TBANE.w, H=TBANE.h;
+  const r=tBox.getBoundingClientRect(), a=r.width/r.height, W=tDim().w, H=tDim().h;
   tv= a>W/H ? {w:H*a,h:H,x:(W-H*a)/2,y:0} : {w:W,h:W/a,x:0,y:(H-W/a)/2};
 }
 function tStudyRender(){
   if(t$('tbaneApp').hidden||t$('tStudy').hidden) return;
   const r=tBox.getBoundingClientRect(); if(!r.width) return;
   if(!tv) tFit();
-  const old=tBox.querySelector('svg'); if(old) old.remove();
+  tBox.classList.toggle('ruter',tKind==='ruter');
+  const old=tBox.querySelector('svg'), vb=`${tF(tv.x)} ${tF(tv.y)} ${tF(tv.w)} ${tF(tv.h)}`;
+  if(tKind==='ruter'){
+    // Keep the image element between frames so it isn't decoded again on every zoom step.
+    if(old&&old.dataset.kind==='ruter') old.setAttribute('viewBox',vb);
+    else {
+      if(old) old.remove();
+      tBox.insertAdjacentHTML('afterbegin',`<svg data-kind="ruter" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ruters linjekart for T-banen"><image href="${T_RUTER.src}" width="${T_RUTER.w}" height="${T_RUTER.h}"/></svg>`);
+      tBox.querySelector('image').addEventListener('error',()=>{ tRuterFailed=true; tStudyRender(); });
+    }
+    const link=`<a href="${T_RUTER.page}" target="_blank" rel="noopener">ruter.no</a>`;
+    t$('tInfo').innerHTML=tRuterFailed
+      ?`<span>Fikk ikke hentet linjekartet fra Ruter. Det kan ha fått ny adresse – se ${link}.</span>`
+      :`<span>Ruters linjekart: avstandene stemmer ikke, men linjene er lette å følge. Dra for å flytte, knip eller rull for å zoome. Kilde: ${link}.</span>`;
+    return;
+  }
+  if(old) old.remove();
   tBox.insertAdjacentHTML('afterbegin',tRender(tv,r.width,{focus:tSel,sel:tStudySel}).svg);
   const st=tSt[tStudySel];
   t$('tInfo').innerHTML=st?`<strong>${st.name}</strong><div class="badges">${[...st.lines].sort().map(tBadge).join('')}</div>`
@@ -1217,7 +1245,7 @@ const tLater=()=>{ cancelAnimationFrame(tRaf); tRaf=requestAnimationFrame(tStudy
 function tZoom(f,cx,cy){
   const r=tBox.getBoundingClientRect();
   if(cx==null){ cx=r.left+r.width/2; cy=r.top+r.height/2; }
-  const w=Math.min(Math.max(tv.w*f,90),TBANE.w*1.5), k=w/tv.w;
+  const W=tDim().w, w=Math.min(Math.max(tv.w*f,W/18),W*1.5), k=w/tv.w;
   const ux=tv.x+(cx-r.left)/r.width*tv.w, uy=tv.y+(cy-r.top)/r.height*tv.h;
   tv={x:ux-(ux-tv.x)*k,y:uy-(uy-tv.y)*k,w,h:tv.h*k};
   tLater();
@@ -1243,7 +1271,7 @@ tBox.addEventListener('pointermove',e=>{
 const tUp=e=>{
   if(!tPtr.delete(e.pointerId)) return;
   if(tPtr.size) return;
-  if(tMoved<6&&e.type==='pointerup'){
+  if(tKind==='geo'&&tMoved<6&&e.type==='pointerup'){
     const r=tBox.getBoundingClientRect(), ux=tv.x+(e.clientX-r.left)/r.width*tv.w, uy=tv.y+(e.clientY-r.top)/r.height*tv.h;
     const lim=18*tv.w/r.width; let best=-1, bd=lim;
     tSt.forEach(s=>{ const d=Math.hypot(s.x-ux,s.y-uy); if(d<bd){ bd=d; best=s.i; } });
@@ -1263,8 +1291,20 @@ function tTab(which){
   const q=which==='quiz';
   t$('tTabQuiz').setAttribute('aria-selected',q); t$('tTabStudy').setAttribute('aria-selected',!q);
   t$('tQuiz').hidden=!q; t$('tStudy').hidden=q;
+  tLinesShown();
   if(!q) tStudyRender();
 }
+// The line picker dims lines on the geographic map and filters the quiz; Ruter's map is a fixed image.
+const tLinesShown=()=>{ t$('tLines').hidden=!t$('tStudy').hidden&&tKind==='ruter'; };
+function tSetKind(k){
+  tKind=k; tv=null;
+  try{ localStorage.setItem('tMapKind',k); }catch(e){}
+  t$('tKindGeo').setAttribute('aria-checked',k==='geo'); t$('tKindRuter').setAttribute('aria-checked',k==='ruter');
+  tLinesShown(); tStudyRender();
+}
+t$('tKindGeo').addEventListener('click',()=>tSetKind('geo'));
+t$('tKindRuter').addEventListener('click',()=>tSetKind('ruter'));
+t$('tKindGeo').setAttribute('aria-checked',tKind==='geo'); t$('tKindRuter').setAttribute('aria-checked',tKind==='ruter');
 t$('tTabQuiz').addEventListener('click',()=>tTab('quiz'));
 t$('tTabStudy').addEventListener('click',()=>tTab('study'));
 function tOpen(){ if(!tDeck.length){ tRenderLines(); tStart(tNewDeck()); } tStudyRender(); }
