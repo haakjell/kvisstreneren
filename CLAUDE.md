@@ -115,8 +115,17 @@ alternativer, med litt slingringsmonn for skrivefeil). «Pugg»-fanen viser hele
   skuespiller, er to av de fem feilalternativene herfra. Legg bare til navn du har sjekket; serien
   hadde hundrevis av gjesteroller.
 
-Lista er satt sammen for hånd fra IMDb-oppføringene og norsk presse (september 2026). Det finnes
-ikke noe skript for den.
+`top:1` er de rundt 30 rollene med flest episoder på IMDb (tt0177446, summert over alle som har
+spilt rollen): alle med minst 310 episoder, der tre roller deler plassen på grensa. To unntak:
+Georg Anker-Hansen er med selv om han bare var med i et drøyt år, fordi han er seriens mest kjente
+rolle, og resepsjonisten Fiona er holdt utenfor fordi hun er en bakgrunnsrolle uten etternavn.
+
+Lista er satt sammen for hånd. Episodetallene er fra IMDb-sida med full rolleliste (hentet via
+Wayback Machine, februar 2023 — IMDb blokkerer direkte henting). Årstall og beskrivelser er
+sjekket mot fandom-wikien hotelcaesar.fandom.com (infoboksene har årene), «Liste over tidligere
+rollefigurer i Hotel Cæsar» og rollefigur-artiklene på no.wikipedia. Der kildene er uenige om
+årstall, er fandom-wikien fulgt. `CAESAR_OUT` er sjekket mot hele IMDb-rollelista, fandom-wikien
+og skuespillernes egne Wikipedia-artikler (september 2026). Det finnes ikke noe skript for lista.
 
 ## Testing
 
