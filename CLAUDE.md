@@ -95,14 +95,29 @@ Stoppfølgen er per retning fordi den ikke alltid er lik begge veier — Guller�
 plattform mot Frognerseteren. Sentrum forstørres med en fiskeøyeprojeksjon (`FISH_R`/`FISH_P`
 i skriptet). Linjefargene ligger i CSS som `--l1`…`--l5`, ikke i dataene.
 
-«Kart»-fanen har en bryter mellom to kart, som huskes i `localStorage` under `tMapKind`:
-«Geografisk» (SVG-en fra `TBANE`) og «Linjekart», Ruters eget schematiske linjekart. Linjekartet
-er et bilde som lenkes direkte fra Ruters CDN (`T_RUTER` i `<script>`), på samme måte som våpnene
-lenkes fra Wikimedia — det ligger ikke i repoet. Publiserer Ruter et nytt kart, får bildet ny
-adresse: hent den fra «Oversikt over alle t-banelinjer» på `T_RUTER.page` og bytt `T_RUTER.src`.
-Får ikke sida hentet bildet, vises en melding med lenke til ruter.no. Linjevelgeren skjules mens
-linjekartet vises, og stasjonene kan ikke trykkes på der. Kvissen bruker alltid det geografiske
-kartet, siden linjekartet viser alle stasjonsnavnene.
+Bryteren øverst («Geografisk» / «Linjekart») gjelder både «Kviss» og «Kart», og huskes i
+`localStorage` under `tMapKind`. «Geografisk» er SVG-en fra `TBANE`. «Linjekart» er Ruters eget
+schematiske linjekart: et bilde som lenkes direkte fra Ruters CDN, på samme måte som våpnene lenkes
+fra Wikimedia — det ligger ikke i repoet. Siden Ruters kart har alle stasjonsnavnene trykt på seg,
+dekker kvissen til alle navn (også endestasjonsoverskriftene) unntatt de to viste stoppene. Svaret
+får en «?»-pille som er minst like lang som det lengste svaralternativet, så lengden ikke røper noe.
+Etter svaret vises alle navnene. I «Kart» kan man trykke på navnene; linjevelgeren skjules der, siden
+den ikke kan dimme linjer i et bilde. Får ikke sida hentet bildet, faller begge fanene tilbake til
+det geografiske kartet med en melding (`#tMapNote`).
+
+`T_RUTER` holder bildelenken og hvor hvert navn står på bildet (senter, lengde, høyde og vinkel i
+bildepiksler). Den er generert; ikke rediger den for hånd:
+
+```bash
+node tools/update-ruter-map.mjs
+```
+
+Skriptet laster ned Ruters PDF og trenger `pdftocairo` (poppler-utils). PDF-en har ikke noe
+tekstlag — hver bokstav er en omriss-figur — så skriptet grupperer bokstavene til ord, regner like
+figurer som samme bokstav og løser det som et chiffer mot stasjonsnavnene i `TBANE`. Når Ruter
+publiserer et nytt kart, får PDF-en og bildet nye adresser: hent dem fra T-bane-sida på ruter.no
+(«Linjekart for T-banen» og bildet «Oversikt over alle t-banelinjer»), sett dem inn øverst i
+skriptet og kjør det. Finner det ikke alle stasjonene entydig, stopper det og sier hvilke.
 
 Kvissen spør om neste stopp i en retning, og viser de to foregående stoppene. Spørsmål der de
 viste stoppene ikke avgjør svaret, droppes (linje 5 passerer Tøyen og Carl Berners plass to
