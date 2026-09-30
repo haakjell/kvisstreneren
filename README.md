@@ -12,3 +12,8 @@ Flere moduser for T-banen, som kan bygge på kartet som allerede finnes:
 4. **Bytt tog.** «Fra Kolsås til Vestli – hvor bytter du?»
 5. **Hvor mange stopp?** Hvor mange stopp er det mellom to stasjoner på en linje?
 6. **Sett i rekkefølge.** Dra fem stopp på en linje i riktig rekkefølge.
+
+For Hotel Cæsar:
+
+- **Bilder av rollefigurene.** Vis bilde av rollefiguren i kvissen og i «Pugg», hentet fra
+  [Hotel Cæsar-wikien på Fandom](https://hotelcaesar.fandom.com) der det finnes et.
