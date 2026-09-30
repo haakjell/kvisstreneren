@@ -1456,12 +1456,25 @@ c$('cSetActor').addEventListener('click',()=>cUse('actor'));
 c$('cSetType').addEventListener('click',()=>cUse('type'));
 function cOpen(){ if(!cDeck.length){ cRenderStudy(); cUse('role'); } }
 c$('cNote').textContent='Roller og skuespillere: IMDb, Wikipedia og Hotel Cæsar-wikien. Spørsmålene gjelder de '+cTop.length+' rollene med flest episoder; de andre rollefigurene dukker opp som feil alternativer.';
-c$('modeCaesarIcon').innerHTML=`<svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
-  <rect x="17" y="24" width="54" height="56" rx="3" fill="var(--paper)" stroke="var(--azure)" stroke-width="3.5"/>
-  <g fill="var(--azure)">${[33,45,57].map(y=>[26,40,54].map(x=>`<rect x="${x}" y="${y}" width="8" height="7" rx="1"/>`).join('')).join('')}</g>
-  <path d="M37 80 V68 a7 7 0 0 1 14 0 V80 Z" fill="var(--azure)"/>
-  <rect x="12" y="8" width="64" height="15" rx="4" fill="var(--or)"/>
-  ${[20,32,44,56,68].map(x=>kStar(x,15.5,5,5.2,2.2,'#1B2733')).join('')}
+// The original Hotel Cæsar logo (1998): an Ionic capital whose red volutes curl round an orange,
+// battlemented column. Each volute is a stem up the side of the column that turns into a spiral;
+// R is the spiral's radius every quarter turn, and m mirrors it for the right-hand side.
+function cVolute(m){
+  const X=x=>m?1206-x:x, R=[160,158,152,142,94,68,62,46,26];
+  let d=`M${X(448)} 652Q${X(482)} 430 ${X(460)} 245`;
+  for(let t=.25;t<=4*Math.PI;t+=.25){
+    const k=t/(Math.PI/2), i=Math.min(Math.floor(k),R.length-2), r=R[i]+(R[i+1]-R[i])*(k-i);
+    d+=`L${X(300+r*Math.cos(t)).toFixed(0)} ${(245-r*Math.sin(t)).toFixed(0)}`;
+  }
+  return `<path d="${d}"/>`;
+}
+c$('modeCaesarIcon').innerHTML=`<svg viewBox="100 50 1006 624" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="#C8202E" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">${cVolute(0)+cVolute(1)}</g>
+  <g fill="#E2692A">
+    <rect x="470" y="84" width="266" height="44" rx="8"/>
+    <path fill-rule="evenodd" d="M498 188L520 176L518 144Q536 124 554 144L556 158Q603 176 650 158L652 144Q670 124 688 144L686 176L708 188L660 292L714 652H492L546 292Z
+      M568 300H580L582 652H540Z M626 300H638L666 652H624Z"/>
+  </g>
 </svg>`;
 </script>
 <script>
