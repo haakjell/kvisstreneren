@@ -99,7 +99,8 @@ Bryteren øverst («Geografisk» / «Linjekart») gjelder både «Kviss» og «K
 `localStorage` under `tMapKind`. «Geografisk» er SVG-en fra `TBANE`. «Linjekart» er Ruters eget
 schematiske linjekart: et bilde som lenkes direkte fra Ruters CDN, på samme måte som våpnene lenkes
 fra Wikimedia — det ligger ikke i repoet. Siden Ruters kart har alle stasjonsnavnene trykt på seg,
-dekker kvissen til alle navn (også endestasjonsoverskriftene) unntatt de to viste stoppene. Svaret
+dekker kvissen til alle navn (også endestasjonsoverskriftene) unntatt de to viste stoppene, med
+felt i kartets bakgrunnsfarge (`.rc`), så man ikke ser hvor lange navnene er. Svaret
 får en «?»-pille som er minst like lang som det lengste svaralternativet, så lengden ikke røper noe.
 Etter svaret vises alle navnene. I «Kart» kan man trykke på navnene; linjevelgeren skjules der, siden
 den ikke kan dimme linjer i et bilde. Får ikke sida hentet bildet, faller begge fanene tilbake til
