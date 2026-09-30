@@ -7,11 +7,12 @@ Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til bruker
 
 ## Struktur
 
-Sida har en forside (`#home`) med én knapp per modus, og tre visninger som byttes med `goMode()`:
+Sida har en forside (`#home`) med én knapp per modus, og fire visninger som byttes med `goMode()`:
 
 | Modus | Seksjon | Innhold |
 |---|---|---|
 | `prep` | `#prepApp` | Ukas kvissprep — se under |
+| `tbane` | `#tbaneApp` | T-banen: «neste stopp»-kviss og kart (`TBANE`) — se under |
 | `vapen` | `#vapenApp` | Fylkes- og kommunevåpen (`FYLKER`, `KOMMUNER`, `SETS`) |
 | `bydel` | `#bydelApp` | Oslos bydeler (`BSETS`) |
 
@@ -77,6 +78,26 @@ All tekst HTML-escapes før den rendres, så rapporten kan legges inn ordrett �
 anførselstegn og spesialtegn går fint. Det eneste `set-prep.mjs` må røre er en bokstavelig
 `</script` i teksten, som ellers ville lukket blokken for tidlig.
 
+## T-banen
+
+Kartet tegnes som SVG fra `TBANE` — ingen bilder. `TBANE` er generert; ikke rediger den for hånd.
+Når Ruter endrer linjer eller stopp, kjør fra reporoten:
+
+```bash
+node tools/update-tbane.mjs
+```
+
+Skriptet henter linjene fra Entur (der Ruter publiserer rutene), tar det lengste stoppmønsteret
+i hver retning per linje, og legger stasjoner, stoppfølger og spor inn i `index.html`.
+Stoppfølgen er per retning fordi den ikke alltid er lik begge veier — Gulleråsen har bare
+plattform mot Frognerseteren. Sentrum forstørres med en fiskeøyeprojeksjon (`FISH_R`/`FISH_P`
+i skriptet). Linjefargene ligger i CSS som `--l1`…`--l5`, ikke i dataene.
+
+Kvissen spør om neste stopp i en retning, og viser de to foregående stoppene. Spørsmål der de
+viste stoppene ikke avgjør svaret, droppes (linje 5 passerer Tøyen og Carl Berners plass to
+ganger). Er det skjulte stoppet en endestasjon, spørres det etter endestasjonen i stedet, siden
+«mot X» ellers ville røpet svaret.
+
 ## Testing
 
 Det finnes ingen testpakke. Etter en endring:
@@ -85,7 +106,7 @@ Det finnes ingen testpakke. Etter en endring:
 node -e "const s=require('fs').readFileSync('index.html','utf8');[...s.matchAll(/<script>([\s\S]*?)<\/script>/g)].forEach((b,i)=>{new Function(b[1]);console.log('block',i,'ok')})"
 ```
 
-Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle tre modusene, og både
+Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle fire modusene, og både
 lys og mørk modus (temaet følger `prefers-color-scheme`).
 
 ## Konvensjoner
