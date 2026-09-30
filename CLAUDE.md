@@ -22,37 +22,41 @@ Ny modus krever tre ting: en `<section>`/`<div>` i HTML, en linje i `goMode()`, 
 ## Ukas kvissprep
 
 Forsidas øverste knapp åpner `#prepApp`, som rendrer markdown-rapporten fra **quizprep**-skillen.
-Alt ligger nederst i `<script>`, rett før `// ---------- Mode switching ----------`:
+To steder er involvert:
 
-- `PREP` — dataene. Dette er det eneste som skal endres når det kommer ny prep.
-- `prepMarkdown()` / `prepInline()` — en liten markdown-renderer.
-- `renderPrep()` — fyller `#prepBody` og teksten på forsideknappen. Kalles én gang ved oppstart.
+- `#prepSource` i markupen (inne i `#prepApp`) — en `<script type="text/markdown">`-blokk som
+  holder selve rapporten, ordrett. Attributtet `data-uke` holder quizdatoen.
+- Nederst i `<script>`: `prepMarkdown()` / `prepInline()` (en liten markdown-renderer) og
+  `renderPrep()`, som fyller `#prepBody` og teksten på forsideknappen ved oppstart.
 
 ### Slik legger du inn ny prep
 
-1. Kjør quizprep-skillen. Den skriver en markdown-rapport.
-2. Lim hele rapporten inn mellom bakteksene i `PREP.markdown`, og sett `PREP.uke` til quizdatoen:
+Kjør quizprep-skillen. Lagre rapporten som `prep/<quizdato>.md` (f.eks.
+`prep/2026-10-07.md`) — den mappa er arkivet over gamle preper. Kjør så, fra reporoten:
 
-```js
-const PREP = {
-  uke: 'onsdag 7. oktober 2026',
-  markdown: String.raw`
-# Quizprep — onsdag 7. oktober 2026
-...hele rapporten...
-`
-};
+```bash
+node tools/set-prep.mjs <rapport.md> "onsdag 7. oktober 2026"
 ```
 
-3. Åpne `index.html` i nettleseren og sjekk at sida rendrer som forventet.
+Skriptet legger rapporten inn i `#prepSource` og setter `data-uke`. Åpne `index.html` i
+nettleseren etterpå og se over at det ser riktig ut. Datoargumentet er valgfritt, men det er
+det som gir teksten «Klar til onsdag 7. oktober 2026» på forsideknappen.
 
-Detaljer som er verdt å vite:
+Mellom to preper:
 
-- **`String.raw` er med vilje** — den gjør at `\` i teksten står som det er. Til gjengjeld kan
-  ikke rapporten inneholde backticks; de avslutter strengen. Bytt dem ut hvis de dukker opp.
-- **Tom `markdown` gir automatisk placeholderen** «Ukas prep kommer snart», og forsideknappen
-  sier «Kommer snart». Det er tilstanden mellom to preper — ingen andre endringer trengs.
-- Forrige ukes prep erstattes rett og slett. Det finnes ikke noe arkiv; vil du ha et, må det
-  bygges.
+```bash
+node tools/set-prep.mjs --clear
+```
+
+Da viser sida placeholderen «Ukas prep kommer snart» igjen, og forsideknappen sier «Kommer
+snart». Ingen andre endringer trengs.
+
+**Kjøres quizprep herfra, hører dette med til jobben.** Skriv rapporten til `prep/<dato>.md`,
+kjør `set-prep.mjs`, sjekk sida i nettleseren, og commit både rapporten og `index.html`. Ikke
+lim rapporten inn for hånd, og ikke forhåndsformater markdownen — skriptet og rendreren tar den
+som den er.
+
+Sida viser bare den nyeste prepen; `prep/`-mappa er arkivet.
 
 ### Hva rendreren støtter
 
@@ -69,7 +73,9 @@ Alt annet (tabeller, bilder, kursiv, kodeblokker, nøstede lister) blir stående
 Trenger rapporten mer, utvid `prepMarkdown()` — ikke forhåndsformater markdownen for hånd, for
 da må jobben gjøres på nytt neste uke.
 
-All tekst HTML-escapes før den rendres, så innliming er trygt.
+All tekst HTML-escapes før den rendres, så rapporten kan legges inn ordrett — backticks,
+anførselstegn og spesialtegn går fint. Det eneste `set-prep.mjs` må røre er en bokstavelig
+`</script` i teksten, som ellers ville lukket blokken for tidlig.
 
 ## Testing
 

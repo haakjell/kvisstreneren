@@ -164,6 +164,8 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
   </section>
 
   <div id="prepApp" hidden>
+    <!-- Replaced weekly by tools/set-prep.mjs; see CLAUDE.md. Empty = placeholder. -->
+    <script type="text/markdown" id="prepSource" data-uke=""></script>
     <button class="back" data-home>← Alle kvisser</button>
     <article class="card prose" id="prepBody"></article>
     <p class="note">Oppdateres hver uke med rapporten fra quizprep.</p>
@@ -735,14 +737,8 @@ b$('bSetOld').addEventListener('click',()=>bUse('old'));
 b$('bSetNew').addEventListener('click',()=>bUse('new'));
 
 // ---------- Ukas kvissprep ----------
-// Replaced weekly: run the quiz-prep skill and paste the whole markdown report between
-// the backticks below, then set `uke`. Empty markdown falls back to the placeholder.
-const PREP = {
-  uke: '',            // f.eks. 'onsdag 7. oktober 2026'
-  markdown: String.raw`
-`
-};
-
+// The report itself lives in the #prepSource block up in the markup, so it survives
+// pasting verbatim — backticks and all. See CLAUDE.md for the weekly routine.
 function prepInline(t){
   t = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const parked = [];
@@ -773,10 +769,11 @@ function prepMarkdown(md){
   return out.join('');
 }
 function renderPrep(){
-  const md = (PREP.markdown||'').trim();
+  const src = b$('prepSource');
+  const md = (src.textContent||'').trim(), uke = src.dataset.uke;
   b$('prepBody').innerHTML = md ? prepMarkdown(md)
     : '<div class="prepsoon"><strong>Ukas prep kommer snart</strong><p>Her dukker ferske nyhetssaker, navnedagene for uka og «på denne dagen» opp så snart ukas quizprep er kjørt.</p></div>';
-  b$('prepTeaser').textContent = md ? (PREP.uke ? 'Klar til ' + PREP.uke : 'Nyheter, navnedager og datoen') : 'Kommer snart';
+  b$('prepTeaser').textContent = md ? (uke ? 'Klar til ' + uke : 'Nyheter, navnedager og datoen') : 'Kommer snart';
 }
 
 // ---------- Mode switching ----------
