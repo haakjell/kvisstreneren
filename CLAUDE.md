@@ -3,8 +3,7 @@
 Én enkelt statisk side — `index.html` — med all HTML, CSS, JavaScript og alle data i samme fil.
 Ingen byggesteg, ingen avhengigheter, ingen pakkefil. Åpne fila i nettleseren for å teste.
 
-Språk: alt brukervendt er på norsk (bokmål). Hold kode og kommentarer på norsk der det finnes
-norske kommentarer fra før.
+Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til brukeren, engelsk i koden.
 
 ## Struktur
 
@@ -85,4 +84,11 @@ lys og mørk modus (temaet følger `prefers-color-scheme`).
 
 ## Konvensjoner
 
-- **Commit-meldinger skrives alltid på engelsk**, selv om sida, koden og denne fila er på norsk.
+- **Alt brukeren ser skal være på norsk** (bokmål): knappetekster, overskrifter, tilbakemeldinger,
+  feilmeldinger, `<title>`, `aria-label` og annen skjermlesertekst. Ingen engelske ord i
+  grensesnittet — heller ikke i midlertidig tekst eller placeholdere.
+- **Koden er på engelsk**: variabel- og funksjonsnavn, id-er, CSS-klasser og kommentarer.
+  Unntaket er egennavn og faguttrykk som ikke har noen naturlig engelsk form — `FYLKER`,
+  `KOMMUNER`, `bydel`, `vapen` — de blir stående som de er.
+- **Commit-meldinger skrives alltid på engelsk**, selv om sida og denne fila er på norsk.
+- Denne fila (CLAUDE.md) er på norsk, som dokumentasjon for deg.

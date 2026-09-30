@@ -735,8 +735,8 @@ b$('bSetOld').addEventListener('click',()=>bUse('old'));
 b$('bSetNew').addEventListener('click',()=>bUse('new'));
 
 // ---------- Ukas kvissprep ----------
-// Bytt ut dette hver uke: kjør quizprep-skillen og lim hele markdown-rapporten inn
-// mellom bakteksene under, og oppdater `uke`. Tom markdown gir «kommer snart».
+// Replaced weekly: run the quiz-prep skill and paste the whole markdown report between
+// the backticks below, then set `uke`. Empty markdown falls back to the placeholder.
 const PREP = {
   uke: '',            // f.eks. 'onsdag 7. oktober 2026'
   markdown: String.raw`
