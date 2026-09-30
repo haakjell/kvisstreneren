@@ -7,7 +7,7 @@ Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til bruker
 
 ## Struktur
 
-Sida har en forside (`#home`) med én knapp per modus, og fem visninger som byttes med `goMode()`:
+Sida har en forside (`#home`) med én knapp per modus, og seks visninger som byttes med `goMode()`:
 
 | Modus | Seksjon | Innhold |
 |---|---|---|
@@ -16,6 +16,7 @@ Sida har en forside (`#home`) med én knapp per modus, og fem visninger som bytt
 | `vapen` | `#vapenApp` | Fylkes- og kommunevåpen (`FYLKER`, `KOMMUNER`, `SETS`) |
 | `bydel` | `#bydelApp` | Oslos bydeler (`BSETS`) |
 | `caesar` | `#caesarApp` | Hotel Cæsar: roller og skuespillere (`CAESAR`, `CAESAR_OUT`) — se under |
+| `mgp` | `#mgpApp` | Melodi Grand Prix: vinnere og årstall (`MGP`, `MGP_GAPS`) — se under |
 
 `goMode()` viser/skjuler seksjonene og husker valget i `sessionStorage` under nøkkelen `mode`.
 Ny modus krever tre ting: en `<section>`/`<div>` i HTML, en linje i `goMode()`, og en
@@ -127,6 +128,31 @@ rollefigurer i Hotel Cæsar» og rollefigur-artiklene på no.wikipedia. Der kild
 årstall, er fandom-wikien fulgt. `CAESAR_OUT` er sjekket mot hele IMDb-rollelista, fandom-wikien
 og skuespillernes egne Wikipedia-artikler (september 2026). Det finnes ikke noe skript for lista.
 
+## Melodi Grand Prix
+
+Kviss om hvem som vant MGP hvilket år. Tre spørsmålstyper, som i Hotel Cæsar: år → artist,
+artist → år (med låttittelen, så artister med flere seire får et entydig spørsmål), og «Skriv
+svaret» (begge veier; årstall kan skrives med to sifre, «85»). Chipene «Fra og med» setter
+tidligste år som spørres om (Alle, 1980, 1990, 2000, 2010) og huskes i `localStorage` under
+`mgpFrom`. Det finnes bevisst ingen øvre grense. «Pugg»-fanen viser alle år i utvalget, per tiår.
+
+- `MGP` — én rad per MGP-finale fra 1971: `y` år, `a` artisten som representerte Norge i
+  Eurovision (det er svaret), `s` låta slik den het i Eurovision, `e` plassering i
+  Eurovision-finalen (`'semi'` = røk ut i semifinalen, `'x'` = avlyst i 2020), `last`/`zero` for
+  sisteplass og null poeng, `m` medlemmer av en gruppe, `also` andre som sang vinnerlåta i
+  MGP-finalen, `al` andre skrivemåter som godtas, og `n` en merknad som vises etter svaret.
+- Ingen i `a`, `m` eller `also` brukes som feil alternativ for sitt eget år — så Jahn Teigen
+  dukker ikke opp som feil svar for 1974, og Hanne Krogh ikke for 1985 (Bobbysocks). Når du
+  legger til en gruppe, før opp medlemmene som har vunnet på egen hånd i `m`.
+- `MGP_GAPS` — år uten MGP-finale, som vises i «Pugg», men aldri spørres om: 1970 (boikott),
+  1991 (NRK avlyste finalen og valgte «Mrs. Thompson» med Just 4 Fun selv) og 2002 (rykket ned).
+- 1972–1976 ble hver låt framført to ganger i MGP, av to ulike artister; bare den som dro til
+  Eurovision står i `a`, den andre står i `also` og godtas som svar i «Skriv svaret».
+
+Kilder: «Melodi Grand Prix» (vinnertabellen) og årsartiklene på no.wikipedia, og «Norway in the
+Eurovision Song Contest» på en.wikipedia (plasseringene), sjekket september 2026. Etter hvert
+års MGP: legg til en rad nederst i `MGP` (plasseringen kommer i mai). Det finnes ikke noe skript.
+
 ## Testing
 
 Det finnes ingen testpakke. Etter en endring:
@@ -135,7 +161,7 @@ Det finnes ingen testpakke. Etter en endring:
 node -e "const s=require('fs').readFileSync('index.html','utf8');[...s.matchAll(/<script>([\s\S]*?)<\/script>/g)].forEach((b,i)=>{new Function(b[1]);console.log('block',i,'ok')})"
 ```
 
-Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle fem modusene, og både
+Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle seks modusene, og både
 lys og mørk modus (temaet følger `prefers-color-scheme`).
 
 ## Konvensjoner

@@ -17,3 +17,8 @@ For Hotel Cæsar:
 
 - **Bilder av rollefigurene.** Vis bilde av rollefiguren i kvissen og i «Pugg», hentet fra
   [Hotel Cæsar-wikien på Fandom](https://hotelcaesar.fandom.com) der det finnes et.
+
+For Melodi Grand Prix:
+
+- **Hør sangen.** Legg inn en YouTube-lenke eller en innebygd YouTube-spiller for vinnerlåta,
+  som vises etter svaret og i «Pugg».
