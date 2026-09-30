@@ -7,7 +7,7 @@ Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til bruker
 
 ## Struktur
 
-Sida har en forside (`#home`) med én knapp per modus, og fire visninger som byttes med `goMode()`:
+Sida har en forside (`#home`) med én knapp per modus, og fem visninger som byttes med `goMode()`:
 
 | Modus | Seksjon | Innhold |
 |---|---|---|
@@ -15,6 +15,7 @@ Sida har en forside (`#home`) med én knapp per modus, og fire visninger som byt
 | `tbane` | `#tbaneApp` | T-banen: «neste stopp»-kviss og kart (`TBANE`) — se under |
 | `vapen` | `#vapenApp` | Fylkes- og kommunevåpen (`FYLKER`, `KOMMUNER`, `SETS`) |
 | `bydel` | `#bydelApp` | Oslos bydeler (`BSETS`) |
+| `caesar` | `#caesarApp` | Hotel Cæsar: roller og skuespillere (`CAESAR`, `CAESAR_OUT`) — se under |
 
 `goMode()` viser/skjuler seksjonene og husker valget i `sessionStorage` under nøkkelen `mode`.
 Ny modus krever tre ting: en `<section>`/`<div>` i HTML, en linje i `goMode()`, og en
@@ -98,6 +99,25 @@ viste stoppene ikke avgjør svaret, droppes (linje 5 passerer Tøyen og Carl Ber
 ganger). Er det skjulte stoppet en endestasjon, spørres det etter endestasjonen i stedet, siden
 «mot X» ellers ville røpet svaret.
 
+## Hotel Cæsar
+
+Kviss om hvem som spilte hvem i TV 2-såpen (1998–2017). Tre spørsmålstyper, valgt med knappene
+øverst: rolle → skuespiller, skuespiller → rolle, og «Skriv svaret» (begge veier, uten
+alternativer, med litt slingringsmonn for skrivefeil). «Pugg»-fanen viser hele lista.
+
+- `CAESAR` — én rad per rollefigur: `r` rolle, `a` skuespiller, `also` andre som har spilt samme
+  rolle (omcasting eller barneversjonen; teller som riktig og brukes aldri som feil alternativ),
+  `g` rollefigurens kjønn (`'k'`/`'m'`, så feilalternativene blir troverdige), `y` år i serien,
+  `n` kort beskrivelse, og `top:1` for de største rollene.
+- Spørsmålene hentes bare fra `top:1`-radene. De andre rollene brukes som feil alternativer når
+  svaret er en rolle, og deres skuespillere når svaret er en skuespiller.
+- `CAESAR_OUT` — kjente norske skuespillere som **ikke** var med i serien. Når svaret er en
+  skuespiller, er to av de fem feilalternativene herfra. Legg bare til navn du har sjekket; serien
+  hadde hundrevis av gjesteroller.
+
+Lista er satt sammen for hånd fra IMDb-oppføringene og norsk presse (september 2026). Det finnes
+ikke noe skript for den.
+
 ## Testing
 
 Det finnes ingen testpakke. Etter en endring:
@@ -106,7 +126,7 @@ Det finnes ingen testpakke. Etter en endring:
 node -e "const s=require('fs').readFileSync('index.html','utf8');[...s.matchAll(/<script>([\s\S]*?)<\/script>/g)].forEach((b,i)=>{new Function(b[1]);console.log('block',i,'ok')})"
 ```
 
-Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle fire modusene, og både
+Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle fem modusene, og både
 lys og mørk modus (temaet følger `prefers-color-scheme`).
 
 ## Konvensjoner
