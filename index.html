@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Quiztrener – våpen og bydeler</title>
+<title>Kvisstreneren – våpen og bydeler</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -139,40 +139,40 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 <body>
 <div class="wrap">
   <section class="home" id="home" hidden>
-    <h1>Quiztrener</h1>
-    <p class="sub">Pick what to practise for Wednesday.</p>
+    <h1>Kvisstreneren</h1>
+    <p class="sub">Velg hva du vil øve på til onsdag.</p>
     <div class="modes">
-      <button class="mode" id="goVapen"><div id="modeShieldIcon" aria-hidden="true"></div><div><strong>Våpenskjold</strong><span>Fylkesvåpen and kommunevåpen</span></div></button>
-      <button class="mode" id="goBydel"><div class="omap" id="modeMapIcon" aria-hidden="true" style="margin:0"></div><div><strong>Oslos bydeler</strong><span>Today’s 15, or the 8 from 2028</span></div></button>
+      <button class="mode" id="goVapen"><div id="modeShieldIcon" aria-hidden="true"></div><div><strong>Våpenskjold</strong><span>Fylkesvåpen og kommunevåpen</span></div></button>
+      <button class="mode" id="goBydel"><div class="omap" id="modeMapIcon" aria-hidden="true" style="margin:0"></div><div><strong>Oslos bydeler</strong><span>Dagens 15, eller de 8 fra 2028</span></div></button>
     </div>
   </section>
 
   <div id="vapenApp" hidden>
-  <button class="back" data-home>← All quizzes</button>
+  <button class="back" data-home>← Alle kvisser</button>
   <header>
     <div>
       <h1>Fylkesvåpen</h1>
       <div class="sub" id="sub">De 15 fylkene fra 2024</div>
     </div>
     <div class="tabs" role="tablist">
-      <button role="tab" id="tabQuiz" aria-selected="true">Quiz</button>
-      <button role="tab" id="tabStudy" aria-selected="false">Study</button>
+      <button role="tab" id="tabQuiz" aria-selected="true">Kviss</button>
+      <button role="tab" id="tabStudy" aria-selected="false">Pugg</button>
     </div>
   </header>
-  <div class="setswitch" role="radiogroup" aria-label="Choose set">
+  <div class="setswitch" role="radiogroup" aria-label="Velg sett">
     <button role="radio" id="setF" aria-checked="true">Fylkesvåpen <span>15</span></button>
     <button role="radio" id="setK" aria-checked="false">Kommunevåpen <span>30</span></button>
   </div>
 
   <main id="quizView">
     <section class="card" id="playCard">
-      <div class="meta"><span id="count">1 / 15</span><span id="score">0 correct</span></div>
+      <div class="meta"><span id="count">1 / 15</span><span id="score">0 riktige</span></div>
       <div class="bar"><i id="barFill"></i></div>
       <div class="shield" id="shieldBox"></div>
-      <div class="q" id="qLabel">Which fylke is this?</div>
+      <div class="q" id="qLabel">Hvilket fylke er dette?</div>
       <div class="options" id="options" role="group" aria-labelledby="qLabel"></div>
       <div class="feedback" id="feedback" aria-live="polite"></div>
-      <div class="btns"><button class="primary" id="actionBtn" hidden>Next</button></div>
+      <div class="btns"><button class="primary" id="actionBtn" hidden>Neste</button></div>
     </section>
 
     <section class="card done" id="doneCard" hidden>
@@ -180,55 +180,55 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
       <p id="doneText"></p>
       <div class="minigrid" id="missedGrid"></div>
       <div class="btns">
-        <button class="primary" id="retryMissed">Practise the missed ones</button>
-        <button class="ghost" id="restart">Start over</button>
+        <button class="primary" id="retryMissed">Øv på dem du bommet på</button>
+        <button class="ghost" id="restart">Start på nytt</button>
       </div>
     </section>
   </main>
 
   <main id="studyView" hidden>
     <div class="studybar">
-      <span>Tap a shield to reveal when names are hidden.</span>
-      <button class="ghost" id="toggleNames" style="padding:8px 12px">Hide names</button>
+      <span>Trykk på et våpen for å se navnet når navnene er skjult.</span>
+      <button class="ghost" id="toggleNames" style="padding:8px 12px">Skjul navn</button>
     </div>
     <div class="study" id="studyGrid"></div>
   </main>
-  <p class="note">Images: Wikimedia Commons (public-domain Norwegian coats of arms). Needs an internet connection; if an image can’t load, a rough drawing is shown instead.</p>
+  <p class="note">Bilder: Wikimedia Commons (norske våpen i det fri). Krever nettilgang; hvis et bilde ikke lastes, vises en grov strektegning i stedet.</p>
   </div>
 
   <div id="bydelApp" hidden>
-  <button class="back" data-home>← All quizzes</button>
+  <button class="back" data-home>← Alle kvisser</button>
   <header>
     <div>
       <h1>Oslos bydeler</h1>
       <div class="sub" id="bSub">De 15 bydelene i dag</div>
     </div>
     <div class="tabs" role="tablist">
-      <button role="tab" id="bTabQuiz" aria-selected="true">Quiz</button>
-      <button role="tab" id="bTabStudy" aria-selected="false">Study</button>
+      <button role="tab" id="bTabQuiz" aria-selected="true">Kviss</button>
+      <button role="tab" id="bTabStudy" aria-selected="false">Pugg</button>
     </div>
   </header>
-  <div class="setswitch" role="radiogroup" aria-label="Choose set">
-    <button role="radio" id="bSetOld" aria-checked="true">I dag <span>15</span></button>
-    <button role="radio" id="bSetNew" aria-checked="false">Fra 2028 <span>8</span></button>
+  <div class="setswitch" role="radiogroup" aria-label="Velg sett">
+    <button role="radio" id="bSetOld" aria-checked="true">Gamle <span>15</span></button>
+    <button role="radio" id="bSetNew" aria-checked="false">Nye <span>8</span></button>
   </div>
   <main id="bQuiz">
     <section class="card" id="bPlay">
-      <div class="meta"><span id="bCount">1 / 15</span><span id="bScore">0 correct</span></div>
+      <div class="meta"><span id="bCount">1 / 15</span><span id="bScore">0 riktige</span></div>
       <div class="bar"><i id="bBar"></i></div>
       <div class="omap" id="bMapBox"></div>
-      <div class="q" id="bQ">Which bydel is highlighted?</div>
+      <div class="q" id="bQ">Hvilken bydel er markert?</div>
       <div class="options" id="bOptions" role="group" aria-labelledby="bQ"></div>
       <div class="feedback" id="bFeedback" aria-live="polite"></div>
-      <div class="btns"><button class="primary" id="bAction" hidden>Next</button></div>
+      <div class="btns"><button class="primary" id="bAction" hidden>Neste</button></div>
     </section>
     <section class="card done" id="bDone" hidden>
       <h2 id="bDoneTitle"></h2>
       <p id="bDoneText"></p>
       <div class="minimaps" id="bMissed"></div>
       <div class="btns">
-        <button class="primary" id="bRetry">Practise the missed ones</button>
-        <button class="ghost" id="bRestart">Start over</button>
+        <button class="primary" id="bRetry">Øv på dem du bommet på</button>
+        <button class="ghost" id="bRestart">Start på nytt</button>
       </div>
     </section>
   </main>
@@ -238,7 +238,7 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
     <div class="chips" id="bChips"></div>
   </main>
   <p class="note" id="bNote"></p>
-  <p class="note">Map: bydel boundaries from Oslo kommune, via AnalyseABO/Kart-fylker-og-kommuner-json. Works offline.</p>
+  <p class="note">Kart: bydelsgrenser fra Oslo kommune, via AnalyseABO/Kart-fylker-og-kommuner-json. Virker uten nett.</p>
   </div>
 
 </div>
@@ -335,21 +335,21 @@ function osloSeal(){
 }
 
 const FYLKER = [
-  {name:'Oslo', svg:()=>osloSeal(), motif:'Round city seal: St. Hallvard on a throne with a halo, holding three arrows and a millstone.'},
-  {name:'Akershus', svg:()=>shield(B,'akershus'), motif:'Silver stepped gable on blue — Akershus fortress.'},
-  {name:'Østfold', svg:()=>shield(R,'ostfold'), motif:'Three gold sun rays on red; the middle one flame-cut.'},
-  {name:'Buskerud', svg:()=>shield(S,'buskerud'), motif:'Blue bear on silver.'},
-  {name:'Vestfold', svg:()=>shield(R,'vestfold'), motif:'Gold royal crown on red — the Yngling kings.'},
-  {name:'Telemark', svg:()=>shield(G,'telemark'), motif:'Black farmer’s battle axe rising from the base, on gold.'},
-  {name:'Innlandet', svg:()=>shield(V,'innlandet'), motif:'Three silver lines on green: treetops, mountains and water.'},
-  {name:'Agder', svg:()=>shield(R,'agder'), motif:'Gold oak on red.'},
-  {name:'Rogaland', svg:()=>shield(B,'rogaland'), motif:'Silver pointed-foot cross on blue — Erling Skjalgsson’s stone cross.'},
-  {name:'Vestland', svg:()=>shield(DB,'vestland'), motif:'Two silver mountains on deep blue.'},
-  {name:'Møre og Romsdal', svg:()=>shield(B,'more'), motif:'Three gold ship prows seen from the front, on blue.', aliases:['more og romsdal','more & romsdal','mr','m&r','more romsdal']},
-  {name:'Trøndelag', svg:()=>shield(S,'trondelag'), motif:'Gold cross with outward-curving arms on silver (from Nord-Trøndelag).'},
-  {name:'Nordland', svg:()=>shield(G,'nordland'), motif:'Black Nordland boat with mast and square sail, on gold.'},
-  {name:'Troms', svg:()=>shield(R,'troms'), motif:'Gold griffin on red — the Bjarkøy family arms.'},
-  {name:'Finnmark', svg:()=>shield(K,'finnmark'), motif:'Gold castle on black — Vardøhus fortress.'}
+  {name:'Oslo', svg:()=>osloSeal(), motif:'Rundt bysegl: St. Hallvard på en trone med glorie, med tre piler og en kvernstein.'},
+  {name:'Akershus', svg:()=>shield(B,'akershus'), motif:'Trappegavl i sølv på blått – Akershus festning.'},
+  {name:'Østfold', svg:()=>shield(R,'ostfold'), motif:'Tre gullstråler på rødt; den midterste flammeskåret.'},
+  {name:'Buskerud', svg:()=>shield(S,'buskerud'), motif:'Blå bjørn på sølv.'},
+  {name:'Vestfold', svg:()=>shield(R,'vestfold'), motif:'Kongekrone i gull på rødt – Ynglingekongene.'},
+  {name:'Telemark', svg:()=>shield(G,'telemark'), motif:'Svart bondestridsøks som stiger opp fra skjoldfoten, på gull.'},
+  {name:'Innlandet', svg:()=>shield(V,'innlandet'), motif:'Tre sølvlinjer på grønt: tretopper, fjell og vann.'},
+  {name:'Agder', svg:()=>shield(R,'agder'), motif:'Eik i gull på rødt.'},
+  {name:'Rogaland', svg:()=>shield(B,'rogaland'), motif:'Kors med spiss fot i sølv på blått – Erling Skjalgssons steinkors.'},
+  {name:'Vestland', svg:()=>shield(DB,'vestland'), motif:'To fjell i sølv på dypblått.'},
+  {name:'Møre og Romsdal', svg:()=>shield(B,'more'), motif:'Tre skipsstavner i gull sett forfra, på blått.', aliases:['more og romsdal','more & romsdal','mr','m&r','more romsdal']},
+  {name:'Trøndelag', svg:()=>shield(S,'trondelag'), motif:'Gullkors med utoverbuede armer på sølv (fra Nord-Trøndelag).'},
+  {name:'Nordland', svg:()=>shield(G,'nordland'), motif:'Svart nordlandsbåt med mast og råseil, på gull.'},
+  {name:'Troms', svg:()=>shield(R,'troms'), motif:'Griff i gull på rødt – Bjarkøyættens våpen.'},
+  {name:'Finnmark', svg:()=>shield(K,'finnmark'), motif:'Borg i gull på svart – Vardøhus festning.'}
 ];
 
 const WM=n=>'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(n);
@@ -384,36 +384,36 @@ const kGull=(x,y,c)=>`<path fill="${c}" transform="translate(${x} ${y})" d="M-34
 const kFigure=(x,c)=>`<g fill="${c}" transform="translate(${x} 0)"><circle cx="0" cy="92" r="11"/><path d="M-14,106 H14 L20,172 H-20 Z"/></g>`;
 
 const KOMMUNER=[
- {name:'Oslo', svg:()=>osloSeal(), files:['Oslo komm.svg'], motif:'The city seal: St. Hallvard on a throne with three arrows and a millstone (same as the fylke).'},
- {name:'Bergen', svg:()=>shieldInner(R,`<path fill="${G}" d="M0,244 V196 Q30,180 60,192 Q100,176 140,192 Q170,182 200,196 V244Z"/><g transform="translate(20 -20) scale(.8)">${kCastle(S,R)}</g>`), files:['Bergen komm.svg','1201 Bergen komm.png'], motif:'Silver castle on a gold mountain base, on red.'},
- {name:'Trondheim', svg:()=>shieldInner(R,`<g fill="${G}"><path d="M28,180 V84 a36,36 0 0 1 72,0 V180Z"/><rect x="106" y="64" width="66" height="116"/>${[106,124,142,160].map(x=>`<rect x="${x}" y="50" width="12" height="16"/>`).join('')}<circle cx="70" cy="212" r="11"/><circle cx="100" cy="212" r="11"/><circle cx="130" cy="212" r="11"/></g>${kFigure(64,R)}${kFigure(139,R)}<path d="M56,80 L64,64 L72,80Z" fill="${R}"/>`), files:['Trondheim komm.svg','5001 Trondheim komm.png','1601 Trondheim komm.png'], motif:'Old city seal: a bishop in a church portal and a king in a castle, three heads below (the city council).'},
- {name:'Stavanger', svg:()=>shieldInner(B,`<path d="M100,220 Q86,170 100,130 Q114,90 98,36" fill="none" stroke="${G}" stroke-width="8" stroke-linecap="round"/><g fill="${G}"><ellipse cx="66" cy="112" rx="28" ry="14" transform="rotate(-30 66 112)"/><ellipse cx="136" cy="84" rx="28" ry="14" transform="rotate(30 136 84)"/><ellipse cx="70" cy="58" rx="22" ry="12" transform="rotate(-30 70 58)"/>${[[128,146],[142,146],[135,158],[121,158],[149,158],[128,170],[142,170],[135,182]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7"/>`).join('')}</g>`), files:['Stavanger komm.svg','1103 Stavanger komm.png'], motif:'Gold branched grapevine on blue.'},
- {name:'Bærum', svg:()=>shieldInner(V,`<path fill="${S}" d="M64,220 L80,56 H120 L136,220 Z"/><path fill="${V}" d="M88,220 V186 a12,12 0 0 1 24,0 V220Z"/>`), files:['Bærum komm.svg','0219 Barum komm.png'], motif:'Silver lime kiln (a tower without battlements) on green.'},
- {name:'Kristiansand', svg:()=>shieldInner(G,`${kTree(V)}<g transform="translate(30 88) scale(.62)"><path fill="${R}" d="${BEAR}"/></g>`), files:['Kristiansand komm.svg','1001 Kristiansand komm.png'], motif:'The Norwegian lion in front of a tree, with the motto «Causa triumphat tandem bona».'},
- {name:'Drammen', svg:()=>shieldInner(B,`<path fill="${G}" d="M20,244 V206 Q60,186 100,198 Q140,186 180,206 V244Z"/><rect x="88" y="62" width="24" height="140" fill="${S}"/><rect x="80" y="54" width="40" height="12" fill="${S}"/><path d="M44,70 L156,186" stroke="${S}" stroke-width="7"/><path d="M156,70 L44,186" stroke="${G}" stroke-width="7"/><circle cx="160" cy="64" r="11" fill="none" stroke="${G}" stroke-width="6"/>`), files:['Drammen komm.svg','0602 Drammen komm.png','3005 Drammen komm.png'], motif:'A column on rocky ground, crossed by a key and a sword – faith, justice and strength.'},
- {name:'Asker', svg:()=>shieldInner(B,`<path fill="${S}" d="M46,196 L46,72 L82,196Z M92,196 L92,50 L132,196Z M142,196 L142,84 L170,196Z"/>`), files:['Asker komm 2020.svg','Asker komm nytt våpen.png'], reformed:true, motif:'Three silver sails on blue – one for each merged municipality (2020).'},
- {name:'Lillestrøm', svg:()=>shieldInner(B,`<g fill="${S}">${[74,122,170].map(y=>`<path d="M36,${y} Q100,${y+20} 170,${y-10} Q104,${y+34} 36,${y} Z"/>`).join('')}</g>`), files:['Lillestrøm komm.svg','Lillestrøm komm 2020.svg','Lillestrøm kommunevåpen (uoffisiell versjon).png'], reformed:true, motif:'Three silver dugout boats on blue (from the 2,200-year-old find in Sørum).'},
- {name:'Fredrikstad', svg:()=>shieldInner(R,`<g transform="translate(30 76) scale(.7)">${kCastle(G,R)}</g><g transform="translate(14 -38) scale(.85)"><path fill="${G}" d="${WALK}"/></g>`), files:['Fredrikstad komm.svg','0106 Fredrikstad komm.png'], motif:'Gold bear and tower on red (borrowed from Sarpsborg).'},
- {name:'Sandnes', svg:()=>shieldInner(V,`<g fill="${S}"><ellipse cx="108" cy="140" rx="50" ry="36"/><circle cx="64" cy="100" r="22"/><path d="M44,98 L24,104 L44,110Z"/><path d="M152,128 L182,98 L174,142Z"/><rect x="88" y="170" width="40" height="30" rx="6"/></g><circle cx="60" cy="95" r="4" fill="${V}"/>`), files:['Sandnes komm.svg','1102 Sandnes komm.png'], motif:'Silver «leirgauk» – a clay cuckoo whistle from the Sandnes potteries – on green.'},
- {name:'Tromsø', svg:()=>shieldInner(B,`<g transform="translate(-6 20)"><path fill="${S}" d="${WALK}"/>${kAntlers(S)}</g>`), files:['Tromsø komm.svg','1902 Tromso komm.png','5401 Tromso komm.png'], motif:'Silver walking reindeer on blue.'},
- {name:'Sandefjord', svg:()=>shieldInner(G,`<g fill="${K}"><circle cx="92" cy="66" r="14"/><path d="M76,84 H108 L114,142 L108,180 H76 L80,142 Z"/><path d="M152,26 L162,10 L158,34Z"/><path d="M0,244 V190 Q20,176 40,180 H160 Q180,176 200,190 V244Z"/></g><path d="M106,90 L132,56" stroke="${K}" stroke-width="10" stroke-linecap="round"/><path d="M154,28 L64,196" stroke="${K}" stroke-width="5"/>`), files:['Sandefjord komm 2017.svg','Sandefjord komm 2017.png'], reformed:true, motif:'Black whaler with a raised harpoon in a boat, on gold – from the whaling monument (2017).'},
- {name:'Nordre Follo', svg:()=>shieldInner(B,kEar(S)), files:['Nordre Follo komm.svg','Nordre Follo komm 2020.svg','Nordre Follo kommune. Foreslått kommunevåpen per 2019.png'], reformed:true, motif:'Silver ear of oats on blue (2020).'},
- {name:'Sarpsborg', svg:()=>shieldInner(G,`<g transform="translate(30 76) scale(.7)">${kCastle(K,G)}</g><g transform="translate(14 -38) scale(.85)"><path fill="${K}" d="${WALK}"/></g>`), files:['Sarpsborg komm.svg','0105 Sarpsborg komm.png'], motif:'Black bear walking above a black castle, on gold.'},
- {name:'Tønsberg', svg:()=>shieldInner(B,`<path fill="${G}" d="M60,215 Q60,110 96,64 Q116,40 140,52 Q156,62 146,82 Q138,96 122,88 Q112,82 118,72 Q100,90 92,130 Q84,172 92,215 Z"/><path d="M130,215 V160" stroke="${G}" stroke-width="6"/><ellipse cx="118" cy="162" rx="14" ry="7" transform="rotate(-35 118 162)" fill="${G}"/><ellipse cx="142" cy="150" rx="14" ry="7" transform="rotate(35 142 150)" fill="${G}"/>`), files:['Tønsberg komm 2020.svg','Tønsberg kommunevåpen 2020.svg'], reformed:true, motif:'A prow from the Oseberg ship and a sprout (2020).'},
- {name:'Ålesund', svg:()=>shieldInner(B,`<path fill="${S}" d="M36,96 C40,84 46,80 50,78 L56,82 C56,92 62,98 72,100 L128,100 C138,98 144,92 144,82 L150,78 C154,80 160,84 164,96 C146,122 54,122 36,96 Z"/><rect x="97" y="40" width="6" height="60" fill="${S}"/>${kWaves(S,132)}${kWaves(S,150)}<g fill="${S}">${[[62,194],[100,204],[138,194]].map(([x,y])=>`<path transform="translate(${x} ${y})" d="M-22,0 Q-4,-12 14,0 L24,-9 L24,9 L14,0 Q-4,12 -22,0Z"/>`).join('')}</g>${kWaves(S,168)}`), files:['Ålesund komm.svg','1504 Alesund komm.png','1507 Alesund komm.png'], motif:'Silver boat on four waves with three cod below – fishing.'},
- {name:'Skien', svg:()=>shieldInner(B,`<path d="M72,210 L128,70 M128,210 L72,70" stroke="${S}" stroke-width="7" stroke-linecap="round"/>${kStar(100,56,6,18,8,G)}<g transform="translate(-34 70) scale(.5)">${kTree(G)}</g><g transform="translate(134 70) scale(.5)">${kTree(G)}</g>`), files:['Skien komm.svg','0806 Skien komm.png'], motif:'Two ski poles topped by a six-pointed star, between two gold rose trees.'},
- {name:'Bodø', svg:()=>shieldInner(R,kStar(100,118,12,78,44,G)), files:['Bodø komm.svg','1804 Bodo komm.png'], motif:'Gold sun with twelve points on red – the midnight sun.'},
- {name:'Moss', svg:()=>shieldInner(R,`<path fill="none" stroke="${G}" stroke-width="14" stroke-linecap="round" d="M40,86 Q40,176 104,176 Q150,176 150,132"/><path d="M150,132 L150,104" stroke="${G}" stroke-width="10"/>${kStar(150,76,6,26,10,G)}`), files:['Moss komm 2020.svg','Rygge komm.svg','0136 Rygge komm.png'], reformed:true, motif:'Gold spur on red (from the Viking-age find at Rød; Rygge’s old arms, used by Moss since 2020).'},
- {name:'Lørenskog', svg:()=>shieldInner(G,`<g fill="none" stroke="${R}" stroke-width="10"><circle cx="100" cy="118" r="62"/><circle cx="100" cy="118" r="12"/></g><g stroke="${R}" stroke-width="7">${[0,45,90,135].map(a=>`<line x1="${100+62*Math.cos(a*Math.PI/180)}" y1="${118+62*Math.sin(a*Math.PI/180)}" x2="${100-62*Math.cos(a*Math.PI/180)}" y2="${118-62*Math.sin(a*Math.PI/180)}"/>`).join('')}</g><g fill="${R}">${[0,45,90,135,180,225,270,315].map(a=>`<rect x="92" y="34" width="16" height="22" transform="rotate(${a} 100 118)"/>`).join('')}</g>`), files:['Lørenskog komm.svg','0230 Lorenskog komm.png'], motif:'Red water wheel on gold – sawmills and forestry.'},
- {name:'Larvik', svg:()=>shieldInner(V,`<path d="M100,240 V110" stroke="${S}" stroke-width="10"/><g fill="${S}">${[[100,52,0],[70,70,-35],[130,70,35],[58,104,-60],[142,104,60],[76,134,-45],[124,134,45]].map(([x,y,r])=>`<path transform="translate(${x} ${y}) rotate(${r})" d="M0,-24 Q14,0 0,20 Q-14,0 0,-24Z"/>`).join('')}</g>`), files:['Larvik komm 2018.svg','Larvik komm 2017.svg'], reformed:true, motif:'A rising tree with seven drop-shaped leaves (2017).'},
- {name:'Indre Østfold', svg:()=>shieldInner(K,kEar(G)), files:['Indre Østfold komm.svg','Indre Østfold komm 2020.svg'], reformed:true, motif:'Gold ear of grain on black – farming (2020).'},
- {name:'Arendal', svg:()=>shieldInner(B,`<path fill="${S}" d="M40,150 L160,150 L146,172 L56,172 Z"/><rect x="98" y="40" width="5" height="110" fill="${S}"/><path fill="${S}" d="M92,50 L92,140 L50,140Z M108,46 L108,140 L150,140Z"/>${kWaves(S,188)}${kWaves(S,204)}${kWaves(S,220)}`), files:['Arendal komm.svg','0906 Arendal komm.png'], motif:'Silver sailing ship on three silver waves, on blue.'},
- {name:'Ullensaker', svg:()=>shieldInner(B,`<g fill="${G}"><circle cx="96" cy="62" r="14"/><path d="M80,80 H112 L118,140 L108,196 H96 L98,150 L90,150 L84,196 H72 L78,140 Z"/></g><path d="M40,206 Q100,196 164,210" stroke="${G}" stroke-width="7" fill="none"/><path d="M132,56 Q162,110 132,164" stroke="${G}" stroke-width="6" fill="none"/><path d="M132,56 L132,164" stroke="${G}" stroke-width="2"/>`), files:['Ullensaker komm.svg','0235 Ullensaker komm.png'], motif:'The god Ull from Norse mythology (not a traditional heraldic design).'},
- {name:'Karmøy', svg:()=>shieldInner(R,`<g fill="none" stroke="${S}" stroke-width="10" stroke-linejoin="round"><path d="M84,38 H116 V98 H168 V130 H116 V204 H84 V130 H32 V98 H84 Z"/><path d="M100,38 V204 M32,114 H168"/></g>`), files:['Karmøy komm.svg','1149 Karmoy komm.png'], motif:'Silver lattice cross on red – «karm», Christianity and a knot for the island as a hub.'},
- {name:'Øygarden', svg:()=>shieldInner(S,`<g fill="${B}"><path d="M68,92 L100,48 L132,92Z"/><rect x="72" y="96" width="56" height="70"/><rect x="62" y="166" width="76" height="16"/><rect x="80" y="182" width="40" height="30"/></g><g fill="${S}"><rect x="80" y="104" width="16" height="54"/><rect x="104" y="104" width="16" height="54"/></g>`), files:['Øygarden komm.svg','1259 Oygarden komm.png'], motif:'Blue lighthouse lantern on silver – the sea.'},
- {name:'Haugesund', svg:()=>shieldInner(B,kGull(64,90,S)+kGull(136,90,S)+kGull(100,160,S)), files:['Haugesund komm.svg','1106 Haugesund komm.png'], motif:'Three silver gulls on blue – herring and shipping.'},
- {name:'Porsgrunn', svg:()=>shieldInner(B,`<path d="M0,40 L200,220 L200,260 L0,80Z" fill="${S}"/><g fill="none" stroke="${G}" stroke-width="7" stroke-linecap="round"><path d="M146,40 V110 M128,56 H164 M118,96 Q146,124 174,96"/></g><path d="M40,200 Q60,150 80,120" stroke="${G}" stroke-width="5" fill="none"/>${[[50,176],[62,156],[72,138]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="12" ry="6" transform="rotate(-50 ${x} ${y})" fill="${G}"/>`).join('')}`), files:['Porsgrunn komm.svg','0805 Porsgrunn komm.png'], motif:'A branch of pors (bog myrtle), an anchor and a silver diagonal band for the river.'},
- {name:'Ringsaker', svg:()=>shieldInner(R,`<g transform="translate(-6 20)"><path fill="${S}" d="${WALK}"/>${kAntlers(S)}</g>`), files:['Ringsaker komm.svg','0412 Ringsaker komm.png'], motif:'Silver standing elk on red – inspired by rock carvings at Stein.'}
+ {name:'Oslo', svg:()=>osloSeal(), files:['Oslo komm.svg'], motif:'Byseglet: St. Hallvard på en trone med tre piler og en kvernstein (samme som fylket).'},
+ {name:'Bergen', svg:()=>shieldInner(R,`<path fill="${G}" d="M0,244 V196 Q30,180 60,192 Q100,176 140,192 Q170,182 200,196 V244Z"/><g transform="translate(20 -20) scale(.8)">${kCastle(S,R)}</g>`), files:['Bergen komm.svg','1201 Bergen komm.png'], motif:'Borg i sølv på gyllen fjellgrunn, på rødt.'},
+ {name:'Trondheim', svg:()=>shieldInner(R,`<g fill="${G}"><path d="M28,180 V84 a36,36 0 0 1 72,0 V180Z"/><rect x="106" y="64" width="66" height="116"/>${[106,124,142,160].map(x=>`<rect x="${x}" y="50" width="12" height="16"/>`).join('')}<circle cx="70" cy="212" r="11"/><circle cx="100" cy="212" r="11"/><circle cx="130" cy="212" r="11"/></g>${kFigure(64,R)}${kFigure(139,R)}<path d="M56,80 L64,64 L72,80Z" fill="${R}"/>`), files:['Trondheim komm.svg','5001 Trondheim komm.png','1601 Trondheim komm.png'], motif:'Gammelt bysegl: en biskop i en kirkeportal og en konge i en borg, med tre hoder under (bystyret).'},
+ {name:'Stavanger', svg:()=>shieldInner(B,`<path d="M100,220 Q86,170 100,130 Q114,90 98,36" fill="none" stroke="${G}" stroke-width="8" stroke-linecap="round"/><g fill="${G}"><ellipse cx="66" cy="112" rx="28" ry="14" transform="rotate(-30 66 112)"/><ellipse cx="136" cy="84" rx="28" ry="14" transform="rotate(30 136 84)"/><ellipse cx="70" cy="58" rx="22" ry="12" transform="rotate(-30 70 58)"/>${[[128,146],[142,146],[135,158],[121,158],[149,158],[128,170],[142,170],[135,182]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7"/>`).join('')}</g>`), files:['Stavanger komm.svg','1103 Stavanger komm.png'], motif:'Forgrenet vinranke i gull på blått.'},
+ {name:'Bærum', svg:()=>shieldInner(V,`<path fill="${S}" d="M64,220 L80,56 H120 L136,220 Z"/><path fill="${V}" d="M88,220 V186 a12,12 0 0 1 24,0 V220Z"/>`), files:['Bærum komm.svg','0219 Barum komm.png'], motif:'Kalkovn i sølv (et tårn uten tinder) på grønt.'},
+ {name:'Kristiansand', svg:()=>shieldInner(G,`${kTree(V)}<g transform="translate(30 88) scale(.62)"><path fill="${R}" d="${BEAR}"/></g>`), files:['Kristiansand komm.svg','1001 Kristiansand komm.png'], motif:'Den norske løven foran et tre, med mottoet «Causa triumphat tandem bona».'},
+ {name:'Drammen', svg:()=>shieldInner(B,`<path fill="${G}" d="M20,244 V206 Q60,186 100,198 Q140,186 180,206 V244Z"/><rect x="88" y="62" width="24" height="140" fill="${S}"/><rect x="80" y="54" width="40" height="12" fill="${S}"/><path d="M44,70 L156,186" stroke="${S}" stroke-width="7"/><path d="M156,70 L44,186" stroke="${G}" stroke-width="7"/><circle cx="160" cy="64" r="11" fill="none" stroke="${G}" stroke-width="6"/>`), files:['Drammen komm.svg','0602 Drammen komm.png','3005 Drammen komm.png'], motif:'En søyle på berggrunn, krysset av en nøkkel og et sverd – tro, rettferd og styrke.'},
+ {name:'Asker', svg:()=>shieldInner(B,`<path fill="${S}" d="M46,196 L46,72 L82,196Z M92,196 L92,50 L132,196Z M142,196 L142,84 L170,196Z"/>`), files:['Asker komm 2020.svg','Asker komm nytt våpen.png'], reformed:true, motif:'Tre seil i sølv på blått – ett for hver sammenslåtte kommune (2020).'},
+ {name:'Lillestrøm', svg:()=>shieldInner(B,`<g fill="${S}">${[74,122,170].map(y=>`<path d="M36,${y} Q100,${y+20} 170,${y-10} Q104,${y+34} 36,${y} Z"/>`).join('')}</g>`), files:['Lillestrøm komm.svg','Lillestrøm komm 2020.svg','Lillestrøm kommunevåpen (uoffisiell versjon).png'], reformed:true, motif:'Tre stokkebåter i sølv på blått (fra det 2200 år gamle funnet i Sørum).'},
+ {name:'Fredrikstad', svg:()=>shieldInner(R,`<g transform="translate(30 76) scale(.7)">${kCastle(G,R)}</g><g transform="translate(14 -38) scale(.85)"><path fill="${G}" d="${WALK}"/></g>`), files:['Fredrikstad komm.svg','0106 Fredrikstad komm.png'], motif:'Bjørn og tårn i gull på rødt (lånt fra Sarpsborg).'},
+ {name:'Sandnes', svg:()=>shieldInner(V,`<g fill="${S}"><ellipse cx="108" cy="140" rx="50" ry="36"/><circle cx="64" cy="100" r="22"/><path d="M44,98 L24,104 L44,110Z"/><path d="M152,128 L182,98 L174,142Z"/><rect x="88" y="170" width="40" height="30" rx="6"/></g><circle cx="60" cy="95" r="4" fill="${V}"/>`), files:['Sandnes komm.svg','1102 Sandnes komm.png'], motif:'Leirgauk i sølv – en fløyte av leire fra pottemakeriene i Sandnes – på grønt.'},
+ {name:'Tromsø', svg:()=>shieldInner(B,`<g transform="translate(-6 20)"><path fill="${S}" d="${WALK}"/>${kAntlers(S)}</g>`), files:['Tromsø komm.svg','1902 Tromso komm.png','5401 Tromso komm.png'], motif:'Gående rein i sølv på blått.'},
+ {name:'Sandefjord', svg:()=>shieldInner(G,`<g fill="${K}"><circle cx="92" cy="66" r="14"/><path d="M76,84 H108 L114,142 L108,180 H76 L80,142 Z"/><path d="M152,26 L162,10 L158,34Z"/><path d="M0,244 V190 Q20,176 40,180 H160 Q180,176 200,190 V244Z"/></g><path d="M106,90 L132,56" stroke="${K}" stroke-width="10" stroke-linecap="round"/><path d="M154,28 L64,196" stroke="${K}" stroke-width="5"/>`), files:['Sandefjord komm 2017.svg','Sandefjord komm 2017.png'], reformed:true, motif:'Svart hvalfanger med hevet harpun i en båt, på gull – fra hvalfangstmonumentet (2017).'},
+ {name:'Nordre Follo', svg:()=>shieldInner(B,kEar(S)), files:['Nordre Follo komm.svg','Nordre Follo komm 2020.svg','Nordre Follo kommune. Foreslått kommunevåpen per 2019.png'], reformed:true, motif:'Havreaks i sølv på blått (2020).'},
+ {name:'Sarpsborg', svg:()=>shieldInner(G,`<g transform="translate(30 76) scale(.7)">${kCastle(K,G)}</g><g transform="translate(14 -38) scale(.85)"><path fill="${K}" d="${WALK}"/></g>`), files:['Sarpsborg komm.svg','0105 Sarpsborg komm.png'], motif:'Svart gående bjørn over en svart borg, på gull.'},
+ {name:'Tønsberg', svg:()=>shieldInner(B,`<path fill="${G}" d="M60,215 Q60,110 96,64 Q116,40 140,52 Q156,62 146,82 Q138,96 122,88 Q112,82 118,72 Q100,90 92,130 Q84,172 92,215 Z"/><path d="M130,215 V160" stroke="${G}" stroke-width="6"/><ellipse cx="118" cy="162" rx="14" ry="7" transform="rotate(-35 118 162)" fill="${G}"/><ellipse cx="142" cy="150" rx="14" ry="7" transform="rotate(35 142 150)" fill="${G}"/>`), files:['Tønsberg komm 2020.svg','Tønsberg kommunevåpen 2020.svg'], reformed:true, motif:'En stavn fra Osebergskipet og en spire (2020).'},
+ {name:'Ålesund', svg:()=>shieldInner(B,`<path fill="${S}" d="M36,96 C40,84 46,80 50,78 L56,82 C56,92 62,98 72,100 L128,100 C138,98 144,92 144,82 L150,78 C154,80 160,84 164,96 C146,122 54,122 36,96 Z"/><rect x="97" y="40" width="6" height="60" fill="${S}"/>${kWaves(S,132)}${kWaves(S,150)}<g fill="${S}">${[[62,194],[100,204],[138,194]].map(([x,y])=>`<path transform="translate(${x} ${y})" d="M-22,0 Q-4,-12 14,0 L24,-9 L24,9 L14,0 Q-4,12 -22,0Z"/>`).join('')}</g>${kWaves(S,168)}`), files:['Ålesund komm.svg','1504 Alesund komm.png','1507 Alesund komm.png'], motif:'Båt i sølv på fire bølger med tre torsk under – fiskeri.'},
+ {name:'Skien', svg:()=>shieldInner(B,`<path d="M72,210 L128,70 M128,210 L72,70" stroke="${S}" stroke-width="7" stroke-linecap="round"/>${kStar(100,56,6,18,8,G)}<g transform="translate(-34 70) scale(.5)">${kTree(G)}</g><g transform="translate(134 70) scale(.5)">${kTree(G)}</g>`), files:['Skien komm.svg','0806 Skien komm.png'], motif:'To skistaver kronet av en sekstakket stjerne, mellom to rosentrær i gull.'},
+ {name:'Bodø', svg:()=>shieldInner(R,kStar(100,118,12,78,44,G)), files:['Bodø komm.svg','1804 Bodo komm.png'], motif:'Sol med tolv stråler i gull på rødt – midnattssolen.'},
+ {name:'Moss', svg:()=>shieldInner(R,`<path fill="none" stroke="${G}" stroke-width="14" stroke-linecap="round" d="M40,86 Q40,176 104,176 Q150,176 150,132"/><path d="M150,132 L150,104" stroke="${G}" stroke-width="10"/>${kStar(150,76,6,26,10,G)}`), files:['Moss komm 2020.svg','Rygge komm.svg','0136 Rygge komm.png'], reformed:true, motif:'Spore i gull på rødt (fra vikingtidsfunnet på Rød; Rygges gamle våpen, brukt av Moss siden 2020).'},
+ {name:'Lørenskog', svg:()=>shieldInner(G,`<g fill="none" stroke="${R}" stroke-width="10"><circle cx="100" cy="118" r="62"/><circle cx="100" cy="118" r="12"/></g><g stroke="${R}" stroke-width="7">${[0,45,90,135].map(a=>`<line x1="${100+62*Math.cos(a*Math.PI/180)}" y1="${118+62*Math.sin(a*Math.PI/180)}" x2="${100-62*Math.cos(a*Math.PI/180)}" y2="${118-62*Math.sin(a*Math.PI/180)}"/>`).join('')}</g><g fill="${R}">${[0,45,90,135,180,225,270,315].map(a=>`<rect x="92" y="34" width="16" height="22" transform="rotate(${a} 100 118)"/>`).join('')}</g>`), files:['Lørenskog komm.svg','0230 Lorenskog komm.png'], motif:'Rødt vannhjul på gull – sagbruk og skogbruk.'},
+ {name:'Larvik', svg:()=>shieldInner(V,`<path d="M100,240 V110" stroke="${S}" stroke-width="10"/><g fill="${S}">${[[100,52,0],[70,70,-35],[130,70,35],[58,104,-60],[142,104,60],[76,134,-45],[124,134,45]].map(([x,y,r])=>`<path transform="translate(${x} ${y}) rotate(${r})" d="M0,-24 Q14,0 0,20 Q-14,0 0,-24Z"/>`).join('')}</g>`), files:['Larvik komm 2018.svg','Larvik komm 2017.svg'], reformed:true, motif:'Et voksende tre med sju dråpeformede blader (2017).'},
+ {name:'Indre Østfold', svg:()=>shieldInner(K,kEar(G)), files:['Indre Østfold komm.svg','Indre Østfold komm 2020.svg'], reformed:true, motif:'Kornaks i gull på svart – jordbruk (2020).'},
+ {name:'Arendal', svg:()=>shieldInner(B,`<path fill="${S}" d="M40,150 L160,150 L146,172 L56,172 Z"/><rect x="98" y="40" width="5" height="110" fill="${S}"/><path fill="${S}" d="M92,50 L92,140 L50,140Z M108,46 L108,140 L150,140Z"/>${kWaves(S,188)}${kWaves(S,204)}${kWaves(S,220)}`), files:['Arendal komm.svg','0906 Arendal komm.png'], motif:'Seilskip i sølv på tre sølvbølger, på blått.'},
+ {name:'Ullensaker', svg:()=>shieldInner(B,`<g fill="${G}"><circle cx="96" cy="62" r="14"/><path d="M80,80 H112 L118,140 L108,196 H96 L98,150 L90,150 L84,196 H72 L78,140 Z"/></g><path d="M40,206 Q100,196 164,210" stroke="${G}" stroke-width="7" fill="none"/><path d="M132,56 Q162,110 132,164" stroke="${G}" stroke-width="6" fill="none"/><path d="M132,56 L132,164" stroke="${G}" stroke-width="2"/>`), files:['Ullensaker komm.svg','0235 Ullensaker komm.png'], motif:'Guden Ull fra norrøn mytologi (ikke et tradisjonelt heraldisk motiv).'},
+ {name:'Karmøy', svg:()=>shieldInner(R,`<g fill="none" stroke="${S}" stroke-width="10" stroke-linejoin="round"><path d="M84,38 H116 V98 H168 V130 H116 V204 H84 V130 H32 V98 H84 Z"/><path d="M100,38 V204 M32,114 H168"/></g>`), files:['Karmøy komm.svg','1149 Karmoy komm.png'], motif:'Sprossekors i sølv på rødt – «karm», kristendommen og en knute for øya som knutepunkt.'},
+ {name:'Øygarden', svg:()=>shieldInner(S,`<g fill="${B}"><path d="M68,92 L100,48 L132,92Z"/><rect x="72" y="96" width="56" height="70"/><rect x="62" y="166" width="76" height="16"/><rect x="80" y="182" width="40" height="30"/></g><g fill="${S}"><rect x="80" y="104" width="16" height="54"/><rect x="104" y="104" width="16" height="54"/></g>`), files:['Øygarden komm.svg','1259 Oygarden komm.png'], motif:'Blå fyrlykt på sølv – havet.'},
+ {name:'Haugesund', svg:()=>shieldInner(B,kGull(64,90,S)+kGull(136,90,S)+kGull(100,160,S)), files:['Haugesund komm.svg','1106 Haugesund komm.png'], motif:'Tre måker i sølv på blått – sild og skipsfart.'},
+ {name:'Porsgrunn', svg:()=>shieldInner(B,`<path d="M0,40 L200,220 L200,260 L0,80Z" fill="${S}"/><g fill="none" stroke="${G}" stroke-width="7" stroke-linecap="round"><path d="M146,40 V110 M128,56 H164 M118,96 Q146,124 174,96"/></g><path d="M40,200 Q60,150 80,120" stroke="${G}" stroke-width="5" fill="none"/>${[[50,176],[62,156],[72,138]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="12" ry="6" transform="rotate(-50 ${x} ${y})" fill="${G}"/>`).join('')}`), files:['Porsgrunn komm.svg','0805 Porsgrunn komm.png'], motif:'En kvist av pors, et anker og et skråbånd i sølv for elva.'},
+ {name:'Ringsaker', svg:()=>shieldInner(R,`<g transform="translate(-6 20)"><path fill="${S}" d="${WALK}"/>${kAntlers(S)}</g>`), files:['Ringsaker komm.svg','0412 Ringsaker komm.png'], motif:'Stående elg i sølv på rødt – inspirert av helleristningene på Stein.'}
 ];
 
 const REG=[];
@@ -427,8 +427,8 @@ document.addEventListener('error',e=>{
   if(i<c.length){ el.dataset.i=i; el.src=c[i]; } else { el.outerHTML=f.draw(); }
 },true);
 const SETS={
-  fylker:{list:FYLKER, sub:'De 15 fylkene fra 2024', q:'Which fylke is this?'},
-  kommuner:{list:KOMMUNER, sub:'De 30 største kommunene (folketall 1. januar 2026)', q:'Which kommune is this?'}
+  fylker:{list:FYLKER, sub:'De 15 fylkene fra 2024', q:'Hvilket fylke er dette?'},
+  kommuner:{list:KOMMUNER, sub:'De 30 største kommunene (folketall 1. januar 2026)', q:'Hvilken kommune er dette?'}
 };
 let SET=FYLKER;
 
@@ -494,7 +494,7 @@ function show(){
   const box=$('shieldBox'); box.classList.remove('pop'); void box.offsetWidth;
   box.innerHTML=f.svg(); box.classList.add('pop');
   $('count').textContent=`${pos+1} / ${deck.length}`;
-  $('score').textContent=`${correct} correct`;
+  $('score').textContent=`${correct} riktige`;
   $('barFill').style.width=`${pos/deck.length*100}%`;
   $('feedback').innerHTML=''; $('actionBtn').hidden=true;
   const others=shuffle(SET.map((_,i)=>i).filter(i=>i!==deck[pos])).slice(0,5);
@@ -512,9 +512,9 @@ function pick(i){
     else b.classList.add('dim');
   });
   if(ok) correct++; else if(!missed.includes(cur)) missed.push(cur);
-  $('feedback').innerHTML=(ok?`<div class="verdict ok">Riktig!</div>`:`<div class="verdict bad">It’s ${f.name}</div>`)+`<div class="motif">${f.motif}</div>`;
-  $('score').textContent=`${correct} correct`;
-  $('actionBtn').textContent = pos===deck.length-1 ? 'See result' : 'Next';
+  $('feedback').innerHTML=(ok?`<div class="verdict ok">Riktig!</div>`:`<div class="verdict bad">Det er ${f.name}</div>`)+`<div class="motif">${f.motif}</div>`;
+  $('score').textContent=`${correct} riktige`;
+  $('actionBtn').textContent = pos===deck.length-1 ? 'Se resultat' : 'Neste';
   $('actionBtn').hidden=false;
   if(ok){ $('actionBtn').blur(); autoTimer=setTimeout(act, AUTO_MS); }
   else { $('actionBtn').focus({preventScroll:true}); }
@@ -524,8 +524,8 @@ function done(){
   $('barFill').style.width='100%';
   $('playCard').hidden=true; $('doneCard').hidden=false;
   const n=deck.length;
-  $('doneTitle').textContent = correct===n ? 'Alle riktige!' : `${correct} of ${n}`;
-  $('doneText').textContent = missed.length ? 'These tripped you up:' : 'Ready for Wednesday.';
+  $('doneTitle').textContent = correct===n ? 'Alle riktige!' : `${correct} av ${n}`;
+  $('doneText').textContent = missed.length ? 'Disse bommet du på:' : 'Klar til onsdag.';
   $('missedGrid').innerHTML = missed.map(i=>`<figure>${SET[i].svg()}<figcaption>${SET[i].name}</figcaption></figure>`).join('');
   $('retryMissed').hidden = !missed.length;
   (missed.length?$('retryMissed'):$('restart')).focus({preventScroll:true});
@@ -551,7 +551,7 @@ $('toggleNames').addEventListener('click',()=>{
   const g=$('studyGrid'); const hide=!g.classList.contains('hide-names');
   g.classList.toggle('hide-names',hide);
   g.querySelectorAll('figure').forEach(f=>f.classList.remove('show'));
-  $('toggleNames').textContent = hide ? 'Show names' : 'Hide names';
+  $('toggleNames').textContent = hide ? 'Vis navn' : 'Skjul navn';
 });
 function tab(which){
   clearTimeout(autoTimer); autoTimer=null;
@@ -566,8 +566,8 @@ function useSet(key){
   const S=SETS[key]; SET=S.list;
   $('setF').setAttribute('aria-checked', key==='fylker'); $('setK').setAttribute('aria-checked', key==='kommuner');
   $('sub').textContent=S.sub; $('qLabel').textContent=S.q;
-  $('restart').textContent=`Start over with all ${SET.length}`;
-  const g=$('studyGrid'); g.classList.remove('hide-names'); $('toggleNames').textContent='Hide names';
+  $('restart').textContent=`Start på nytt med alle ${SET.length}`;
+  const g=$('studyGrid'); g.classList.remove('hide-names'); $('toggleNames').textContent='Skjul navn';
   renderStudy(); start(SET.map((_,i)=>i));
 }
 $('setF').addEventListener('click',()=>useSet('fylker'));
@@ -644,7 +644,7 @@ function bShow(){
   const box=b$('bMapBox'); box.classList.remove('pop'); void box.offsetWidth;
   box.innerHTML=bMap(cur); box.classList.add('pop');
   b$('bCount').textContent=`${bPos+1} / ${bDeck.length}`;
-  b$('bScore').textContent=`${bCorrect} correct`;
+  b$('bScore').textContent=`${bCorrect} riktige`;
   b$('bBar').style.width=`${bPos/bDeck.length*100}%`;
   b$('bFeedback').innerHTML=''; b$('bAction').hidden=true;
   const others=shuffle(BS.list.map((_,i)=>i).filter(i=>i!==cur)).slice(0,5);
@@ -657,9 +657,9 @@ function bPick(i){
     el.classList.add(bi===cur?'right':bi===i?'wrong':'dim'); });
   b$('bMapBox').innerHTML=bMap(cur, ok?{[cur]:'ok'}:{[i]:'no'});
   if(ok) bCorrect++; else if(!bMissed.includes(cur)) bMissed.push(cur);
-  b$('bFeedback').innerHTML=(ok?`<div class="verdict ok">Riktig!</div>`:`<div class="verdict bad">It’s ${b.name}</div>`)+`<div class="motif">Bydel ${b.num}. ${b.note}</div>`;
-  b$('bScore').textContent=`${bCorrect} correct`;
-  b$('bAction').textContent= bPos===bDeck.length-1 ? 'See result' : 'Next';
+  b$('bFeedback').innerHTML=(ok?`<div class="verdict ok">Riktig!</div>`:`<div class="verdict bad">Det er ${b.name}</div>`)+`<div class="motif">Bydel ${b.num}. ${b.note}</div>`;
+  b$('bScore').textContent=`${bCorrect} riktige`;
+  b$('bAction').textContent= bPos===bDeck.length-1 ? 'Se resultat' : 'Neste';
   b$('bAction').hidden=false;
   if(ok){ b$('bAction').blur(); bTimer=setTimeout(bAct, 700); } else b$('bAction').focus({preventScroll:true});
 }
@@ -667,8 +667,8 @@ function bAct(){ clearTimeout(bTimer); bTimer=null; if(!bAnswered) return; bPos+
 function bFinish(){
   b$('bBar').style.width='100%'; b$('bPlay').hidden=true; b$('bDone').hidden=false;
   const n=bDeck.length;
-  b$('bDoneTitle').textContent= bCorrect===n ? 'Alle riktige!' : `${bCorrect} of ${n}`;
-  b$('bDoneText').textContent= bMissed.length ? 'These tripped you up:' : 'Ready for Wednesday.';
+  b$('bDoneTitle').textContent= bCorrect===n ? 'Alle riktige!' : `${bCorrect} av ${n}`;
+  b$('bDoneText').textContent= bMissed.length ? 'Disse bommet du på:' : 'Klar til onsdag.';
   b$('bMissed').innerHTML=bMissed.map(i=>`<figure><div class="omap">${bMap(i)}</div><figcaption>${BS.list[i].name}</figcaption></figure>`).join('');
   b$('bRetry').hidden=!bMissed.length;
   (bMissed.length?b$('bRetry'):b$('bRestart')).focus({preventScroll:true});
@@ -688,7 +688,7 @@ let bSel=-1;
 function bRenderStudy(){
   b$('bStudyMap').innerHTML=bMap(bSel,{},true,BS.fs);
   const b=BS.list[bSel];
-  b$('bInfo').innerHTML= b ? `<strong>${b.name}</strong><span>Bydel ${b.num}. ${b.note}</span>` : `<span>Tap a bydel on the map or a name below.</span>`;
+  b$('bInfo').innerHTML= b ? `<strong>${b.name}</strong><span>Bydel ${b.num}. ${b.note}</span>` : `<span>Trykk på en bydel i kartet eller et navn under.</span>`;
   b$('bChips').innerHTML=BS.list.map((x,i)=>`<button data-i="${i}" aria-pressed="${i===bSel}">${x.name}</button>`).join('');
 }
 function bSelect(i){ bSel = bSel===i ? -1 : i; bRenderStudy(); }
@@ -706,7 +706,7 @@ function bUse(key){
   bKey=key; BS=BSETS[key]; bSel=-1;
   b$('bSetOld').setAttribute('aria-checked',key==='old'); b$('bSetNew').setAttribute('aria-checked',key==='new');
   b$('bSub').textContent=BS.sub; b$('bNote').textContent=BS.note;
-  b$('bRestart').textContent=`Start over with all ${BS.list.length}`;
+  b$('bRestart').textContent=`Start på nytt med alle ${BS.list.length}`;
   bRenderStudy(); bStart(BS.list.map((_,i)=>i));
 }
 b$('bSetOld').addEventListener('click',()=>bUse('old'));
