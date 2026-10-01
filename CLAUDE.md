@@ -8,7 +8,7 @@ Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til bruker
 
 ## Struktur
 
-Sida har en forside (`#home`) med én knapp per modus, og seks visninger som byttes med `goMode()`:
+Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og seks visninger som byttes med `goMode()`:
 
 | Modus | Seksjon | Innhold |
 |---|---|---|
@@ -202,6 +202,14 @@ tidligste år som spørres om (Alle, 1980, 1990, 2000, 2010) og huskes i `localS
 Kilder: «Melodi Grand Prix» (vinnertabellen) og årsartiklene på no.wikipedia, og «Norway in the
 Eurovision Song Contest» på en.wikipedia (plasseringene), sjekket september 2026. Etter hvert
 års MGP: legg til en rad nederst i `MGP` (plasseringen kommer i mai). Det finnes ikke noe skript.
+
+## Nedtellingen
+
+Øverst på forsida (`#countdown`) står en nedtelling til neste kviss, onsdag kl. 19. Mens kvissen
+pågår, onsdag 19–22, står det i stedet at man ikke har lov til å være her, og at juks er strengt
+forbudt. Fra kl. 22 teller den ned til neste onsdag. Tidene gjelder norsk tid (`Europe/Oslo`)
+uansett hvilken tidssone enheten står i, og sommertidsskiftet er regnet med. Dag og klokkeslett
+står i `QUIZ_DAY`, `QUIZ_START` og `QUIZ_END`; `renderCountdown()` kjøres hvert sekund.
 
 ## Hjemskjermen
 
