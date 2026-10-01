@@ -19,9 +19,17 @@ Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per mo
 | `caesar` | `#caesarApp` | Hotel Cæsar: roller og skuespillere (`CAESAR`, `CAESAR_OUT`) — se under |
 | `mgp` | `#mgpApp` | Melodi Grand Prix: vinnere og årstall (`MGP`, `MGP_GAPS`) — se under |
 
-`goMode()` viser/skjuler seksjonene og husker valget i `sessionStorage` under nøkkelen `mode`.
-Ny modus krever tre ting: en `<section>`/`<div>` i HTML, en linje i `goMode()`, og en
-`addEventListener` på knappen på forsida.
+`goMode()` viser/skjuler seksjonene. Hver modus har sin egen adresse med hash — `#prep`, `#tbane`,
+`#vapen`, `#bydel`, `#caesar`, `#mgp`; forsida har ingen hash — så tilbakeknappen i nettleseren,
+tilbakegesten på Android, oppdatering og lenker rett til en modus virker. Hash er valgt fordi
+GitHub Pages bare serverer `index.html`: stier som `/kvisstreneren/tbane` ville gitt 404.
+Knappene på forsida går via `openMode()` (`pushState`); «← Alle kvisser» (`goHome()`) går ett
+steg tilbake i historikken hvis man kom fra forsida, og bytter ellers ut oppføringen, så
+historikken ikke hoper seg opp. `syncMode()` følger `popstate`/`hashchange`; ukjent hash gir
+forsida. Fanene inne i en modus («Kviss», «Kart», «Pugg» …) har ingen egen adresse.
+
+Ny modus krever fire ting: en `<section>`/`<div>` i HTML, en linje i `goMode()`, navnet i
+`MODES`, og en `addEventListener` med `openMode()` på knappen på forsida.
 
 ## Ukas kvissprep
 

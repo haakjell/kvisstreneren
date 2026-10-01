@@ -2230,7 +2230,12 @@ function renderPrep(){
 }
 
 // ---------- Mode switching ----------
+// Each mode has its own URL hash (#tbane, #mgp …; the home page has none), so the browser's
+// back button, Android's back gesture and reloads all work. Tabs inside a mode are not routed.
+const MODES=['prep','vapen','bydel','tbane','caesar','mgp'];
+let curMode=null;
 function goMode(m){
+  curMode=m;
   clearTimeout(autoTimer); autoTimer=null; clearTimeout(bTimer); bTimer=null; clearTimeout(tTimer); tTimer=null; clearTimeout(cTimer); cTimer=null; clearTimeout(mgTimer); mgTimer=null;
   b$('home').hidden=m!=='home'; b$('prepApp').hidden=m!=='prep'; b$('vapenApp').hidden=m!=='vapen'; b$('bydelApp').hidden=m!=='bydel'; b$('tbaneApp').hidden=m!=='tbane'; b$('caesarApp').hidden=m!=='caesar'; b$('mgpApp').hidden=m!=='mgp';
   if(m==='bydel' && !bDeck.length) bUse('old');
@@ -2239,15 +2244,33 @@ function goMode(m){
   if(m==='mgp') mgOpen();
   if(m==='prep' || m==='home') renderPrep(); // the page may have been open since before the quiz
   window.scrollTo(0,0);
-  try{ sessionStorage.setItem('mode',m); }catch(e){}
 }
-b$('goPrep').addEventListener('click',()=>goMode('prep'));
-b$('goVapen').addEventListener('click',()=>goMode('vapen'));
-b$('goBydel').addEventListener('click',()=>goMode('bydel'));
-b$('goTbane').addEventListener('click',()=>goMode('tbane'));
-b$('goCaesar').addEventListener('click',()=>goMode('caesar'));
-b$('goMgp').addEventListener('click',()=>goMode('mgp'));
-document.querySelectorAll('[data-home]').forEach(el=>el.addEventListener('click',()=>goMode('home')));
+function hashMode(){ const h=location.hash.slice(1); return MODES.includes(h) ? h : 'home'; }
+function openMode(m){   // from a button on the home page: a new history entry
+  history.pushState({fromHome:true},'','#'+m);
+  goMode(m);
+}
+function goHome(){
+  // Came here from the home page: step back, so back/forward don't pile up entries.
+  // Opened straight on a mode's URL: swap this entry for the home page instead.
+  if(history.state && history.state.fromHome){ history.back(); return; }
+  history.replaceState(null,'',location.pathname+location.search);
+  goMode('home');
+}
+function syncMode(){   // back/forward, or a hash typed into the address bar
+  const m=hashMode();
+  if(location.hash && m==='home') history.replaceState(null,'',location.pathname+location.search);
+  if(m!==curMode) goMode(m);
+}
+window.addEventListener('popstate',syncMode);
+window.addEventListener('hashchange',syncMode);
+b$('goPrep').addEventListener('click',()=>openMode('prep'));
+b$('goVapen').addEventListener('click',()=>openMode('vapen'));
+b$('goBydel').addEventListener('click',()=>openMode('bydel'));
+b$('goTbane').addEventListener('click',()=>openMode('tbane'));
+b$('goCaesar').addEventListener('click',()=>openMode('caesar'));
+b$('goMgp').addEventListener('click',()=>openMode('mgp'));
+document.querySelectorAll('[data-home]').forEach(el=>el.addEventListener('click',goHome));
 b$('modeShieldIcon').innerHTML=shield(R,'rogaland');
 b$('modeMapIcon').innerHTML=(()=>{const s=BS; BS=BSETS.new; const out=bMap(4); BS=s; return out;})();
 renderPrep();
@@ -2342,7 +2365,7 @@ b$('installNever').addEventListener('click',()=>{
   b$('installBtn').hidden=true; b$('installSheet').close();
 });
 
-{ let m='home'; try{ m=sessionStorage.getItem('mode')||'home'; }catch(e){} goMode(m); }
+syncMode();
 </script>
 </body>
 </html>
