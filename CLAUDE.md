@@ -62,6 +62,13 @@ som den er.
 
 Sida viser bare den nyeste prepen; `prep/`-mappa er arkivet.
 
+Når kvissdagen er over (fra dagen etter datoen i `data-uke`, eller i rapportens første linje om
+attributtet mangler), viser `renderPrep()` et varsel øverst (`#prepStale`) om at prepen er
+utdatert og at ny kommer neste onsdag — på selve onsdagen «Ny prep til i kveld kommer snart». Forsideknappen
+sier det samme i stedet for «Klar til …». Datoen leses fra teksten, så den må ha dag, måned og
+år («onsdag 7. oktober 2026»). Varselet regnes ut på nytt hver gang man går til forsida eller
+prepen, og forsvinner av seg selv når `set-prep.mjs` legger inn en ny rapport.
+
 ### Hva rendreren støtter
 
 Rapporten fra quizprep bruker bare dette, og rendreren dekker akkurat det:
@@ -251,4 +258,7 @@ med mobilemulering (berøring) i utviklerverktøyene.
   Unntaket er egennavn og faguttrykk som ikke har noen naturlig engelsk form — `FYLKER`,
   `KOMMUNER`, `bydel`, `vapen` — de blir stående som de er.
 - **Commit-meldinger skrives alltid på engelsk**, selv om sida og denne fila er på norsk.
+- **Før push til main:** squash alle commits i branchen til én, rebase den på nyeste
+  `origin/main`, og fast-forward main til den (`git push origin HEAD:main`, aldri force-push
+  til main). Kjør syntakssjekken under «Testing» på nytt etter rebasen.
 - Denne fila (CLAUDE.md) er på norsk, som dokumentasjon for deg.

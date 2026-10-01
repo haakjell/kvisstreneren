@@ -245,6 +245,11 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .mglist.hide-artists li:not(.gap){cursor:pointer}
 .mglist.hide-artists li:not(.gap) strong{visibility:hidden}
 .mglist.hide-artists li.show strong{visibility:visible}
+/* Shown above an old report once its quiz day has passed */
+.prepstale{background:var(--paper);border:1.5px solid var(--or);border-left-width:6px;border-radius:14px;padding:12px 16px;margin:0 0 14px}
+.prepstale[hidden]{display:none}
+.prepstale strong{display:block;font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.15rem}
+.prepstale p{margin:2px 0 0;color:var(--muted)}
 .prepsoon{text-align:center;color:var(--muted);padding:26px 6px 22px}
 .prepsoon strong{display:block;font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.4rem;color:var(--ink);margin-bottom:8px}
 /* Countdown to the next quiz (Wednesday 19:00 Oslo time), or a warning while it runs */
@@ -410,6 +415,7 @@ Nyhetsvinduet er komplett. Navnedagene 1. og 2. oktober ligger fram i tid, men e
 - **1972** — Ari Behn blir født, forfatter av «Trist som faen» og gift med prinsesse Märtha Louise 2002–2017.
 </script>
     <button class="back" data-home>← Alle kvisser</button>
+    <div class="prepstale" id="prepStale" role="status" hidden></div>
     <article class="card prose" id="prepBody"></article>
     <p class="note">Oppdateres hver uke med rapporten fra quizprep.</p>
   </div>
@@ -2191,12 +2197,34 @@ function prepMarkdown(md){
   closeList();
   return out.join('');
 }
+const PREP_MONTHS = ['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'];
+// Reads the quiz date out of text like "onsdag 7. oktober 2026"; null if there is none.
+function prepDate(t){
+  const m = (t||'').toLowerCase().match(/(\d{1,2})\.\s*([a-zæøå]+)\s+(\d{4})/);
+  const mon = m ? PREP_MONTHS.indexOf(m[2]) : -1;
+  return mon < 0 ? null : new Date(+m[3], mon, +m[1]);
+}
+// Once the quiz day is over, the report is last week's: say so, and when the next one is due.
+function prepStale(md, uke){
+  const quiz = prepDate(uke) || prepDate(md.split('\n')[0]);
+  const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if(!quiz || today <= quiz) return null;
+  const next = new Date(today); next.setDate(today.getDate() + (3 - today.getDay() + 7) % 7);
+  const fmt = d => (d.getDay()===3 ? 'onsdag ' : '') + d.getDate() + '. ' + PREP_MONTHS[d.getMonth()];
+  return { was: fmt(quiz), next: fmt(next), isToday: +next === +today };
+}
 function renderPrep(){
   const src = b$('prepSource');
   const md = (src.textContent||'').trim(), uke = src.dataset.uke;
+  const stale = md ? prepStale(md, uke) : null;
   b$('prepBody').innerHTML = md ? prepMarkdown(md)
     : '<div class="prepsoon"><strong>Ukas prep kommer snart</strong><p>Her dukker ferske nyhetssaker, navnedagene for uka og «på denne dagen» opp så snart ukas quizprep er kjørt.</p></div>';
-  b$('prepTeaser').textContent = md ? (uke ? 'Klar til ' + uke : 'Nyheter, navnedager og datoen') : 'Kommer snart';
+  b$('prepStale').hidden = !stale;
+  if(stale) b$('prepStale').innerHTML = '<strong>Denne prepen er utdatert</strong><p>Den var til kvissen ' + stale.was + '. '
+    + (stale.isToday ? 'Ny prep til i kveld kommer snart.' : 'Ny prep kommer ' + stale.next + '.') + '</p>';
+  b$('prepTeaser').textContent = !md ? 'Kommer snart'
+    : stale ? (stale.isToday ? 'Ny prep til i kveld kommer snart' : 'Ny prep kommer ' + stale.next)
+    : uke ? 'Klar til ' + uke : 'Nyheter, navnedager og datoen';
 }
 
 // ---------- Mode switching ----------
@@ -2207,6 +2235,7 @@ function goMode(m){
   if(m==='tbane') tOpen();
   if(m==='caesar') cOpen();
   if(m==='mgp') mgOpen();
+  if(m==='prep' || m==='home') renderPrep(); // the page may have been open since before the quiz
   window.scrollTo(0,0);
   try{ sessionStorage.setItem('mode',m); }catch(e){}
 }
