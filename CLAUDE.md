@@ -218,6 +218,12 @@ forbudt. Fra kl. 22 teller den ned til neste onsdag. Tidene gjelder norsk tid (`
 uansett hvilken tidssone enheten står i, og sommertidsskiftet er regnet med. Dag og klokkeslett
 står i `QUIZ_DAY`, `QUIZ_START` og `QUIZ_END`; `renderCountdown()` kjøres hvert sekund.
 
+Enheter som er null foran, vises ikke («5 timer 0 minutter 30 sekunder», ikke «0 dager …»);
+nuller i midten blir stående. Den siste timen vises også millisekunder, og da tegnes nedtellingen
+hver frame (`requestAnimationFrame`) — men bare mens forsida vises; ellers er det ett sekund
+igjen. Markupen bygges bare på nytt når oppsettet endres; ellers skrives bare tallene
+(`cdShow()`), så det koster nesten ingenting.
+
 ## Hjemskjermen
 
 På mobil (berøringsskjerm) viser forsida knappen «Legg til på hjemskjermen» øverst til høyre
