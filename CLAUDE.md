@@ -145,21 +145,22 @@ alternativer, med litt slingringsmonn for skrivefeil). «Pugg»-fanen viser hele
 ### Bilder av rollefigurene
 
 Hvert spørsmål viser et bilde av rollefiguren, og «Pugg» (og lista over bom på slutten) viser
-miniatyrbilder. Bryteren «Vis bilder» slår dem av og på for både «Kviss» og «Pugg», og huskes i
+miniatyrbilder. Bare `top:1`-rollene har bilde — det er bare de det spørres om; de andre rollene
+vises uten bilde i «Pugg». Bryteren «Vis bilder» slår dem av og på for både «Kviss» og «Pugg», og huskes i
 `localStorage` under `cPics` (bilder er på som standard). Bildene er infoboksbildene fra
 rollefigur-artiklene på hotelcaesar.fandom.com. De lenkes direkte fra Fandoms CDN, på samme måte som
 våpnene lenkes fra Wikimedia, og ligger ikke i repoet. Fandom avviser forespørsler med en
 fremmed `Referer`, så `<img>` må ha `referrerpolicy="no-referrer"` (det har `cPic()`). Får et bilde
 ikke lastet, fjernes det, og resten av sida virker som før.
 
-`CAESAR_IMG` (rolle → bildelenke) er generert; ikke rediger den for hånd. Når du har lagt til
-roller i `CAESAR`, eller vil ha nye bilder fra wikien, kjør fra reporoten:
+`CAESAR_IMG` (rolle → bildelenke) er generert; ikke rediger den for hånd. Når du har endret
+`top:1`-rollene i `CAESAR`, eller vil ha nye bilder fra wikien, kjør fra reporoten:
 
 ```bash
 node tools/update-caesar-images.mjs
 ```
 
-Wikien skriver av og til navnet annerledes enn vi gjør («Åge Nygaard», «Hugo Anker-Hansen jr.»);
+Wikien skriver av og til navnet annerledes enn vi gjør («Åge Nygaard»);
 slike avvik står i `TITLES` øverst i skriptet. Er infoboksbildet dårlig, kan du velge et bilde fra
 artikkelens galleri i `FILES`. Skriptet sier fra om roller det ikke fant noe bilde for.
 

@@ -3,7 +3,7 @@
 //
 //   node tools/update-caesar-images.mjs
 //
-// For every role in CAESAR, looks up the character's article on the Hotel Cæsar wiki
+// For every role in CAESAR marked top:1 (the ones the quiz asks about), looks up the character's article on the Hotel Cæsar wiki
 // (hotelcaesar.fandom.com), takes the picture in the infobox («bilde=») and stores a link to a
 // thumbnail of it. The page loads the pictures straight from Fandom's CDN; nothing is
 // downloaded into the repo. Fandom refuses requests with a foreign Referer, so the page loads
@@ -19,10 +19,6 @@ const WIDTH = 320; // thumbnail width; smaller originals are used as they are
 // Roles whose wiki article has a different name than the role in CAESAR
 const TITLES = {
   'Åge Nygård': 'Åge Nygaard',
-  'Henning Nygård': 'Henning Nygaard',
-  'Mercedes Gonzales Nygård': 'Mercedes Gonzales Nygaard',
-  'Hugo Anker-Hansen': 'Hugo Anker-Hansen jr.',
-  'Nadia Selam-Tefari': 'Nadia Selam Tefari',
 };
 // Roles where the infobox picture is too small or unclear; a picture from the article's gallery instead
 const FILES = {
@@ -36,7 +32,7 @@ const die = msg => { console.error('update-caesar-images: ' + msg); process.exit
 const html = readFileSync(page, 'utf8');
 const src = html.match(/^const CAESAR=(\[[\s\S]*?\n\]);$/m);
 if (!src) die('fant ikke «const CAESAR=[…];» i index.html.');
-const roles = new Function('return ' + src[1])().map(e => e.r);
+const roles = new Function('return ' + src[1])().filter(e => e.top).map(e => e.r);
 
 async function api(params) {
   const url = API + '?' + new URLSearchParams({ format: 'json', formatversion: '2', ...params });
@@ -90,5 +86,5 @@ const missing = roles.filter(r => !out[r]);
 const marker = /^const CAESAR_IMG=.*;$/m;
 if (!marker.test(html)) die('fant ikke linja «const CAESAR_IMG=…;» i index.html.');
 writeFileSync(page, html.replace(marker, () => 'const CAESAR_IMG=' + JSON.stringify(out) + ';'));
-console.log(`update-caesar-images: bilder av ${Object.keys(out).length} av ${roles.length} rollefigurer lagt inn i index.html.`);
+console.log(`update-caesar-images: bilder av ${Object.keys(out).length} av de ${roles.length} største rollene lagt inn i index.html.`);
 if (missing.length) console.log('Uten bilde: ' + missing.join(', ') + '. Legg til artikkelnavnet i TITLES eller et bilde i FILES.');
