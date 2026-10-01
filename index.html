@@ -246,6 +246,15 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .mglist.hide-artists li:not(.gap){cursor:pointer}
 .mglist.hide-artists li:not(.gap) strong{visibility:hidden}
 .mglist.hide-artists li.show strong{visibility:visible}
+/* ---------- Dagens kviss ---------- */
+#mxPrompt.pop .tmap svg{animation:pop .35s ease}
+#mxPrompt .tq{margin-bottom:8px}
+@media (prefers-reduced-motion:reduce){#mxPrompt.pop .tmap svg{animation:none}}
+.mxmarks{display:flex;justify-content:center;gap:5px;margin:6px 0 12px}
+.mxmarks span{width:22px;height:22px;border-radius:6px;background:var(--ok)}
+.mxmarks span.no{background:var(--bad)}
+.tmissed .mxthumb{flex:none;width:40px;height:40px;margin:0}
+.tmissed .mxthumb svg,.tmissed .mxthumb img{display:block;width:40px;height:40px;object-fit:contain}
 /* Shown above an old report once its quiz day has passed */
 .prepstale{background:var(--paper);border:1.5px solid var(--or);border-left-width:6px;border-radius:14px;padding:12px 16px;margin:0 0 14px}
 .prepstale[hidden]{display:none}
@@ -422,6 +431,49 @@ Nyhetsvinduet er komplett. Navnedagene 1. og 2. oktober ligger fram i tid, men e
     <p class="note">Oppdateres hver uke med rapporten fra quizprep.</p>
   </div>
 
+  <div id="dagensApp" hidden>
+  <button class="back" data-home>← Alle kvisser</button>
+  <header>
+    <div>
+      <h1>Dagens kviss</h1>
+      <div class="sub" id="mxSub"></div>
+    </div>
+  </header>
+  <main id="mxMain">
+    <section class="card" id="mxPlay">
+      <div class="meta"><span id="mxCount">1 / 10</span><span id="mxScore">0 riktige</span></div>
+      <div class="bar"><i id="mxBar"></i></div>
+      <div id="mxPrompt"></div>
+      <div class="q" id="mxQ"></div>
+      <div class="options" id="mxOptions" role="group" aria-labelledby="mxQ"></div>
+      <div class="feedback" id="mxFeedback" aria-live="polite"></div>
+      <div class="btns"><button class="primary" id="mxAction" hidden>Neste</button></div>
+    </section>
+    <section class="card done" id="mxDone" hidden>
+      <h2 id="mxDoneTitle"></h2>
+      <div class="mxmarks" id="mxMarks" role="img"></div>
+      <p id="mxDoneText"></p>
+      <ul class="tmissed" id="mxMissed"></ul>
+      <div class="btns">
+        <button class="primary" id="mxShare">Del resultatet</button>
+        <button class="ghost" id="mxMore">Ti blandede spørsmål til</button>
+        <button class="ghost" id="mxToday" hidden>Dagens resultat</button>
+      </div>
+      <p class="hint" id="mxShared" aria-live="polite"></p>
+    </section>
+  </main>
+  <section class="card done" id="mxOffline" hidden>
+    <h2>Fikk ikke hentet datoen</h2>
+    <p>Dagens kviss bruker datoen fra nettet, ikke klokka på enheten din. Sjekk at du er på nett.</p>
+    <div class="btns"><button class="primary" id="mxRetry">Prøv igjen</button></div>
+  </section>
+  <section class="card done" id="mxClosed" hidden>
+    <h2>Kvissen pågår!</h2>
+    <p>Dagens kviss er stengt til kl. 22. Juks er strengt forbudt.</p>
+  </section>
+  <p class="note">To spørsmål fra hver av bydelene, T-banen, våpenskjold, Melodi Grand Prix (bare fra og med 2000) og Hotel Cæsar, i den rekkefølgen. Spørsmålene er de samme for alle, og nye hver dag ved midnatt.</p>
+  </div>
+
   <div id="tbaneApp" hidden>
   <button class="back" data-home>← Alle kvisser</button>
   <header>
@@ -435,8 +487,8 @@ Nyhetsvinduet er komplett. Navnedagene 1. og 2. oktober ligger fram i tid, men e
     </div>
   </header>
   <div class="setswitch" role="radiogroup" aria-label="Velg kart">
-    <button role="radio" id="tKindGeo" aria-checked="true">Geografisk</button>
-    <button role="radio" id="tKindRuter" aria-checked="false">Linjekart</button>
+    <button role="radio" id="tKindGeo" aria-checked="false">Geografisk</button>
+    <button role="radio" id="tKindRuter" aria-checked="true">Linjekart</button>
   </div>
   <p class="note tmapnote" id="tMapNote" hidden></p>
   <div class="linepick" id="tLines" role="group" aria-label="Velg linjer"><span>Linjer</span></div>
@@ -881,8 +933,8 @@ document.addEventListener('error',e=>{
   if(i<c.length){ el.dataset.i=i; el.src=c[i]; } else { el.outerHTML=f.draw(); }
 },true);
 const SETS={
-  fylker:{list:FYLKER, sub:'De 15 fylkene fra 2024', q:'Hvilket fylke er dette?'},
-  kommuner:{list:KOMMUNER, sub:'De 30 største kommunene (folketall 1. januar 2026)', q:'Hvilken kommune er dette?'}
+  fylker:{list:FYLKER, sub:'De 15 fylkene fra 2024', q:'Hvilket fylke er dette?', kind:'Fylkesvåpen'},
+  kommuner:{list:KOMMUNER, sub:'De 30 største kommunene (folketall 1. januar 2026)', q:'Hvilken kommune er dette?', kind:'Kommunevåpen'}
 };
 let SET=FYLKER;
 
@@ -930,7 +982,29 @@ function judge(input, f){
   if(targets.some(t=>t.length>=5 && lev(x,t)<=1)) return 'close';
   return 'wrong';
 }
-function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+// Every random choice the quizzes make goes through rnd(), so the daily quiz can swap in a seeded
+// generator for a while (withSeed) and give everyone the same questions on the same day.
+let rnd=Math.random;
+function seedOf(str){ let h=2166136261; for(const ch of str){ h^=ch.codePointAt(0); h=Math.imul(h,16777619); } return h>>>0; }
+function withSeed(seed, fn){
+  let a=seed>>>0; const was=rnd;
+  rnd=()=>{ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; };   // mulberry32
+  try{ return fn(); } finally{ rnd=was; }
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+// k random indices into a list of n, other than cur: the wrong options
+const otherIx=(n,cur,k=5)=>shuffle([...Array(n).keys()].filter(i=>i!==cur)).slice(0,k);
+
+// Question sources for the mixed quiz ("Dagens kviss"), one per mode; each mode adds its own,
+// built from the same helpers as its own quiz. deal(n) returns n different questions:
+//   {q, tag?, cls, prompt(box), reveal?(r, box), opts:[{label, ok, info?}], fact, miss}
+// q is the question, tag an addition to the mode's name in the counter ("Bydelene, de nye fra
+// 2028"), prompt() the HTML above it, in a box with class cls. reveal(), if there is
+// one, redraws the box after the answer (r = {ok, pick}). prompt() runs before opts are read,
+// so a source may fill opts in there: T-banen picks options that the map doesn't label.
+// fact is shown after the answer, the picked option's info first if it was wrong, and miss
+// is the inside of the row in the list of misses.
+const MIX={};
 
 const $=id=>document.getElementById(id);
 let deck=[], pos=0, correct=0, missed=[], answered=false, autoTimer=null;
@@ -951,8 +1025,7 @@ function show(){
   $('score').textContent=`${correct} riktige`;
   $('barFill').style.width=`${pos/deck.length*100}%`;
   $('feedback').innerHTML=''; $('actionBtn').hidden=true;
-  const others=shuffle(SET.map((_,i)=>i).filter(i=>i!==deck[pos])).slice(0,5);
-  const opts=shuffle([deck[pos],...others]);
+  const opts=shuffle([deck[pos],...otherIx(SET.length,deck[pos])]);
   $('options').innerHTML=opts.map(i=>`<button data-i="${i}">${SET[i].name}</button>`).join('');
 }
 function pick(i){
@@ -994,6 +1067,16 @@ document.addEventListener('keydown',e=>{
 });
 $('retryMissed').addEventListener('click',()=>start(missed));
 $('restart').addEventListener('click',()=>start(SET.map((_,i)=>i)));
+
+// Mixed quiz: any of the arms, county or municipality
+MIX.vapen={label:'Våpenskjold', deal(n){
+  return shuffle([SETS.fylker,SETS.kommuner].flatMap(S=>S.list.map((_,cur)=>({S,cur})))).slice(0,n).map(({S,cur})=>{
+    const list=S.list, f=list[cur];
+    return {q:S.q, cls:'shield', prompt:()=>f.svg(),
+      opts:shuffle([cur,...otherIx(list.length,cur)]).map(i=>({label:list[i].name,ok:i===cur})),
+      fact:f.motif, miss:`<span class="mxthumb">${f.svg()}</span><div><strong>${f.name}</strong><small>${S.kind}</small></div>`};
+  });
+}};
 
 // Study view
 function renderStudy(){
@@ -1182,9 +1265,9 @@ let tSel=new Set(T_CODES), tDeck=[], tPos=0, tCorrect=0, tMissedQ=[], tAnswered=
 // Every (line, direction, position) that can be asked. The shown stops before the hidden one
 // must pin down the answer: on line 5 the ring passes Tøyen and Carl Berners plass twice, so
 // "after Tøyen, Carl Berners plass" is dropped there (Sinsen and Hasle are asked other ways).
-function tCandidates(){
+function tCandidates(sel){
   const out=[];
-  T_CODES.filter(c=>tSel.has(c)).forEach(c=>TBANE.lines[c].forEach((seq,d)=>{
+  T_CODES.filter(c=>sel.has(c)).forEach(c=>TBANE.lines[c].forEach((seq,d)=>{
     for(let k=1;k<seq.length;k++){
       const ctx=seq.slice(Math.max(0,k-2),k);
       const same=j=>{const c2=seq.slice(Math.max(0,j-2),j); return c2.length===ctx.length&&c2.every((v,x)=>v===ctx[x]);};
@@ -1195,10 +1278,10 @@ function tCandidates(){
   return out;
 }
 // Pick a random stop on a random selected line, then a random direction that works for it.
-function tNewDeck(){
+function tNewDeck(sel=tSel, n=T_DECK){
   const groups={};
-  tCandidates().forEach(q=>(groups[q.c+'|'+q.st]??=[]).push(q));
-  return shuffle(Object.values(groups)).slice(0,T_DECK).map(g=>g[Math.floor(Math.random()*g.length)]);
+  tCandidates(sel).forEach(q=>(groups[q.c+'|'+q.st]??=[]).push(q));
+  return shuffle(Object.values(groups)).slice(0,n).map(g=>g[Math.floor(rnd()*g.length)]);
 }
 function tStart(deck){
   clearTimeout(tTimer); tTimer=null;
@@ -1212,8 +1295,10 @@ function tQView(q){
   return {x:(Math.max(...xs)+Math.min(...xs))/2-w/2,y:(Math.max(...ys)+Math.min(...ys))/2-h/2,w,h};
 }
 // ---------- T-banen: Ruters linjekart ----------
-let tKind='geo', tRuterFailed=false, tRuterImg=null;
-try{ if(localStorage.getItem('tMapKind')==='ruter') tKind='ruter'; }catch(e){}
+// Ruter's map is the default. tMapKind is only written when someone picks a map kind, so a stored
+// 'geo' is a choice and is kept; no value (new, or never picked) gets Ruter's map.
+let tKind='ruter', tRuterFailed=false, tRuterImg=null;
+try{ if(localStorage.getItem('tMapKind')==='geo') tKind='geo'; }catch(e){}
 const tRuterOn=()=>tKind==='ruter'&&!tRuterFailed;
 // Label rectangles are [centre x, centre y, length, height, angle in degrees] in image pixels.
 function tRCorners([x,y,l,h,a]){
@@ -1264,22 +1349,18 @@ function tRuterQMap(q,reveal){
   }
   return s+'</svg>';
 }
-function tQMap(q,reveal){
-  if(tRuterOn()) return {svg:tRuterQMap(q,reveal),labeled:[]};
-  const box=t$('tMapBox');
-  return tRender(tQView(q),box.clientWidth||520,{focus:new Set([q.c]),hide:q.st,qline:q.c,ctx:q.ctx,reveal});
+function tGeoQMap(q,reveal,pxW){
+  return tRender(tQView(q),pxW||520,{focus:new Set([q.c]),hide:q.st,qline:q.c,ctx:q.ctx,reveal});
 }
-function tShow(){
-  const q=tCur=tDeck[tPos]; tAnswered=false;
-  t$('tQ').innerHTML=`<div class="dir"><span class="sr">Linje</span>${tBadge(q.c)}${q.last?'':`<span>${tSt[q.to].name}</span>`}</div>`+
-    `<div class="q">${q.last?`Hva heter endestasjonen etter ${tSt[q.ctx[q.ctx.length-1]].name}?`:`Hva er neste stopp etter ${tSt[q.ctx[q.ctx.length-1]].name}?`}</div>`;
-  // The geographic map decides which names it labels; on Ruter's map only the given stops show
-  const ruter=tRuterOn(), geo=ruter?null:tQMap(q), labeled=ruter?[]:geo.labeled;
-  t$('tCount').textContent=`${tPos+1} / ${tDeck.length}`;
-  t$('tScore').textContent=`${tCorrect} riktige`;
-  t$('tBar').style.width=`${tPos/tDeck.length*100}%`;
-  t$('tFeedback').innerHTML=''; t$('tAction').hidden=true;
-  // Distractors: nearby stops on the same line first, then nearby stations, never one that is labelled on the map
+function tQMap(q,reveal,pxW=t$('tMapBox').clientWidth){
+  if(tRuterOn()) return {svg:tRuterQMap(q,reveal),labeled:[]};
+  return tGeoQMap(q,reveal,pxW);
+}
+const tDirHTML=q=>`<div class="dir"><span class="sr">Linje</span>${tBadge(q.c)}${q.last?'':`<span>${tSt[q.to].name}</span>`}</div>`;
+const tQText=q=>`${q.last?'Hva heter endestasjonen etter':'Hva er neste stopp etter'} ${tSt[q.ctx[q.ctx.length-1]].name}?`;
+// Distractors: nearby stops on the same line first, then nearby stations, never one that is labelled
+// on the map. Sets q.opts (Ruter's map sizes the answer's pill by them) and returns all six, shuffled.
+function tPickOpts(q,labeled){
   const seq=TBANE.lines[q.c][q.d], shown=new Set([...labeled,...q.ctx,q.st]);
   const ok=i=>!shown.has(i)&&tSt[i].name!==tSt[q.st].name;
   const near=[...new Set(seq.filter((v,j)=>Math.abs(j-q.k)>=2&&Math.abs(j-q.k)<=6))].filter(ok);
@@ -1288,9 +1369,31 @@ function tShow(){
   const picks=shuffle(near).slice(0,3);
   picks.push(...shuffle(around.slice(0,12)).slice(0,5-picks.length));
   q.opts=picks;
+  return shuffle([q.st,...picks]);
+}
+// The trip, and what's worth knowing about the answer
+function tFact(q){
+  const also=[...tSt[q.st].lines].filter(c=>c!==q.c).sort();
+  // Stops made only in the other direction, like Gulleråsen, which has a platform on one side
+  const back=TBANE.lines[q.c][1-q.d].slice().reverse(), bi=back.indexOf(q.ctx[q.ctx.length-1]), bj=back.indexOf(q.st);
+  const skip=bi>=0&&bj>bi+1?`Linje ${q.c} stopper ikke på ${back.slice(bi+1,bj).map(i=>tSt[i].name).join(' og ')} i denne retningen. `:'';
+  const extra=skip+(q.last?`${tSt[q.st].name} er endestasjon for linje ${q.c}.`:also.length?`Her går også linje ${also.join(', ').replace(/, (\d)$/,' og $1')}.`:'');
+  return tTrip(q)+(extra?'. '+extra:'');
+}
+const tMissLi=q=>`${tBadge(q.c)}<div>${tTrip(q).replace(/[^→]+$/,m=>` <strong>${m.trim()}</strong>`)}<small>${q.last?'Endestasjon':`Mot ${tSt[q.to].name}`}</small></div>`;
+function tShow(){
+  const q=tCur=tDeck[tPos]; tAnswered=false;
+  t$('tQ').innerHTML=tDirHTML(q)+`<div class="q">${tQText(q)}</div>`;
+  // The geographic map decides which names it labels; on Ruter's map only the given stops show
+  const ruter=tRuterOn(), geo=ruter?null:tQMap(q), labeled=ruter?[]:geo.labeled;
+  t$('tCount').textContent=`${tPos+1} / ${tDeck.length}`;
+  t$('tScore').textContent=`${tCorrect} riktige`;
+  t$('tBar').style.width=`${tPos/tDeck.length*100}%`;
+  t$('tFeedback').innerHTML=''; t$('tAction').hidden=true;
+  const opts=tPickOpts(q,labeled);
   const box=t$('tMapBox');
   box.classList.remove('pop'); void box.offsetWidth; box.innerHTML=ruter?tQMap(q).svg:geo.svg; box.classList.add('pop');
-  t$('tOptions').innerHTML=shuffle([q.st,...picks]).map(i=>`<button data-i="${i}">${tSt[i].name}</button>`).join('');
+  t$('tOptions').innerHTML=opts.map(i=>`<button data-i="${i}">${tSt[i].name}</button>`).join('');
 }
 function tTrip(q){ return [...q.ctx,q.st].map(i=>tSt[i].name).join(' → '); }
 function tPick(i){
@@ -1300,13 +1403,8 @@ function tPick(i){
     el.classList.add(bi===q.st?'right':bi===i?'wrong':'dim'); });
   t$('tMapBox').classList.remove('pop'); t$('tMapBox').innerHTML=tQMap(q,ok?'ok':'no').svg;
   if(ok) tCorrect++; else if(!tMissedQ.includes(q)) tMissedQ.push(q);
-  const also=[...tSt[q.st].lines].filter(c=>c!==q.c).sort();
-  // Stops made only in the other direction, like Gulleråsen, which has a platform on one side
-  const back=TBANE.lines[q.c][1-q.d].slice().reverse(), bi=back.indexOf(q.ctx[q.ctx.length-1]), bj=back.indexOf(q.st);
-  const skip=bi>=0&&bj>bi+1?`Linje ${q.c} stopper ikke på ${back.slice(bi+1,bj).map(i=>tSt[i].name).join(' og ')} i denne retningen. `:'';
-  const extra=skip+(q.last?`${tSt[q.st].name} er endestasjon for linje ${q.c}.`:also.length?`Her går også linje ${also.join(', ').replace(/, (\d)$/,' og $1')}.`:'');
   t$('tFeedback').innerHTML=(ok?`<div class="verdict ok">Riktig!</div>`:`<div class="verdict bad">Det er ${tSt[q.st].name}</div>`)+
-    `<div class="motif">${tTrip(q)}${extra?'. '+extra:''}</div>`;
+    `<div class="motif">${tFact(q)}</div>`;
   t$('tScore').textContent=`${tCorrect} riktige`;
   t$('tAction').textContent=tPos===tDeck.length-1?'Se resultat':'Neste';
   t$('tAction').hidden=false;
@@ -1318,7 +1416,7 @@ function tFinish(){
   const n=tDeck.length;
   t$('tDoneTitle').textContent=tCorrect===n?'Alle riktige!':`${tCorrect} av ${n}`;
   t$('tDoneText').textContent=tMissedQ.length?'Disse bommet du på:':'Klar til onsdag.';
-  t$('tMissed').innerHTML=tMissedQ.map(q=>`<li>${tBadge(q.c)}<div>${tTrip(q).replace(/[^→]+$/,m=>` <strong>${m.trim()}</strong>`)}<small>${q.last?'Endestasjon':`Mot ${tSt[q.to].name}`}</small></div></li>`).join('');
+  t$('tMissed').innerHTML=tMissedQ.map(q=>`<li>${tMissLi(q)}</li>`).join('');
   t$('tRetry').hidden=!tMissedQ.length;
   (tMissedQ.length?t$('tRetry'):t$('tRestart')).focus({preventScroll:true});
 }
@@ -1326,6 +1424,24 @@ t$('tAction').addEventListener('click',tAct);
 t$('tOptions').addEventListener('click',e=>{const el=e.target.closest('button'); if(el) tPick(+el.dataset.i);});
 t$('tRetry').addEventListener('click',()=>tStart(shuffle(tMissedQ)));
 t$('tRestart').addEventListener('click',()=>tStart(tNewDeck()));
+
+// Mixed quiz: all lines, on the map kind chosen here ("Geografisk" / "Linjekart"). The options are
+// picked when the map is drawn, at the width it gets, so none of them is labelled on it; on
+// Ruter's map the answer's pill is sized by them, so it is drawn after.
+MIX.tbane={label:'T-banen', deal(n){
+  if(tKind==='ruter') tRuterLoad();
+  return tNewDeck(new Set(T_CODES),n).map(q=>{
+    const map=(svg)=>`<div class="tq">${tDirHTML(q)}</div><div class="tmap">${svg}</div>`;
+    const m={q:tQText(q), cls:'', fact:tFact(q), miss:tMissLi(q),
+      prompt(box){
+        const w=box.clientWidth-3, ruter=tRuterOn(), first=ruter?{labeled:[]}:tQMap(q,undefined,w);
+        m.opts=tPickOpts(q,first.labeled).map(i=>({label:tSt[i].name,ok:i===q.st}));
+        return map(ruter?tQMap(q,undefined,w).svg:first.svg);
+      },
+      reveal:(r,box)=>map(tQMap(q,r.ok?'ok':'no',box.clientWidth-3).svg)};
+    return m;
+  });
+}};
 document.addEventListener('keydown',e=>{
   if(t$('tbaneApp').hidden||t$('tQuiz').hidden||t$('tPlay').hidden) return;
   if(!tAnswered&&/^[1-6]$/.test(e.key)){ const el=t$('tOptions').children[+e.key-1]; if(el) tPick(+el.dataset.i); }
@@ -1573,7 +1689,7 @@ function cPreload(deck){
 // Rounds walk through a shuffled queue of the top roles, so all of them come up before any repeats
 function cNewDeck(){
   if(cQueue.length<C_DECK) cQueue=cQueue.concat(shuffle(cTop.filter(i=>!cQueue.includes(i))));
-  return cQueue.splice(0,C_DECK).map(i=>({i,dir:cMode==='type'?(Math.random()<.5?'role':'actor'):cMode}));
+  return cQueue.splice(0,C_DECK).map(i=>({i,dir:cMode==='type'?(rnd()<.5?'role':'actor'):cMode}));
 }
 function cStart(deck){
   clearTimeout(cTimer); cTimer=null;
@@ -1598,6 +1714,7 @@ function cOptions(q){
     .map(x=>({label:x.r,info:`${x.r} ble spilt av ${x.a}.`}));
   return shuffle([{label:e.r,ok:true},...others]);
 }
+const cQText=q=>q.dir==='role'?'Hvem spilte rollen?':'Hvilken rolle spilte skuespilleren?';
 function cPromptHTML(q){
   const e=CAESAR[q.i];
   return cPic(e,'cpic','Bilde av rollefiguren')+`<small>${q.dir==='role'?'Rollefigur':'Skuespiller'}</small><strong>${q.dir==='role'?e.r:e.a}</strong>`;
@@ -1607,7 +1724,7 @@ function cShow(){
   const box=c$('cPrompt');
   box.innerHTML=cPromptHTML(q);
   box.classList.remove('pop'); void box.offsetWidth; box.classList.add('pop');
-  c$('cQ').textContent=q.dir==='role'?'Hvem spilte rollen?':'Hvilken rolle spilte skuespilleren?';
+  c$('cQ').textContent=cQText(q);
   c$('cCount').textContent=`${cPos+1} / ${cDeck.length}`;
   c$('cScore').textContent=`${cCorrect} riktige`;
   c$('cBar').style.width=`${cPos/cDeck.length*100}%`;
@@ -1671,8 +1788,9 @@ function cSubmit(giveUp){
   cResolve(ok, ok?(v==='close'?'Nesten riktig!':'Riktig!'):`Det var ${answer}`, v==='close'?`Det staves ${answer}.`:'');
 }
 function cAct(){ clearTimeout(cTimer); cTimer=null; if(!cAnswered) return; cPos++; cPos<cDeck.length?cShow():cFinish(); }
+const cMissLi=q=>{const e=CAESAR[q.i]; return `${cPic(e,'thumb')}<div><strong>${e.r}</strong><small>${e.a}</small></div>`;};
 function cRenderMissed(){
-  c$('cMissed').innerHTML=cMissed.map(q=>{const e=CAESAR[q.i]; return `<li>${cPic(e,'thumb')}<div><strong>${e.r}</strong><small>${e.a}</small></div></li>`;}).join('');
+  c$('cMissed').innerHTML=cMissed.map(q=>`<li>${cMissLi(q)}</li>`).join('');
 }
 function cFinish(){
   c$('cBar').style.width='100%'; c$('cPlay').hidden=true; c$('cDone').hidden=false;
@@ -1689,6 +1807,13 @@ c$('cForm').addEventListener('submit',e=>{e.preventDefault(); cSubmit(false);});
 c$('cGiveUp').addEventListener('click',()=>cSubmit(true));
 c$('cRetry').addEventListener('click',()=>cStart(shuffle(cMissed)));
 c$('cRestart').addEventListener('click',()=>cStart(cNewDeck()));
+
+// Mixed quiz: the top roles, role → actor only, with options
+MIX.caesar={label:'Hotel Cæsar', deal(n){
+  const deck=shuffle(cTop).slice(0,n).map(i=>({i,dir:'role'}));
+  cPreload(deck);
+  return deck.map(q=>({q:cQText(q), cls:'cprompt', prompt:()=>cPromptHTML(q), opts:cOptions(q), fact:cFact(CAESAR[q.i]), miss:cMissLi(q)}));
+}};
 document.addEventListener('keydown',e=>{
   if(c$('caesarApp').hidden||c$('cQuiz').hidden||c$('cPlay').hidden) return;
   if(!cAnswered&&cMode!=='type'&&/^[1-6]$/.test(e.key)){ const el=c$('cOptions').children[+e.key-1]; if(el) cPick(+el.dataset.k); }
@@ -1717,12 +1842,15 @@ c$('cPics').addEventListener('click',()=>{
   if(cDeck.length){ c$('cPrompt').innerHTML=cPromptHTML(cDeck[cPos]); cRenderMissed(); cPreload(cDeck.slice(cPos)); }
   cRenderStudy();
 });
-// A picture that fails to load is dropped rather than shown broken
-c$('caesarApp').addEventListener('error',e=>{
-  if(e.target.tagName!=='IMG') return;
+// A picture that fails to load is dropped rather than shown broken, here and in the mixed quiz
+// (where the arms, img.coa, fall back to their drawings instead)
+const cDropPic=e=>{
+  if(e.target.tagName!=='IMG'||e.target.classList.contains('coa')) return;
   const li=e.target.closest('li.pic'); if(li) li.classList.remove('pic');
   e.target.remove();
-},true);
+};
+c$('caesarApp').addEventListener('error',cDropPic,true);
+c$('dagensApp').addEventListener('error',cDropPic,true);
 function cTab(which){
   clearTimeout(cTimer); cTimer=null;
   const q=which==='quiz';
@@ -1861,7 +1989,7 @@ function mgNewDeck(){
   const pool=mgPool().map(e=>e.y);
   mgQueue=mgQueue.filter(y=>y>=mgFrom);
   if(mgQueue.length<MG_DECK) mgQueue=mgQueue.concat(shuffle(pool.filter(y=>!mgQueue.includes(y))));
-  return mgQueue.splice(0,MG_DECK).map(y=>({y,dir:mgMode==='type'?(Math.random()<.5?'year':'artist'):mgMode}));
+  return mgQueue.splice(0,MG_DECK).map(y=>({y,dir:mgMode==='type'?(rnd()<.5?'year':'artist'):mgMode}));
 }
 function mgStart(deck){
   clearTimeout(mgTimer); mgTimer=null;
@@ -1870,27 +1998,34 @@ function mgStart(deck){
 }
 // dir 'year': the year is shown and the answer is an artist. dir 'artist': the other way round.
 // Wrong options come from nearby years, so they are plausible.
-const mgNear=(xs,y,spread)=>xs.map(x=>({x,k:Math.abs(x.y-y)+Math.random()*spread})).sort((p,q)=>p.k-q.k).map(p=>p.x);
-function mgOptions(q){
+const mgNear=(xs,y,spread)=>xs.map(x=>({x,k:Math.abs(x.y-y)+rnd()*spread})).sort((p,q)=>p.k-q.k).map(p=>p.x);
+// pool: the years asked about, and the wrong years; names: the years the wrong artists come from
+function mgOptions(q,pool=mgPool(),names=MGP){
   const e=mgByYear(q.y);
   if(q.dir==='year'){
     const mine=mgPeople(e), seen=new Set([e.a]);
-    const others=mgNear(MGP.filter(x=>![...mgPeople(x)].some(p=>mine.has(p))),e.y,10)
+    const others=mgNear(names.filter(x=>![...mgPeople(x)].some(p=>mine.has(p))),e.y,10)
       .filter(x=>!seen.has(x.a)&&seen.add(x.a)).slice(0,5)
       .map(x=>({label:x.a,info:`${x.a} vant i ${mgList(mgWins(x.a))}.`}));
     return shuffle([{label:e.a,ok:true},...others]);
   }
-  const years=mgNear(mgPool().filter(x=>x!==e),e.y,12).slice(0,5)
+  const years=mgNear(pool.filter(x=>x!==e),e.y,12).slice(0,5)
     .map(x=>({label:x.y,y:x.y,info:`I ${x.y} vant ${x.a} med «${x.s}».`}));
   return [{label:e.y,y:e.y,ok:true},...years].sort((p,q)=>p.y-q.y);
 }
+function mgPromptHTML(q){
+  const e=mgByYear(q.y);
+  return q.dir==='year'?`<small>Melodi Grand Prix</small><strong>${e.y}</strong>`
+    :`<small>Vinneren</small><strong>${e.a}</strong><span class="song">«${e.s}»</span>`;
+}
+const mgQText=q=>q.dir==='year'?'Hvem vant MGP det året?':'Hvilket år vant låta MGP?';
+const mgMissLi=q=>{const e=mgByYear(q.y); return `<div><strong>${e.y}: ${e.a}</strong><small>«${e.s}»</small></div>`;};
 function mgShow(){
   const q=mgDeck[mgPos], e=mgByYear(q.y), typed=mgMode==='type'; mgAnswered=false;
   const box=mg$('mgPrompt');
-  box.innerHTML=q.dir==='year'?`<small>Melodi Grand Prix</small><strong>${e.y}</strong>`
-    :`<small>Vinneren</small><strong>${e.a}</strong><span class="song">«${e.s}»</span>`;
+  box.innerHTML=mgPromptHTML(q);
   box.classList.remove('pop'); void box.offsetWidth; box.classList.add('pop');
-  mg$('mgQ').textContent=q.dir==='year'?'Hvem vant MGP det året?':'Hvilket år vant låta MGP?';
+  mg$('mgQ').textContent=mgQText(q);
   mg$('mgCount').textContent=`${mgPos+1} / ${mgDeck.length}`;
   mg$('mgScore').textContent=`${mgCorrect} riktige`;
   mg$('mgBar').style.width=`${mgPos/mgDeck.length*100}%`;
@@ -1961,7 +2096,7 @@ function mgFinish(){
   const n=mgDeck.length;
   mg$('mgDoneTitle').textContent=mgCorrect===n?'Alle riktige!':`${mgCorrect} av ${n}`;
   mg$('mgDoneText').textContent=mgMissed.length?'Disse bommet du på:':'Klar til onsdag.';
-  mg$('mgMissed').innerHTML=mgMissed.map(q=>{const e=mgByYear(q.y); return `<li><div><strong>${e.y}: ${e.a}</strong><small>«${e.s}»</small></div></li>`;}).join('');
+  mg$('mgMissed').innerHTML=mgMissed.map(q=>`<li>${mgMissLi(q)}</li>`).join('');
   mg$('mgRetry').hidden=!mgMissed.length;
   (mgMissed.length?mg$('mgRetry'):mg$('mgRestart')).focus({preventScroll:true});
 }
@@ -1971,6 +2106,15 @@ mg$('mgForm').addEventListener('submit',e=>{e.preventDefault(); mgSubmit(false);
 mg$('mgGiveUp').addEventListener('click',()=>mgSubmit(true));
 mg$('mgRetry').addEventListener('click',()=>mgStart(shuffle(mgMissed)));
 mg$('mgRestart').addEventListener('click',()=>mgStart(mgNewDeck()));
+
+// Mixed quiz: only from 2000 on (wrong options too), whatever "Fra og med" is set to, either way
+// round, with options
+const MG_MIX_FROM=2000;
+MIX.mgp={label:`MGP fra og med ${MG_MIX_FROM}`, deal(n){
+  const pool=MGP.filter(e=>e.y>=MG_MIX_FROM);
+  return shuffle(pool).slice(0,n).map(e=>{ const q={y:e.y,dir:rnd()<.5?'year':'artist'};
+    return {q:mgQText(q), cls:'cprompt', prompt:()=>mgPromptHTML(q), opts:mgOptions(q,pool,pool), fact:mgFact(e), miss:mgMissLi(q)}; });
+}};
 document.addEventListener('keydown',e=>{
   if(mg$('mgpApp').hidden||mg$('mgQuiz').hidden||mg$('mgPlay').hidden) return;
   if(!mgAnswered&&mgMode!=='type'&&/^[1-6]$/.test(e.key)){ const el=mg$('mgOptions').children[+e.key-1]; if(el) mgPick(+el.dataset.k); }
@@ -2060,13 +2204,13 @@ const NEW=[
  ['Nordstrand','Dagens Nordstrand, pluss Holmlia, Prinsdal og Bjørnerud fra Søndre Nordstrand.']
 ].map(([name,note],i)=>({name,num:i+1,note,d:GEO.new[i+1].d,l:GEO.new[i+1].l}));
 const BSETS={
-  old:{list:OLD, extra:[{name:'Sentrum',d:GEO.old['Sentrum'].d,l:GEO.old['Sentrum'].l,off:true}], fs:15,
+  old:{key:'old', list:OLD, q:'Hvilken bydel er markert?', kind:'Bydelene i dag', extra:[{name:'Sentrum',d:GEO.old['Sentrum'].d,l:GEO.old['Sentrum'].l,off:true}], fs:15,
        sub:'De 15 bydelene i dag', note:'Sentrum (grå) er ikke en egen bydel.'},
-  new:{list:NEW, extra:[], fs:19,
+  new:{key:'new', list:NEW, q:'Hvilken av de nye bydelene er markert?', kind:'De nye bydelene fra 2028', tag:'de nye fra 2028', extra:[], fs:19,
        sub:'De 8 bydelene fra 1. januar 2028',
        note:'Navnene er byrådets endelige forslag (september 2026); bystyret vedtar dem innen 1. november. Grensene er tegnet etter grunnkretsene i vedtaket og er omtrentlige der vedtaket deler en grunnkrets.'}
 };
-let BS=BSETS.old, bKey='old';
+let BS=BSETS.old;
 // Hand-placed labels where the automatic spot is crowded
 const LBL={
  'St. Hanshaugen|old':{t:'St. Hans-\nhaugen',at:[214,214]}, 'Grünerløkka|old':{t:'Grüner-\nløkka',at:[290,226]},
@@ -2077,12 +2221,12 @@ const LBL={
 };
 
 // Build a map SVG. hl: index to highlight, cls: extra class map {index:class}, labels: bool
-function bMap(hl=-1, cls={}, labels=false, fs=14){
-  const all=BS.list.concat(BS.extra);
+function bMap(hl=-1, cls={}, labels=false, fs=14, set=BS){
+  const all=set.list.concat(set.extra);
   let s=`<svg viewBox="8 8 584 636" role="img" aria-label="Kart over Oslos bydeler"><path class="mk" d="${GEO.marka}"/>`;
   all.forEach((b,i)=>{ const c=['bd']; if(b.off) c.push('off'); if(i===hl) c.push('hi'); if(cls[i]) c.push(cls[i]);
     s+=`<path class="${c.join(' ')}" data-i="${b.off?'':i}" d="${b.d}"/>`; });
-  if(labels) all.forEach((b,i)=>{ const o=LBL[b.name+'|'+bKey]||{}, [x,y]=o.at||b.l, lines=(o.t||b.name).split('\n'), f=b.off?fs*.75:fs;
+  if(labels) all.forEach((b,i)=>{ const o=LBL[b.name+'|'+set.key]||{}, [x,y]=o.at||b.l, lines=(o.t||b.name).split('\n'), f=b.off?fs*.75:fs;
     s+=`<text x="${x}" y="${y+f*.35-(lines.length-1)*f*.5}" font-size="${f}" class="${i===hl?'on':''}">${lines.map((t,k)=>`<tspan x="${x}" dy="${k?f:0}">${t}</tspan>`).join('')}</text>`; });
   return s+'</svg>';
 }
@@ -2102,8 +2246,7 @@ function bShow(){
   b$('bScore').textContent=`${bCorrect} riktige`;
   b$('bBar').style.width=`${bPos/bDeck.length*100}%`;
   b$('bFeedback').innerHTML=''; b$('bAction').hidden=true;
-  const others=shuffle(BS.list.map((_,i)=>i).filter(i=>i!==cur)).slice(0,5);
-  b$('bOptions').innerHTML=shuffle([cur,...others]).map(i=>`<button data-i="${i}">${BS.list[i].name}</button>`).join('');
+  b$('bOptions').innerHTML=shuffle([cur,...otherIx(BS.list.length,cur)]).map(i=>`<button data-i="${i}">${BS.list[i].name}</button>`).join('');
 }
 function bPick(i){
   if(bAnswered) return; bAnswered=true;
@@ -2132,6 +2275,18 @@ b$('bAction').addEventListener('click',bAct);
 b$('bOptions').addEventListener('click',e=>{const el=e.target.closest('button'); if(el) bPick(+el.dataset.i);});
 b$('bRetry').addEventListener('click',()=>bStart(bMissed));
 b$('bRestart').addEventListener('click',()=>bStart(BS.list.map((_,i)=>i)));
+
+// Mixed quiz: any of the districts, today's or the 2028 ones
+MIX.bydel={label:'Bydelene', deal(n){
+  return shuffle([BSETS.old,BSETS.new].flatMap(set=>set.list.map((_,cur)=>({set,cur})))).slice(0,n).map(({set,cur})=>{
+    const b=set.list[cur];
+    return {q:set.q, tag:set.tag, cls:'omap', prompt:()=>bMap(cur,{},false,14,set),
+      reveal:r=>bMap(cur,r.ok?{[cur]:'ok'}:{[r.pick.i]:'no'},false,14,set),
+      opts:shuffle([cur,...otherIx(set.list.length,cur)]).map(i=>({label:set.list[i].name,ok:i===cur,i})),
+      fact:`Bydel ${b.num}. ${b.note}`,
+      miss:`<span class="mxthumb omap">${bMap(cur,{},false,14,set)}</span><div><strong>${b.name}</strong><small>${set.kind}</small></div>`};
+  });
+}};
 document.addEventListener('keydown',e=>{
   if(b$('bydelApp').hidden || b$('bQuiz').hidden || b$('bPlay').hidden) return;
   if(!bAnswered && /^[1-6]$/.test(e.key)){ const el=b$('bOptions').children[+e.key-1]; if(el) bPick(+el.dataset.i); }
@@ -2158,7 +2313,7 @@ function bTab(which){
 b$('bTabQuiz').addEventListener('click',()=>bTab('quiz'));
 b$('bTabStudy').addEventListener('click',()=>bTab('study'));
 function bUse(key){
-  bKey=key; BS=BSETS[key]; bSel=-1;
+  BS=BSETS[key]; bSel=-1;
   b$('bSetOld').setAttribute('aria-checked',key==='old'); b$('bSetNew').setAttribute('aria-checked',key==='new');
   b$('bSub').textContent=BS.sub; b$('bNote').textContent=BS.note;
   b$('bRestart').textContent=`Start på nytt med alle ${BS.list.length}`;
@@ -2229,19 +2384,156 @@ function renderPrep(){
     : uke ? 'Klar til ' + uke : 'Nyheter, navnedager og datoen';
 }
 
+// ---------- Dagens kviss ----------
+// Two questions from each mode, from the sources in MIX, always in the order of MX_ORDER. There is
+// no button for it on the home page: it is reached by its URL (#dagens) only, which is handed out.
+// The day's round is dealt from a seed made from the date (Oslo time), so everyone gets the same
+// questions; each mode's deal and each question's drawing get their own seed, so one can't throw
+// the others off. Progress is saved after every answer, which also means a reload doesn't give
+// the question again. "Ti blandede spørsmål til" deals a free round the same way, but unseeded
+// and unsaved.
+const MX_ORDER=['bydel','tbane','vapen','mgp','caesar'], MX_EACH=2, MX_AUTO=1000, MX_KEY='dagens';
+const MX_FIRST='2026-10-01', MX_URL='https://haakjell.github.io/kvisstreneren/#dagens';   // round #0, and the link shared
+const MX_DAYS=['søndag','mandag','tirsdag','onsdag','torsdag','fredag','lørdag'];
+const mx$=id=>document.getElementById(id);
+let mxDeck=[], mxPos=0, mxMarks='', mxAnswered=false, mxTimer=null, mxDay='';   // mxDay '' = a free round
+function mxLoad(){ try{ return JSON.parse(localStorage.getItem(MX_KEY))||{}; }catch(e){ return {}; } }
+function mxSave(st){ try{ localStorage.setItem(MX_KEY,JSON.stringify(st)); }catch(e){} }
+// The day comes from the server's clock, not the device's, which anyone can set: the Date header
+// (plus Age, if a cache answered) of a request for this page. performance.now() carries it on from
+// there, since it doesn't move when the device's clock is changed. Opened as a local file there is
+// no server, so the device's clock is used; that is for testing only.
+let mxClock=null;   // {at: server time in ms, perf: performance.now() at that moment}
+async function mxSync(){
+  if(location.protocol==='file:'){ mxClock={at:Date.now(),perf:performance.now()}; return true; }
+  try{
+    const r=await fetch(location.pathname+'?t='+performance.now(),{method:'HEAD',cache:'no-store'});
+    const at=Date.parse(r.headers.get('Date'));
+    if(!isNaN(at)) mxClock={at:at+(+r.headers.get('Age')||0)*1000,perf:performance.now()};
+  }catch(e){ /* offline: keep the clock from an earlier sync, if any */ }
+  return !!mxClock;
+}
+const mxNow=()=>mxClock.at+performance.now()-mxClock.perf;
+const mxToday=()=>new Date(osloWall(mxNow())).toISOString().slice(0,10);
+function mxLocked(){ const d=new Date(osloWall(mxNow())), h=d.getUTCHours(); return d.getUTCDay()===QUIZ_DAY&&h>=QUIZ_START&&h<QUIZ_END; }
+function mxDate(day){ const d=new Date(day+'T12:00:00Z'); return `${MX_DAYS[d.getUTCDay()]} ${d.getUTCDate()}. ${PREP_MONTHS[d.getUTCMonth()]}`; }
+const mxNumber=day=>Math.round((Date.parse(day)-Date.parse(MX_FIRST))/864e5);
+const mxSubText=()=>mxDay?mxDate(mxDay).replace(/^./,c=>c.toUpperCase())+` · #${mxNumber(mxDay)}`:'Blandet runde';
+const mxScoreOf=marks=>marks.split('').filter(m=>m==='1').length;
+// Days in a row with a finished round, counting back from today (or yesterday, before today's is done)
+function mxStreak(log,today){
+  let t=Date.parse(today), n=0;
+  if(!(today in log)) t-=864e5;
+  while(new Date(t).toISOString().slice(0,10) in log){ n++; t-=864e5; }
+  return n;
+}
+const mxSeeded=(key,fn)=>mxDay?withSeed(seedOf(mxDay+'|'+key),fn):fn();
+function mxDeal(){
+  return MX_ORDER.flatMap(k=>mxSeeded(k,()=>MIX[k].deal(MX_EACH)).map(q=>Object.assign(q,{src:MIX[k].label})));
+}
+function mxStart(day){
+  clearTimeout(mxTimer); mxTimer=null;
+  mxDay=day; mxDeck=mxDeal(); mxMarks='';
+  if(day){ const st=mxLoad(); if(st.day===day) mxMarks=(st.marks||'').slice(0,mxDeck.length); }
+  mxPos=mxMarks.length;
+  mx$('mxSub').textContent=mxSubText();
+  mxPos<mxDeck.length?mxShow():mxFinish();
+}
+function mxShow(){
+  const q=mxDeck[mxPos]; mxAnswered=false;
+  mx$('mxPlay').hidden=false; mx$('mxDone').hidden=true;
+  const box=mx$('mxPrompt'); box.className=q.cls; void box.offsetWidth;
+  box.innerHTML=mxSeeded('q'+mxPos,()=>q.prompt(box)); box.classList.add('pop');
+  mx$('mxQ').textContent=q.q;
+  mx$('mxCount').textContent=`${mxPos+1} / ${mxDeck.length} · ${q.src}${q.tag?', '+q.tag:''}`;
+  mx$('mxScore').textContent=`${mxScoreOf(mxMarks)} riktige`;
+  mx$('mxBar').style.width=`${mxPos/mxDeck.length*100}%`;
+  mx$('mxFeedback').innerHTML=''; mx$('mxAction').hidden=true;
+  mx$('mxOptions').innerHTML=q.opts.map((o,k)=>`<button data-k="${k}">${o.label}</button>`).join('');
+}
+function mxPick(k){
+  if(mxAnswered) return; mxAnswered=true;
+  const q=mxDeck[mxPos], o=q.opts[k], ok=!!o.ok, right=q.opts.find(x=>x.ok);
+  mx$('mxOptions').querySelectorAll('button').forEach(el=>{ const bk=+el.dataset.k; el.disabled=true;
+    el.classList.add(q.opts[bk].ok?'right':bk===k?'wrong':'dim'); });
+  const box=mx$('mxPrompt');
+  if(q.reveal){ box.classList.remove('pop'); box.innerHTML=q.reveal({ok,pick:o},box); }
+  mxMarks+=ok?'1':'0';
+  if(mxDay){
+    const st=mxLoad(); st.day=mxDay; st.marks=mxMarks;
+    if(mxMarks.length===mxDeck.length) (st.log??={})[mxDay]=mxScoreOf(mxMarks);
+    mxSave(st);
+  }
+  mx$('mxFeedback').innerHTML=`<div class="verdict ${ok?'ok':'bad'}">${ok?'Riktig!':`Det var ${right.label}`}</div>`+
+    `<div class="motif">${!ok&&o.info?o.info+' ':''}${q.fact}</div>`;
+  mx$('mxScore').textContent=`${mxScoreOf(mxMarks)} riktige`;
+  mx$('mxAction').textContent=mxPos===mxDeck.length-1?'Se resultat':'Neste';
+  mx$('mxAction').hidden=false;
+  if(ok){ mx$('mxAction').blur(); mxTimer=setTimeout(mxAct,MX_AUTO); } else mx$('mxAction').focus({preventScroll:true});
+}
+function mxAct(){ clearTimeout(mxTimer); mxTimer=null; if(!mxAnswered) return; mxPos++; mxPos<mxDeck.length?mxShow():mxFinish(); }
+function mxFinish(){
+  mx$('mxBar').style.width='100%'; mx$('mxPlay').hidden=true; mx$('mxDone').hidden=false;
+  const n=mxDeck.length, score=mxScoreOf(mxMarks), missed=mxDeck.filter((_,i)=>mxMarks[i]==='0');
+  const streak=mxDay?mxStreak(mxLoad().log||{},mxDay):0;
+  mx$('mxDoneTitle').textContent=score===n?'Alle riktige!':`${score} av ${n}`;
+  mx$('mxDoneText').textContent=(streak>1?`${streak} dager på rad. `:'')+(missed.length?'Disse bommet du på:':'Klar til onsdag.');
+  mx$('mxMarks').innerHTML=mxMarks.split('').map(m=>`<span${m==='1'?'':' class="no"'}></span>`).join('');
+  mx$('mxMarks').setAttribute('aria-label',`${score} riktige og ${n-score} feil`);
+  mx$('mxMissed').innerHTML=missed.map(q=>`<li>${q.miss}</li>`).join('');
+  mx$('mxShare').hidden=!mxDay; mx$('mxToday').hidden=!!mxDay; mx$('mxShared').textContent='';
+  mx$('mxMore').textContent=mxDay?'Ti blandede spørsmål til':'Ti nye blandede spørsmål';
+  (mxDay?mx$('mxShare'):mx$('mxMore')).focus({preventScroll:true});
+}
+// Like Wordle: the round's number, the score, a row of squares and the link, through the phone's
+// share sheet when there is one, and the clipboard otherwise
+async function mxShare(){
+  const text=[`Kvisstreneren #${mxNumber(mxDay)}`,`${mxScoreOf(mxMarks)} av ${mxDeck.length}`,
+    mxMarks.split('').map(m=>m==='1'?'🟩':'🟥').join(''),MX_URL].join('\n');
+  if(navigator.share){ try{ await navigator.share({text}); return; }catch(e){ if(e.name==='AbortError') return; } }
+  try{ await navigator.clipboard.writeText(text); mx$('mxShared').textContent='Kopiert. Lim det inn der du vil dele det.'; }
+  catch(e){ mx$('mxShared').textContent=text; }
+}
+// Opening the mode: ask the server what time it is, then carry on with the round on screen,
+// unless it's yesterday's; then today's
+async function mxOpen(){
+  if(!mxClock){ mx$('mxMain').hidden=true; mx$('mxClosed').hidden=true; mx$('mxOffline').hidden=true; mx$('mxSub').textContent='Henter dagens dato …'; }
+  const ok=await mxSync();
+  if(curMode!=='dagens') return;
+  mx$('mxOffline').hidden=ok;
+  if(!ok){ mx$('mxMain').hidden=true; mx$('mxClosed').hidden=true; mx$('mxSub').textContent='Fikk ikke hentet datoen'; return; }
+  const locked=mxLocked();
+  mx$('mxClosed').hidden=!locked; mx$('mxMain').hidden=locked;
+  if(locked){ mx$('mxSub').textContent='Stengt mens kvissen pågår'; return; }
+  if(!mxDeck.length||(mxDay&&mxDay!==mxToday())) mxStart(mxToday());
+  else mx$('mxSub').textContent=mxSubText();
+}
+mx$('mxAction').addEventListener('click',mxAct);
+mx$('mxOptions').addEventListener('click',e=>{const el=e.target.closest('button'); if(el) mxPick(+el.dataset.k);});
+mx$('mxShare').addEventListener('click',mxShare);
+mx$('mxMore').addEventListener('click',()=>mxStart(''));
+mx$('mxToday').addEventListener('click',()=>mxStart(mxToday()));
+mx$('mxRetry').addEventListener('click',mxOpen);
+document.addEventListener('keydown',e=>{
+  if(mx$('dagensApp').hidden||mx$('mxMain').hidden||mx$('mxPlay').hidden) return;
+  if(!mxAnswered&&/^[1-6]$/.test(e.key)){ const el=mx$('mxOptions').children[+e.key-1]; if(el) mxPick(+el.dataset.k); }
+  else if(mxAnswered&&e.key==='Enter'&&document.activeElement!==mx$('mxAction')){ e.preventDefault(); mxAct(); }
+});
+
 // ---------- Mode switching ----------
 // Each mode has its own URL hash (#tbane, #mgp …; the home page has none), so the browser's
 // back button, Android's back gesture and reloads all work. Tabs inside a mode are not routed.
-const MODES=['prep','bydel','tbane','vapen','mgp','caesar'];
+const MODES=['prep','dagens','bydel','tbane','vapen','mgp','caesar'];
 let curMode=null;
 function goMode(m){
   curMode=m;
-  clearTimeout(autoTimer); autoTimer=null; clearTimeout(bTimer); bTimer=null; clearTimeout(tTimer); tTimer=null; clearTimeout(cTimer); cTimer=null; clearTimeout(mgTimer); mgTimer=null;
-  b$('home').hidden=m!=='home'; b$('prepApp').hidden=m!=='prep'; b$('vapenApp').hidden=m!=='vapen'; b$('bydelApp').hidden=m!=='bydel'; b$('tbaneApp').hidden=m!=='tbane'; b$('caesarApp').hidden=m!=='caesar'; b$('mgpApp').hidden=m!=='mgp';
+  clearTimeout(autoTimer); autoTimer=null; clearTimeout(bTimer); bTimer=null; clearTimeout(tTimer); tTimer=null; clearTimeout(cTimer); cTimer=null; clearTimeout(mgTimer); mgTimer=null; clearTimeout(mxTimer); mxTimer=null;
+  b$('home').hidden=m!=='home'; b$('prepApp').hidden=m!=='prep'; b$('dagensApp').hidden=m!=='dagens'; b$('vapenApp').hidden=m!=='vapen'; b$('bydelApp').hidden=m!=='bydel'; b$('tbaneApp').hidden=m!=='tbane'; b$('caesarApp').hidden=m!=='caesar'; b$('mgpApp').hidden=m!=='mgp';
   if(m==='bydel' && !bDeck.length) bUse('old');
   if(m==='tbane') tOpen();
   if(m==='caesar') cOpen();
   if(m==='mgp') mgOpen();
+  if(m==='dagens') mxOpen();
   if(m==='prep' || m==='home') renderPrep(); // the page may have been open since before the quiz
   window.scrollTo(0,0);
 }

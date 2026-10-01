@@ -8,20 +8,22 @@ Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til bruker
 
 ## Struktur
 
-Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og seks visninger som byttes med `goMode()`.
-Tabellen står i samme rekkefølge som knappene på forsida:
+Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og sju visninger som byttes med `goMode()`.
+Tabellen står i samme rekkefølge som knappene på forsida. Unntaket er `dagens`, som bevisst ikke har
+noen knapp: den nås bare via adressen (`#dagens`), som deles med utvalgte.
 
 | Modus | Seksjon | Innhold |
 |---|---|---|
 | `prep` | `#prepApp` | Ukas prepp — se under |
+| `dagens` | `#dagensApp` | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`), uten knapp — se under |
 | `bydel` | `#bydelApp` | Bydelene: Oslos bydeler (`BSETS`) |
 | `tbane` | `#tbaneApp` | T-banen: «neste stopp»-kviss og kart (`TBANE`) — se under |
 | `vapen` | `#vapenApp` | Fylkes- og kommunevåpen (`FYLKER`, `KOMMUNER`, `SETS`) |
 | `mgp` | `#mgpApp` | Melodi Grand Prix: vinnere og årstall (`MGP`, `MGP_GAPS`) — se under |
 | `caesar` | `#caesarApp` | Hotel Cæsar: roller og skuespillere (`CAESAR`, `CAESAR_OUT`) — se under |
 
-`goMode()` viser/skjuler seksjonene. Hver modus har sin egen adresse med hash — `#prep`, `#tbane`,
-`#vapen`, `#bydel`, `#caesar`, `#mgp`; forsida har ingen hash — så tilbakeknappen i nettleseren,
+`goMode()` viser/skjuler seksjonene. Hver modus har sin egen adresse med hash — `#prep`, `#dagens`,
+`#tbane`, `#vapen`, `#bydel`, `#caesar`, `#mgp`; forsida har ingen hash — så tilbakeknappen i nettleseren,
 tilbakegesten på Android, oppdatering og lenker rett til en modus virker. Hash er valgt fordi
 GitHub Pages bare serverer `index.html`: stier som `/kvisstreneren/tbane` ville gitt 404.
 Knappene på forsida går via `openMode()` (`pushState`); «← Alle kvisser» (`goHome()`) går ett
@@ -30,7 +32,14 @@ historikken ikke hoper seg opp. `syncMode()` følger `popstate`/`hashchange`; uk
 forsida. Fanene inne i en modus («Kviss», «Kart», «Pugg» …) har ingen egen adresse.
 
 Ny modus krever fire ting: en `<section>`/`<div>` i HTML, en linje i `goMode()`, navnet i
-`MODES`, og en `addEventListener` med `openMode()` på knappen på forsida.
+`MODES`, og en `addEventListener` med `openMode()` på knappen på forsida. Skal den være med i
+Dagens kviss, trenger den også en kilde i `MIX` — se «Dagens kviss».
+
+### Tilfeldighet
+
+Alle tilfeldige valg i kvissene (`shuffle()`, feilalternativer, retning på spørsmålet) går gjennom
+`rnd()`, ikke `Math.random()`. Det er det som lar Dagens kviss bytte inn en generator med frø
+(`withSeed()`) og gi alle de samme spørsmålene. Bruk `rnd()` også i ny kode.
 
 ## Ukas prepp
 
@@ -97,6 +106,69 @@ All tekst HTML-escapes før den rendres, så rapporten kan legges inn ordrett �
 anførselstegn og spesialtegn går fint. Det eneste `set-prep.mjs` må røre er en bokstavelig
 `</script` i teksten, som ellers ville lukket blokken for tidlig.
 
+## Dagens kviss
+
+Ti blandede spørsmål med svaralternativer, alltid to fra hver modus og alltid i samme rekkefølge:
+to om bydelene, to om T-banen, to våpenskjold, to MGP og to Hotel Cæsar (`MX_ORDER`, `MX_EACH`).
+Det er et krav at hver runde har to fra hver modus, i den rekkefølgen. Det finnes ingen knapp på
+forsida; modusen nås bare på `#dagens`.
+
+Dagens runde trekkes med et frø laget av datoen i norsk tid, så alle får de samme spørsmålene
+samme dag, og nye ved midnatt. Hver modus' trekning og hvert spørsmåls tegning får hvert sitt frø
+(`mxSeeded()`), så én modus ikke kan forskyve de andre. T-banens feilalternativer velges når kartet
+tegnes, ut fra hvilke navn som får plass, og kan derfor variere litt med skjermbredden og
+karttypen; spørsmålene er de samme.
+
+**Datoen kommer fra serveren, ikke fra enheten**, siden alle kan stille klokka si. Hver gang modusen
+åpnes, sender `mxSync()` en HEAD-forespørsel etter sida selv og leser `Date`-headeren (pluss `Age`,
+om det var en mellomlagring som svarte). Derfra regner `mxNow()` seg videre med
+`performance.now()`, som ikke flytter seg når klokka på enheten endres. Bruk `mxNow()`, aldri
+`Date.now()`, i Dagens kviss. Får sida ikke kontakt og har ingen tid fra før, vises «Fikk ikke
+hentet datoen» med en knapp for å prøve igjen (`#mxOffline`). Åpnet som lokal fil (`file://`)
+finnes det ingen server, og da brukes enhetens klokke; det er bare for testing. Også stengingen
+onsdag 19–22 går etter serverens klokke.
+
+Svarene lagres etter hvert spørsmål i `localStorage` under `dagens` (`day`, `marks` som «1»/«0»
+per spørsmål, og `log` med poeng per dag). Oppdaterer man sida midt i runden, fortsetter den
+der man slapp, uten å gi samme spørsmål på nytt. `log` gir «N dager på rad».
+
+Rundene er nummerert fra `MX_FIRST` (1. oktober 2026 er #0, dagen etter #1 osv.), og nummeret
+står under overskriften. Etter runden kan resultatet deles som i Wordle (delingsarket på mobil,
+ellers utklippstavla), i akkurat dette formatet:
+
+```
+Kvisstreneren #N
+8 av 10
+🟩🟥🟩🟩🟩🟩🟩🟥🟩🟩
+https://haakjell.github.io/kvisstreneren/#dagens
+```
+
+Lenken står i `MX_URL`. «Ti blandede spørsmål til» gir en fri runde uten frø, som ikke lagres. Onsdag 19–22 er modusen stengt, som
+nedtellingen. Endres dataene i en modus (en ny rad i `MGP`), kan dagens spørsmål bli andre for dem
+som ikke har spilt ennå; det er greit.
+
+### Kildene i `MIX`
+
+Hver modus legger inn sin egen kilde, `MIX.<modus> = {label, deal(n)}`, rett etter sin egen kviss.
+`deal(n)` gir `n` ulike spørsmål på formen som står beskrevet over `MIX` i koden: spørsmålstekst,
+HTML over spørsmålet, eventuelt ny HTML etter svaret, alternativene som `{label, ok, info}`,
+faktateksten og raden i lista over bom. Kildene bygges av de samme hjelpefunksjonene som modusens
+egen kviss bruker (`cOptions()`, `mgOptions()`, `tPickOpts()`, `tFact()`, `bMap()`, `otherIx()` …),
+så det finnes bare én versjon av logikken. Endrer du hvordan en modus lager spørsmål, gjør det i
+hjelpefunksjonen, så følger Dagens kviss med.
+
+Valgene i modusene selv gjelder ikke i Dagens kviss. Utvalget der er fast:
+
+- **Bydelene:** tilfeldig blant alle, både dagens 15 og de 8 nye fra 2028. De nye er merket, både
+  i spørsmålet («Hvilken av de nye bydelene er markert?») og i telleren («Bydelene, de nye fra
+  2028», via `tag` i kilden).
+- **T-banen:** alle linjer, på det kartet som er valgt i T-banemodusen («Geografisk» eller
+  «Linjekart», `tMapKind`). Bryteren finnes bare der.
+- **Våpenskjold:** tilfeldig blant alle, både fylkesvåpen og kommunevåpen.
+- **MGP:** bare fra og med 2000 (`MG_MIX_FROM`), også feilalternativene, og det står i telleren
+  («MGP fra og med 2000») og i teksten under kortet. År → artist eller artist → år, tilfeldig.
+- **Hotel Cæsar:** bare rolle → skuespiller.
+
 ## T-banen
 
 Kartet tegnes som SVG fra `TBANE` — ingen bilder. `TBANE` er generert; ikke rediger den for hånd.
@@ -113,7 +185,9 @@ plattform mot Frognerseteren. Sentrum forstørres med en fiskeøyeprojeksjon (`F
 i skriptet). Linjefargene ligger i CSS som `--l1`…`--l5`, ikke i dataene.
 
 Bryteren øverst («Geografisk» / «Linjekart») gjelder både «Kviss» og «Kart», og huskes i
-`localStorage` under `tMapKind`. «Geografisk» er SVG-en fra `TBANE`. «Linjekart» er Ruters eget
+`localStorage` under `tMapKind`. «Linjekart» er standard. Nøkkelen skrives bare når noen trykker
+på bryteren, så en lagret `'geo'` er et valg og blir respektert; alle uten lagret verdi får
+linjekartet. «Geografisk» er SVG-en fra `TBANE`. «Linjekart» er Ruters eget
 schematiske linjekart: et bilde som lenkes direkte fra Ruters CDN, på samme måte som våpnene lenkes
 fra Wikimedia — det ligger ikke i repoet. Siden Ruters kart har alle stasjonsnavnene trykt på seg,
 dekker kvissen til alle navn (også endestasjonsoverskriftene) unntatt de to viste stoppene, med
@@ -260,7 +334,7 @@ Det finnes ingen testpakke. Etter en endring:
 node -e "const s=require('fs').readFileSync('index.html','utf8');[...s.matchAll(/<script>([\s\S]*?)<\/script>/g)].forEach((b,i)=>{new Function(b[1]);console.log('block',i,'ok')})"
 ```
 
-Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle seks modusene, og både
+Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle sju modusene, og både
 lys og mørk modus (temaet følger `prefers-color-scheme`). Knappen for hjemskjermen vises bare
 med mobilemulering (berøring) i utviklerverktøyene.
 
