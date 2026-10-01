@@ -8,16 +8,17 @@ Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til bruker
 
 ## Struktur
 
-Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og seks visninger som byttes med `goMode()`:
+Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og seks visninger som byttes med `goMode()`.
+Tabellen står i samme rekkefølge som knappene på forsida:
 
 | Modus | Seksjon | Innhold |
 |---|---|---|
-| `prep` | `#prepApp` | Ukas kvissprep — se under |
+| `prep` | `#prepApp` | Ukas prepp — se under |
+| `bydel` | `#bydelApp` | Bydelene: Oslos bydeler (`BSETS`) |
 | `tbane` | `#tbaneApp` | T-banen: «neste stopp»-kviss og kart (`TBANE`) — se under |
 | `vapen` | `#vapenApp` | Fylkes- og kommunevåpen (`FYLKER`, `KOMMUNER`, `SETS`) |
-| `bydel` | `#bydelApp` | Oslos bydeler (`BSETS`) |
-| `caesar` | `#caesarApp` | Hotel Cæsar: roller og skuespillere (`CAESAR`, `CAESAR_OUT`) — se under |
 | `mgp` | `#mgpApp` | Melodi Grand Prix: vinnere og årstall (`MGP`, `MGP_GAPS`) — se under |
+| `caesar` | `#caesarApp` | Hotel Cæsar: roller og skuespillere (`CAESAR`, `CAESAR_OUT`) — se under |
 
 `goMode()` viser/skjuler seksjonene. Hver modus har sin egen adresse med hash — `#prep`, `#tbane`,
 `#vapen`, `#bydel`, `#caesar`, `#mgp`; forsida har ingen hash — så tilbakeknappen i nettleseren,
@@ -31,7 +32,7 @@ forsida. Fanene inne i en modus («Kviss», «Kart», «Pugg» …) har ingen eg
 Ny modus krever fire ting: en `<section>`/`<div>` i HTML, en linje i `goMode()`, navnet i
 `MODES`, og en `addEventListener` med `openMode()` på knappen på forsida.
 
-## Ukas kvissprep
+## Ukas prepp
 
 Forsidas øverste knapp åpner `#prepApp`, som rendrer markdown-rapporten fra **quizprep**-skillen.
 To steder er involvert:
@@ -60,7 +61,7 @@ Mellom to preper:
 node tools/set-prep.mjs --clear
 ```
 
-Da viser sida placeholderen «Ukas prep kommer snart» igjen, og forsideknappen sier «Kommer
+Da viser sida placeholderen «Ukas prepp kommer snart» igjen, og forsideknappen sier «Kommer
 snart». Ingen andre endringer trengs.
 
 **Kjøres quizprep herfra, hører dette med til jobben.** Skriv rapporten til `prep/<dato>.md`,
@@ -71,8 +72,8 @@ som den er.
 Sida viser bare den nyeste prepen; `prep/`-mappa er arkivet.
 
 Når kvissdagen er over (fra dagen etter datoen i `data-uke`, eller i rapportens første linje om
-attributtet mangler), viser `renderPrep()` et varsel øverst (`#prepStale`) om at prepen er
-utdatert og at ny kommer neste onsdag — på selve onsdagen «Ny prep til i kveld kommer snart». Forsideknappen
+attributtet mangler), viser `renderPrep()` et varsel øverst (`#prepStale`) om at preppen er
+utdatert («Denne preppen er utdatert») og at ny kommer neste onsdag — på selve onsdagen «Ny prepp til i kveld kommer snart». Forsideknappen
 sier det samme i stedet for «Klar til …». Datoen leses fra teksten, så den må ha dag, måned og
 år («onsdag 7. oktober 2026»). Varselet regnes ut på nytt hver gang man går til forsida eller
 prepen, og forsvinner av seg selv når `set-prep.mjs` legger inn en ny rapport.
@@ -268,6 +269,7 @@ med mobilemulering (berøring) i utviklerverktøyene.
 - **Alt brukeren ser skal være på norsk** (bokmål): knappetekster, overskrifter, tilbakemeldinger,
   feilmeldinger, `<title>`, `aria-label` og annen skjermlesertekst. Ingen engelske ord i
   grensesnittet — heller ikke i midlertidig tekst eller placeholdere.
+  Det heter «prepp» (og «preppen») i teksten brukeren ser; i koden og filnavnene er det `prep`.
 - **Koden er på engelsk**: variabel- og funksjonsnavn, id-er, CSS-klasser og kommentarer.
   Unntaket er egennavn og faguttrykk som ikke har noen naturlig engelsk form — `FYLKER`,
   `KOMMUNER`, `bydel`, `vapen` — de blir stående som de er.
