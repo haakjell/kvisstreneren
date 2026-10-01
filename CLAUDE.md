@@ -2,6 +2,7 @@
 
 Én enkelt statisk side — `index.html` — med all HTML, CSS, JavaScript og alle data i samme fil.
 Ingen byggesteg, ingen avhengigheter, ingen pakkefil. Åpne fila i nettleseren for å teste.
+Det eneste utenfor er `manifest.webmanifest` og ikonene i `icons/` — se «Hjemskjermen».
 
 Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til brukeren, engelsk i koden.
 
@@ -178,6 +179,20 @@ Kilder: «Melodi Grand Prix» (vinnertabellen) og årsartiklene på no.wikipedia
 Eurovision Song Contest» på en.wikipedia (plasseringene), sjekket september 2026. Etter hvert
 års MGP: legg til en rad nederst i `MGP` (plasseringen kommer i mai). Det finnes ikke noe skript.
 
+## Hjemskjermen
+
+På mobil (berøringsskjerm) viser forsida knappen «Legg til på hjemskjermen» øverst til høyre
+(`#installBtn`). Knappen skjules når sida allerede kjører som app fra hjemskjermen, og når
+brukeren har trykket «Ikke vis knappen igjen» (`localStorage`-nøkkelen `installHidden`).
+I Chrome på Android åpner knappen nettleserens egen installeringsdialog (`beforeinstallprompt`);
+ellers, blant annet på iPhone, der det ikke finnes noen slik dialog, åpner den et ark
+(`#installSheet`) med stegene for iOS eller for andre nettlesere.
+
+Dette trenger to ting utenfor `index.html`, siden nettleserne henter dem som egne filer:
+`manifest.webmanifest` (navn, farger, `display: standalone`) og ikonene i `icons/`.
+`icons/icon.svg` er kilden og brukes også som favicon; PNG-ene (180, 192 og 512 piksler) er
+rendret fra den. Endrer du ikonet, rendre PNG-ene på nytt, f.eks. med Playwright/Chromium.
+
 ## Testing
 
 Det finnes ingen testpakke. Etter en endring:
@@ -187,7 +202,8 @@ node -e "const s=require('fs').readFileSync('index.html','utf8');[...s.matchAll(
 ```
 
 Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle seks modusene, og både
-lys og mørk modus (temaet følger `prefers-color-scheme`).
+lys og mørk modus (temaet følger `prefers-color-scheme`). Knappen for hjemskjermen vises bare
+med mobilemulering (berøring) i utviklerverktøyene.
 
 ## Konvensjoner
 

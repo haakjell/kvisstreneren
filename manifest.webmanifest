@@ -1,0 +1,17 @@
+{
+  "name": "Kvisstreneren",
+  "short_name": "Kvisstreneren",
+  "description": "Øv til onsdagskvissen: ukas nyheter, våpenskjold, T-banen, Oslos bydeler, Hotel Cæsar og Melodi Grand Prix.",
+  "lang": "nb",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#E4E9EE",
+  "theme_color": "#E4E9EE",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
