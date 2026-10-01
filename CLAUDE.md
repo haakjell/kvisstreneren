@@ -142,6 +142,29 @@ alternativer, med litt slingringsmonn for skrivefeil). «Pugg»-fanen viser hele
   skuespiller, er to av de fem feilalternativene herfra. Legg bare til navn du har sjekket; serien
   hadde hundrevis av gjesteroller.
 
+### Bilder av rollefigurene
+
+Hvert spørsmål viser et bilde av rollefiguren, og «Pugg» (og lista over bom på slutten) viser
+miniatyrbilder. Bryteren «Vis bilder» slår dem av og på for både «Kviss» og «Pugg», og huskes i
+`localStorage` under `cPics` (bilder er på som standard). Bildene er infoboksbildene fra
+rollefigur-artiklene på hotelcaesar.fandom.com. De lenkes direkte fra Fandoms CDN, på samme måte som
+våpnene lenkes fra Wikimedia, og ligger ikke i repoet. Fandom avviser forespørsler med en
+fremmed `Referer`, så `<img>` må ha `referrerpolicy="no-referrer"` (det har `cPic()`). Får et bilde
+ikke lastet, fjernes det, og resten av sida virker som før.
+
+`CAESAR_IMG` (rolle → bildelenke) er generert; ikke rediger den for hånd. Når du har lagt til
+roller i `CAESAR`, eller vil ha nye bilder fra wikien, kjør fra reporoten:
+
+```bash
+node tools/update-caesar-images.mjs
+```
+
+Wikien skriver av og til navnet annerledes enn vi gjør («Åge Nygaard», «Hugo Anker-Hansen jr.»);
+slike avvik står i `TITLES` øverst i skriptet. Er infoboksbildet dårlig, kan du velge et bilde fra
+artikkelens galleri i `FILES`. Skriptet sier fra om roller det ikke fant noe bilde for.
+
+### Utvalget
+
 `top:1` er de rundt 30 rollene med flest episoder på IMDb (tt0177446, summert over alle som har
 spilt rollen): alle med minst 310 episoder, der tre roller deler plassen på grensa. To unntak:
 Georg Anker-Hansen er med selv om han bare var med i et drøyt år, fordi han er seriens mest kjente
