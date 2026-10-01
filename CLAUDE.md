@@ -186,7 +186,12 @@ På mobil (berøringsskjerm) viser forsida knappen «Legg til på hjemskjermen»
 brukeren har trykket «Ikke vis knappen igjen» (`localStorage`-nøkkelen `installHidden`).
 I Chrome på Android åpner knappen nettleserens egen installeringsdialog (`beforeinstallprompt`);
 ellers, blant annet på iPhone, der det ikke finnes noen slik dialog, åpner den et ark
-(`#installSheet`) med stegene for iOS eller for andre nettlesere.
+(`#installSheet`) med stegene for iOS eller for andre nettlesere. Chrome kan også vise sitt eget
+installeringsbanner uoppfordret; det lar vi være, med mindre brukeren har skjult knappen —
+da undertrykkes banneret også (`preventDefault()` på `beforeinstallprompt`).
+
+Sida har bevisst ingen service worker og ingen offline-modus: bildene (våpen, Ruters kart)
+skal alltid hentes rett fra kilden, uten mellomlagring som kan komme i veien.
 
 Dette trenger to ting utenfor `index.html`, siden nettleserne henter dem som egne filer:
 `manifest.webmanifest` (navn, farger, `display: standalone`) og ikonene i `icons/`.

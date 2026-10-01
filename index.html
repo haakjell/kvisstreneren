@@ -2171,14 +2171,16 @@ renderPrep();
 // The button shows on touch devices only, and never once the page runs as an installed app.
 // Chrome on Android hands us a native install prompt (beforeinstallprompt); everywhere else,
 // notably iOS, which has no such prompt, the button opens a sheet with the steps.
+// Chrome may also show its own install banner unprompted; we let it, unless the user has
+// asked us to stop ("Ikke vis knappen igjen").
 let installEvt=null;
 const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+function installHidden(){ try{ return localStorage.getItem('installHidden')==='1'; }catch(e){ return false; } }
 {
-  let hide=false; try{ hide=localStorage.getItem('installHidden')==='1'; }catch(e){}
   const standalone=matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
-  b$('installBtn').hidden = hide || standalone || !matchMedia('(hover:none) and (pointer:coarse)').matches;
+  b$('installBtn').hidden = installHidden() || standalone || !matchMedia('(hover:none) and (pointer:coarse)').matches;
 }
-addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); installEvt=e; });
+addEventListener('beforeinstallprompt',e=>{ if(installHidden()) e.preventDefault(); installEvt=e; });
 addEventListener('appinstalled',()=>{ installEvt=null; b$('installBtn').hidden=true; });
 b$('installBtn').addEventListener('click',async()=>{
   if(installEvt){
