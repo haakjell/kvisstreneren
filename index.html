@@ -14,7 +14,7 @@
 <meta name="theme-color" content="#111922" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#E4E9EE; --paper:#F7F8F9; --ink:#1B2733; --muted:#5A6875; --line:#C9D2DA;
@@ -38,12 +38,12 @@
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
 body{
   margin:0;min-height:100%;background:var(--bg);color:var(--ink);
-  font-family:"Alegreya Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
   font-size:17px;line-height:1.45;
 }
 .wrap{max-width:560px;margin:0 auto;padding:20px 18px 40px}
 header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
-h1{font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:2.1rem;line-height:1;margin:0;letter-spacing:-.01em}
+h1{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:2.1rem;line-height:1;margin:0;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:.95rem;margin-top:4px}
 .tabs{display:flex;border:1.5px solid var(--line);border-radius:999px;padding:3px;background:var(--paper)}
 .tabs button{border:0;background:none;color:var(--muted);font:inherit;font-weight:500;padding:6px 14px;border-radius:999px;cursor:pointer}
@@ -61,7 +61,7 @@ h1{font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:2.1rem;line-he
 .shield.pop svg,.shield.pop img{animation:pop .35s ease}
 @keyframes pop{from{transform:scale(.94);opacity:.4}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.shield.pop svg{animation:none}.bar i{transition:none}}
-.q{display:block;font-family:"Alegreya",Georgia,serif;font-weight:700;font-size:1.2rem;margin-bottom:8px;text-align:center}
+.q{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:1.2rem;margin-bottom:8px;text-align:center}
 .row{display:flex;gap:8px}
 input[type=text]{
   flex:1;min-width:0;font:inherit;font-size:1.1rem;padding:12px 14px;border-radius:12px;
@@ -82,11 +82,11 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .options button.wrong{background:var(--bad);border-color:var(--bad);color:#fff}
 .options button.dim{opacity:.45}
 .feedback{min-height:3.2em;margin-top:14px;text-align:center}
-.feedback .verdict{font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.35rem}
+.feedback .verdict{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.35rem}
 .feedback .ok{color:var(--ok)} .feedback .bad{color:var(--bad)}
 .feedback .motif{color:var(--muted);font-size:.95rem}
 .hint{color:var(--muted);text-align:center;margin-top:8px;font-size:.95rem}
-.done h2{font-family:"Alegreya",Georgia,serif;font-size:1.8rem;margin:0 0 4px;text-align:center}
+.done h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.8rem;margin:0 0 4px;text-align:center}
 .done p{text-align:center;color:var(--muted);margin:0 0 16px}
 .minigrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:12px;margin:10px 0 18px}
 .minigrid figure{margin:0;text-align:center}
@@ -96,7 +96,7 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .study{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
 .study figure{margin:0;background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:14px 10px 12px;text-align:center}
 .study svg,.study img{width:96px;height:96px;object-fit:contain}
-.study figcaption strong{display:block;font-family:"Alegreya",Georgia,serif;font-size:1.1rem;margin-top:6px}
+.study figcaption strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.1rem;margin-top:6px}
 .study figcaption span{display:block;color:var(--muted);font-size:.85rem;line-height:1.3;margin-top:2px}
 .study.hide-names figcaption{visibility:hidden}
 .study.hide-names figure{cursor:pointer}
@@ -114,7 +114,7 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .mode{display:grid;grid-template-columns:88px 1fr;gap:16px;align-items:center;text-align:left;font:inherit;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:20px;padding:16px 18px;cursor:pointer}
 .mode:hover{border-color:var(--azure)}
 .mode svg{width:88px;height:88px}
-.mode strong{display:block;font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.45rem;line-height:1.1}
+.mode strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.45rem;line-height:1.1}
 .mode span{display:block;color:var(--muted);font-size:.95rem;margin-top:4px}
 .back{font:inherit;font-size:.95rem;background:none;border:0;color:var(--muted);cursor:pointer;padding:4px 0;margin:0 0 10px;text-decoration:underline;text-underline-offset:3px}
 .omap{display:flex;justify-content:center;margin:0 0 14px}
@@ -126,14 +126,14 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .omap .bd.ok{fill:var(--ok)}
 .omap .bd.no{fill:var(--bad);opacity:.55}
 .omap.pop svg{animation:pop .35s ease}
-.omap text{font-family:"Alegreya Sans",system-ui,sans-serif;font-weight:700;fill:var(--ink);stroke:var(--paper);stroke-width:3.5px;paint-order:stroke;text-anchor:middle;pointer-events:none}
+.omap text{font-family:"Figtree",system-ui,sans-serif;font-weight:700;fill:var(--ink);stroke:var(--paper);stroke-width:3.5px;paint-order:stroke;text-anchor:middle;pointer-events:none}
 .omap .bd.hi+text,.omap text.on{fill:#fff;stroke:var(--hi)}
 .bstudy .omap svg{max-height:none;max-width:560px}
 .bstudy .bd{cursor:pointer}
 .bstudy .bd:hover{fill:var(--line)}
 .bstudy .bd.hi:hover{fill:var(--hi)}
 .bdinfo{min-height:4.2em;text-align:center;margin:0 0 14px}
-.bdinfo strong{display:block;font-family:"Alegreya",Georgia,serif;font-size:1.35rem}
+.bdinfo strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.35rem}
 .bdinfo span{color:var(--muted);font-size:.95rem}
 .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .chips button{font:inherit;font-size:.95rem;padding:6px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
@@ -146,8 +146,8 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .prose{padding:18px 18px 22px}
 .prose > :first-child{margin-top:0}
 .prose h1{font-size:1.65rem;margin:0 0 4px;letter-spacing:0}
-.prose h2{font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.3rem;margin:26px 0 8px;padding-bottom:6px;border-bottom:1.5px solid var(--line)}
-.prose h3{font-family:"Alegreya",Georgia,serif;font-weight:700;font-size:1.1rem;margin:18px 0 4px}
+.prose h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.3rem;margin:26px 0 8px;padding-bottom:6px;border-bottom:1.5px solid var(--line)}
+.prose h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:1.1rem;margin:18px 0 4px}
 .prose h4{font-weight:700;font-size:1rem;margin:12px 0 2px}
 .prose p{margin:7px 0}
 .prose ul{margin:6px 0 10px;padding-left:20px}
@@ -165,12 +165,13 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .linepick button{font:inherit;font-weight:800;font-size:1.05rem;width:42px;height:42px;border-radius:50%;border:2px solid var(--c);background:var(--c);color:#fff;cursor:pointer;padding:0}
 .linepick button[aria-pressed="false"]{background:var(--paper);color:var(--muted);border-color:var(--line)}
 .tq{text-align:center;margin:0 0 12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .tq .dir{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:1.05rem;margin-bottom:4px}
 .tq .q{margin:0}
 .tmap{position:relative;margin:0 0 14px;border-radius:14px;overflow:hidden;background:var(--bg);border:1.5px solid var(--line)}
 .tmap svg{display:block;width:100%;height:auto}
 .tmap.pop svg{animation:pop .35s ease}
-.tmap text{font-family:"Alegreya Sans",system-ui,sans-serif;font-weight:700;fill:var(--ink);stroke:var(--bg);paint-order:stroke;stroke-linejoin:round;pointer-events:none}
+.tmap text{font-family:"Figtree",system-ui,sans-serif;font-weight:700;fill:var(--ink);stroke:var(--bg);paint-order:stroke;stroke-linejoin:round;pointer-events:none}
 .tmap text.mute{fill:var(--muted);font-weight:500}
 .tmap text.ok{fill:var(--ok)}
 .tmap text.no{fill:var(--bad)}
@@ -193,7 +194,7 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .tzoom{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:6px}
 .tzoom button{font:inherit;font-weight:700;font-size:1.2rem;width:38px;height:38px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;padding:0;line-height:1}
 .tinfo{min-height:4.2em;text-align:center;margin:0 0 6px}
-.tinfo strong{display:block;font-family:"Alegreya",Georgia,serif;font-size:1.35rem}
+.tinfo strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.35rem}
 .tinfo span{color:var(--muted);font-size:.95rem}
 .tinfo .badges{display:flex;gap:6px;justify-content:center;margin-top:4px}
 .tinfo .lbadge{color:#fff;font-size:1rem}
@@ -205,14 +206,14 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .setswitch.three{grid-template-columns:repeat(3,1fr)}
 .cprompt{text-align:center;margin:8px 0 18px}
 .cprompt small{display:block;color:var(--muted);font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-.cprompt strong{display:block;font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:2rem;line-height:1.1;margin:4px 0 0}
+.cprompt strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:2rem;line-height:1.1;margin:4px 0 0}
 .cprompt.pop strong{animation:pop .35s ease}
 @media (prefers-reduced-motion:reduce){.cprompt.pop strong{animation:none}}
 .row input.right{border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}
 .row input.wrong{border-color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
 .clist{list-style:none;padding:0;margin:0 0 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .clist li{background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;line-height:1.3}
-.clist strong{display:block;font-family:"Alegreya",Georgia,serif;font-size:1.1rem}
+.clist strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.1rem}
 .clist .act{display:block;font-weight:700;color:var(--azure);margin-top:2px}
 .clist small{display:block;color:var(--muted);font-size:.85rem;margin-top:3px}
 .clist.hide-actors li{cursor:pointer}
@@ -230,15 +231,15 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .switch[aria-checked="true"]::before{background:var(--azure)}
 .switch[aria-checked="true"]::after{right:2.5px}
 @media (prefers-reduced-motion:reduce){.switch::before,.switch::after{transition:none}}
-.chead{font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.25rem;margin:4px 0 10px}
+.chead{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.25rem;margin:4px 0 10px}
 /* ---------- Melodi Grand Prix ---------- */
 .cprompt .song{display:block;color:var(--muted);font-size:1.1rem;font-weight:500;margin-top:4px}
 .mgfrom{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:-4px 0 16px}
 .mgfrom > span{color:var(--muted);font-size:.95rem}
 .mglist{list-style:none;padding:0;margin:0 0 18px;display:grid;gap:8px}
 .mglist li{display:grid;grid-template-columns:3.1em 1fr;gap:10px;align-items:baseline;background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:9px 14px;line-height:1.3}
-.mglist b{font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.15rem;color:var(--azure)}
-.mglist strong{display:block;font-family:"Alegreya",Georgia,serif;font-size:1.1rem}
+.mglist b{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.15rem;color:var(--azure)}
+.mglist strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.1rem}
 .mglist small{display:block;color:var(--muted);font-size:.88rem;margin-top:2px}
 .mglist li.gap{background:none;border-style:dashed}
 .mglist li.gap b,.mglist li.gap strong{color:var(--muted)}
@@ -248,20 +249,20 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 /* Shown above an old report once its quiz day has passed */
 .prepstale{background:var(--paper);border:1.5px solid var(--or);border-left-width:6px;border-radius:14px;padding:12px 16px;margin:0 0 14px}
 .prepstale[hidden]{display:none}
-.prepstale strong{display:block;font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.15rem}
+.prepstale strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.15rem}
 .prepstale p{margin:2px 0 0;color:var(--muted)}
 .prepsoon{text-align:center;color:var(--muted);padding:26px 6px 22px}
-.prepsoon strong{display:block;font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.4rem;color:var(--ink);margin-bottom:8px}
+.prepsoon strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.4rem;color:var(--ink);margin-bottom:8px}
 /* Countdown to the next quiz (Wednesday 19:00 Oslo time), or a warning while it runs */
 .countdown{background:var(--paper);border:1.5px solid var(--line);border-radius:20px;padding:14px 18px 16px;margin:0 0 20px;text-align:center}
 .countdown p{margin:0;color:var(--muted);font-size:.95rem}
 .countdown .cdunits{display:flex;justify-content:center;gap:10px;margin:8px 0 6px}
 .countdown .cdunits div{min-width:58px}
 .countdown .cdunits .cdms{min-width:96px}
-.countdown .cdunits b{display:block;font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:2rem;line-height:1.05;color:var(--ink);font-variant-numeric:tabular-nums}
+.countdown .cdunits b{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:2rem;line-height:1.05;color:var(--ink);font-variant-numeric:tabular-nums}
 .countdown .cdunits span{display:block;color:var(--muted);font-size:.85rem}
 .countdown.live{border-color:var(--gules);box-shadow:inset 0 0 0 1px var(--gules)}
-.countdown.live strong{display:block;font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.4rem;line-height:1.15;color:var(--bad);margin-bottom:6px}
+.countdown.live strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.4rem;line-height:1.15;color:var(--bad);margin-bottom:6px}
 .countdown.live p{color:var(--ink)}
 /* Add-to-home-screen button (touch devices only, hidden once installed) and its instruction sheet */
 .install{display:flex;align-items:center;gap:6px;margin:-8px 0 12px auto;font:inherit;font-size:.9rem;font-weight:500;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:999px;padding:5px 12px 5px 8px;cursor:pointer}
@@ -270,7 +271,7 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .sheet{width:100%;max-width:560px;margin:auto auto 0;border:0;border-radius:22px 22px 0 0;padding:24px 20px calc(20px + env(safe-area-inset-bottom,0px));background:var(--paper);color:var(--ink)}
 .sheet:not([open]){display:none}
 .sheet::backdrop{background:rgba(10,16,22,.45)}
-.sheet h2{font-family:"Alegreya",Georgia,serif;font-weight:800;font-size:1.45rem;line-height:1.15;margin:0 0 6px}
+.sheet h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.45rem;line-height:1.15;margin:0 0 6px}
 .sheet p{color:var(--muted);margin:0 0 14px}
 .sheet ol{margin:0 0 18px;padding-left:1.4em}
 .sheet li{margin-bottom:8px}
@@ -1101,7 +1102,7 @@ function tLinePts(c,w){
 const tMeasure=document.createElement('canvas').getContext('2d');
 let tWidths={};
 function tTextW(name){
-  if(!(name in tWidths)){ tMeasure.font=`700 ${T_FONT_PX}px "Alegreya Sans", system-ui, sans-serif`; tWidths[name]=tMeasure.measureText(name).width; }
+  if(!(name in tWidths)){ tMeasure.font=`700 ${T_FONT_PX}px "Figtree", system-ui, sans-serif`; tWidths[name]=tMeasure.measureText(name).width; }
   return tWidths[name];
 }
 const tF=v=>Math.round(v*100)/100;
@@ -1270,7 +1271,7 @@ function tQMap(q,reveal){
 }
 function tShow(){
   const q=tCur=tDeck[tPos]; tAnswered=false;
-  t$('tQ').innerHTML=`<div class="dir">${tBadge(q.c)}<span>${q.last?`Linje ${q.c}`:`Linje ${q.c} mot ${tSt[q.to].name}`}</span></div>`+
+  t$('tQ').innerHTML=`<div class="dir"><span class="sr">Linje</span>${tBadge(q.c)}${q.last?'':`<span>${tSt[q.to].name}</span>`}</div>`+
     `<div class="q">${q.last?`Hva heter endestasjonen etter ${tSt[q.ctx[q.ctx.length-1]].name}?`:`Hva er neste stopp etter ${tSt[q.ctx[q.ctx.length-1]].name}?`}</div>`;
   // The geographic map decides which names it labels; on Ruter's map only the given stops show
   const ruter=tRuterOn(), geo=ruter?null:tQMap(q), labeled=ruter?[]:geo.labeled;
