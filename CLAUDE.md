@@ -80,6 +80,11 @@ som den er.
 
 Sida viser bare den nyeste prepen; `prep/`-mappa er arkivet.
 
+På desktop (fra 900 px) er preppen bredere enn resten av sida, siden den bare er tekst:
+`goMode()` setter klassen `wide` på `.wrap` når preppen vises, og den får da
+`clamp(560px, 60vw, 960px)` — omtrent halve skjermen på en vanlig 1920-skjerm. Forsida og
+kvissene beholder 560 px.
+
 Når kvissdagen er over (fra dagen etter datoen i `data-uke`, eller i rapportens første linje om
 attributtet mangler), viser `renderPrep()` et varsel øverst (`#prepStale`) om at preppen er
 utdatert («Denne preppen er utdatert») og at ny kommer neste onsdag — på selve onsdagen «Ny prepp til i kveld kommer snart». Forsideknappen

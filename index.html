@@ -42,6 +42,11 @@ body{
   font-size:17px;line-height:1.45;
 }
 .wrap{max-width:560px;margin:0 auto;padding:20px 18px 40px}
+/* Ukas prepp is pure reading, so on desktop it gets about half the screen width */
+@media (min-width:900px){
+  .wrap.wide{max-width:clamp(560px,60vw,960px)}
+  .wrap.wide .prose{padding:30px 40px 34px}
+}
 header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
 h1{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:2.1rem;line-height:1;margin:0;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:.95rem;margin-top:4px}
@@ -2529,6 +2534,7 @@ function goMode(m){
   curMode=m;
   clearTimeout(autoTimer); autoTimer=null; clearTimeout(bTimer); bTimer=null; clearTimeout(tTimer); tTimer=null; clearTimeout(cTimer); cTimer=null; clearTimeout(mgTimer); mgTimer=null; clearTimeout(mxTimer); mxTimer=null;
   b$('home').hidden=m!=='home'; b$('prepApp').hidden=m!=='prep'; b$('dagensApp').hidden=m!=='dagens'; b$('vapenApp').hidden=m!=='vapen'; b$('bydelApp').hidden=m!=='bydel'; b$('tbaneApp').hidden=m!=='tbane'; b$('caesarApp').hidden=m!=='caesar'; b$('mgpApp').hidden=m!=='mgp';
+  document.querySelector('.wrap').classList.toggle('wide', m==='prep');
   if(m==='bydel' && !bDeck.length) bUse('old');
   if(m==='tbane') tOpen();
   if(m==='caesar') cOpen();
