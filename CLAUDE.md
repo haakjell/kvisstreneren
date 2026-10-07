@@ -9,13 +9,12 @@ Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til bruker
 ## Struktur
 
 Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og sju visninger som byttes med `goMode()`.
-Tabellen står i samme rekkefølge som knappene på forsida. Unntaket er `dagens`, som bevisst ikke har
-noen knapp: den nås bare via adressen (`#dagens`), som deles med utvalgte.
+Tabellen står i samme rekkefølge som knappene på forsida.
 
 | Modus | Seksjon | Innhold |
 |---|---|---|
 | `prep` | `#prepApp` | Ukas prepp — se under |
-| `dagens` | `#dagensApp` | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`), uten knapp — se under |
+| `dagens` | `#dagensApp` | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`) — se under |
 | `bydel` | `#bydelApp` | Bydelene: Oslos bydeler (`BSETS`) |
 | `tbane` | `#tbaneApp` | T-banen: «neste stopp»-kviss og kart (`TBANE`) — se under |
 | `vapen` | `#vapenApp` | Fylkes- og kommunevåpen (`FYLKER`, `KOMMUNER`, `SETS`) |
@@ -115,8 +114,7 @@ anførselstegn og spesialtegn går fint. Det eneste `set-prep.mjs` må røre er 
 
 Ti blandede spørsmål med svaralternativer, alltid to fra hver modus og alltid i samme rekkefølge:
 to om bydelene, to om T-banen, to våpenskjold, to MGP og to Hotel Cæsar (`MX_ORDER`, `MX_EACH`).
-Det er et krav at hver runde har to fra hver modus, i den rekkefølgen. Det finnes ingen knapp på
-forsida; modusen nås bare på `#dagens`.
+Det er et krav at hver runde har to fra hver modus, i den rekkefølgen.
 
 Dagens runde trekkes med et frø laget av datoen i norsk tid, så alle får de samme spørsmålene
 samme dag, og nye ved midnatt. Hver modus' trekning og hvert spørsmåls tegning får hvert sitt frø
@@ -311,6 +309,10 @@ nuller i midten blir stående. Den siste timen vises også millisekunder, og da 
 hver frame (`requestAnimationFrame`) — men bare mens forsida vises; ellers er det ett sekund
 igjen. Markupen bygges bare på nytt når oppsettet endres; ellers skrives bare tallene
 (`cdShow()`), så det koster nesten ingenting.
+
+Det siste døgnet dirrer boksen kort (0,3 s, klassen `tick`) hver gang sekundet teller ned; den
+siste timen rister den kraftigere hele tiden (klassen `rumble`). Begge slås av med
+`prefers-reduced-motion`.
 
 ## Hjemskjermen
 

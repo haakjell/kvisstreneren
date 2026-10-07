@@ -278,6 +278,12 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .countdown.live{border-color:var(--gules);box-shadow:inset 0 0 0 1px var(--gules)}
 .countdown.live strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.4rem;line-height:1.15;color:var(--bad);margin-bottom:6px}
 .countdown.live p{color:var(--ink)}
+/* Under 24 hours left it jolts briefly on every second; under an hour it shakes all the time */
+.countdown.tick{animation:cdtick .3s ease-out}
+.countdown.rumble{animation:cdrumble .32s linear infinite}
+@keyframes cdtick{0%,100%{transform:none}20%{transform:translate(-3px,0) rotate(-.5deg)}45%{transform:translate(3px,0) rotate(.5deg)}70%{transform:translate(-1.5px,0) rotate(-.2deg)}}
+@keyframes cdrumble{0%,100%{transform:none}15%{transform:translate(-4px,1px) rotate(-1deg)}30%{transform:translate(4px,-1px) rotate(.8deg)}45%{transform:translate(-3px,-1px) rotate(-.6deg)}60%{transform:translate(3px,1px) rotate(1deg)}75%{transform:translate(-2px,0) rotate(-.4deg)}90%{transform:translate(2px,-1px) rotate(.3deg)}}
+@media (prefers-reduced-motion:reduce){.countdown.tick,.countdown.rumble{animation:none}}
 /* Add-to-home-screen button (touch devices only, hidden once installed) and its instruction sheet */
 .install{display:flex;align-items:center;gap:6px;margin:-8px 0 12px auto;font:inherit;font-size:.9rem;font-weight:500;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:999px;padding:5px 12px 5px 8px;cursor:pointer}
 .install[hidden]{display:none}
@@ -303,6 +309,7 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
     <p class="sub">Velg hva du vil øve på til onsdag.</p>
     <div class="modes">
       <button class="mode" id="goPrep"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><rect x="11" y="9" width="54" height="68" rx="9" fill="var(--paper)" stroke="var(--azure)" stroke-width="3.5"/><path d="M23 27h30M23 39h30M23 51h20" stroke="var(--azure)" stroke-width="4.5" stroke-linecap="round"/><circle cx="62" cy="61" r="15" fill="var(--or)"/><path d="M55.5 61.5l4.5 4.5 9-10" stroke="#1B2733" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong>Ukas prepp</strong><span id="prepTeaser">Nyheter, navnedager og datoen</span></div></button>
+      <button class="mode" id="goDagens"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="14" width="64" height="62" rx="10" fill="var(--paper)" stroke="var(--azure)" stroke-width="3.5"/><path d="M12 24a10 10 0 0 1 10-10h44a10 10 0 0 1 10 10v8H12z" fill="var(--azure)"/><rect x="26" y="7" width="6" height="14" rx="3" fill="var(--ink)"/><rect x="56" y="7" width="6" height="14" rx="3" fill="var(--ink)"/><g fill="var(--ok)"><rect x="18" y="44" width="8" height="8" rx="2"/><rect x="29" y="44" width="8" height="8" rx="2"/><rect x="51" y="44" width="8" height="8" rx="2"/><rect x="62" y="44" width="8" height="8" rx="2"/><rect x="18" y="55" width="8" height="8" rx="2"/><rect x="29" y="55" width="8" height="8" rx="2"/><rect x="40" y="55" width="8" height="8" rx="2"/><rect x="62" y="55" width="8" height="8" rx="2"/></g><g fill="var(--bad)"><rect x="40" y="44" width="8" height="8" rx="2"/><rect x="51" y="55" width="8" height="8" rx="2"/></g></svg></div><div><strong>Dagens kviss</strong><span>Ti blandede spørsmål, nye hver dag</span></div></button>
       <button class="mode" id="goBydel"><div class="omap" id="modeMapIcon" aria-hidden="true" style="margin:0"></div><div><strong>Bydelene</strong><span>Dagens 15 eller de nye 8</span></div></button>
       <button class="mode" id="goTbane"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12 L38 36 H78" stroke="var(--l1)"/><path d="M8 42 H80" stroke="var(--l2)"/><path d="M8 48 H48 L72 76" stroke="var(--l5)"/></g><path d="M44 30 V52" stroke="#1B2733" stroke-width="12" stroke-linecap="round"/><path d="M44 30 V52" stroke="#fff" stroke-width="7" stroke-linecap="round"/></svg></div><div><strong>T-banen</strong><span>Neste stopp på alle fem linjer</span></div></button>
       <button class="mode" id="goVapen"><div id="modeShieldIcon" aria-hidden="true"></div><div><strong>Våpenskjold</strong><span>Fylkesvåpen og kommunevåpen</span></div></button>
@@ -2390,8 +2397,7 @@ function renderPrep(){
 }
 
 // ---------- Dagens kviss ----------
-// Two questions from each mode, from the sources in MIX, always in the order of MX_ORDER. There is
-// no button for it on the home page: it is reached by its URL (#dagens) only, which is handed out.
+// Two questions from each mode, from the sources in MIX, always in the order of MX_ORDER.
 // The day's round is dealt from a seed made from the date (Oslo time), so everyone gets the same
 // questions; each mode's deal and each question's drawing get their own seed, so one can't throw
 // the others off. Progress is saved after every answer, which also means a reload doesn't give
@@ -2563,6 +2569,7 @@ function syncMode(){   // back/forward, or a hash typed into the address bar
 window.addEventListener('popstate',syncMode);
 window.addEventListener('hashchange',syncMode);
 b$('goPrep').addEventListener('click',()=>openMode('prep'));
+b$('goDagens').addEventListener('click',()=>openMode('dagens'));
 b$('goVapen').addEventListener('click',()=>openMode('vapen'));
 b$('goBydel').addEventListener('click',()=>openMode('bydel'));
 b$('goTbane').addEventListener('click',()=>openMode('tbane'));
@@ -2592,7 +2599,7 @@ function osloInstant(w,now){ const g=w-(osloWall(now)-now); return w-(osloWall(g
 function cdPlural(n,one,many){ return n===1?one:many; }
 // The markup is only rebuilt when the layout changes (units, labels, text); otherwise just the
 // numbers are written, which keeps the millisecond ticking in the last hour cheap.
-let cdLayout='';
+let cdLayout='', cdLeft=-1;
 function cdShow(cls,html,nums){
   const el=b$('countdown');
   if(cls+html!==cdLayout){ cdLayout=cls+html; el.className=cls; el.innerHTML=html; }
@@ -2617,8 +2624,11 @@ function renderCountdown(){
   const td=new Date(tw), MONTHS=['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'];
   const when=ahead===0?'I kveld':ahead===1?'I morgen':'Onsdag '+td.getUTCDate()+'. '+MONTHS[td.getUTCMonth()];
   // Milliseconds always keep plural and three digits, so the layout stays put while they spin
-  cdShow('countdown','<p>Neste kviss begynner om</p><div class="cdunits">'+units.map(([n,one,many],i)=>'<div'+(fine&&i===units.length-1?' class="cdms"':'')+'><b></b><span>'+(fine&&i===units.length-1?many:cdPlural(n,one,many))+'</span></div>').join('')+'</div><p>'+when+' kl. '+QUIZ_START+'</p>',
+  cdShow(fine?'countdown rumble':'countdown','<p>Neste kviss begynner om</p><div class="cdunits">'+units.map(([n,one,many],i)=>'<div'+(fine&&i===units.length-1?' class="cdms"':'')+'><b></b><span>'+(fine&&i===units.length-1?many:cdPlural(n,one,many))+'</span></div>').join('')+'</div><p>'+when+' kl. '+QUIZ_START+'</p>',
     units.map(([n],i)=>fine&&i===units.length-1?String(n).padStart(3,'0'):String(n)));
+  // Inside the last day, a short jolt each time the seconds tick down (the last hour shakes nonstop)
+  if(!fine && ms<86400000 && left!==cdLeft){ const el=b$('countdown'); el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); }
+  cdLeft=left;
   return fine;
 }
 // Once a second, aimed just past the second; every frame while milliseconds show and the home page
