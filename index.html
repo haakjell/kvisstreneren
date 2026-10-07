@@ -2534,6 +2534,9 @@ function goMode(m){
   clearTimeout(autoTimer); autoTimer=null; clearTimeout(bTimer); bTimer=null; clearTimeout(tTimer); tTimer=null; clearTimeout(cTimer); cTimer=null; clearTimeout(mgTimer); mgTimer=null; clearTimeout(mxTimer); mxTimer=null;
   b$('home').hidden=m!=='home'; b$('prepApp').hidden=m!=='prep'; b$('dagensApp').hidden=m!=='dagens'; b$('vapenApp').hidden=m!=='vapen'; b$('bydelApp').hidden=m!=='bydel'; b$('tbaneApp').hidden=m!=='tbane'; b$('caesarApp').hidden=m!=='caesar'; b$('mgpApp').hidden=m!=='mgp';
   document.querySelector('.wrap').classList.toggle('wide', m==='prep');
+  // The one countdown element moves between the home page and the prep, so it keeps its state
+  if(m==='prep') b$('prepStale').before(b$('countdown'));
+  else if(m==='home') b$('home').querySelector('h1').before(b$('countdown'));
   if(m==='bydel' && !bDeck.length) bUse('old');
   if(m==='tbane') tOpen();
   if(m==='caesar') cOpen();
@@ -2624,10 +2627,10 @@ function renderCountdown(){
   cdLeft=left;
   return fine;
 }
-// Once a second, aimed just past the second; every frame while milliseconds show and the home page
+// Once a second, aimed just past the second; every frame while milliseconds show and the countdown
 // is in view (animation frames also pause by themselves in background tabs).
 (function tick(){
-  if(renderCountdown() && !b$('home').hidden) requestAnimationFrame(tick);
+  if(renderCountdown() && !b$('countdown').closest('[hidden]')) requestAnimationFrame(tick);
   else setTimeout(tick,1000-Date.now()%1000+5);
 })();
 
