@@ -299,18 +299,134 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .sheet li svg{width:1.15em;height:1.15em;vertical-align:-.2em;margin:0 1px}
 .sheet .sheetbtns{display:flex;flex-direction:column;gap:6px}
 .sheet .linkbtn{font:inherit;font-size:.95rem;background:none;border:0;color:var(--muted);cursor:pointer;padding:8px;text-decoration:underline;text-underline-offset:3px}
+.sheet ul{margin:0 0 18px;padding-left:1.3em}
+.sheet .premium{font:inherit;font-weight:700;border-radius:12px;padding:10px 16px;border:1.5px dashed var(--line);background:none;color:var(--muted);cursor:not-allowed}
+.sheet .premium span{display:block;font-weight:500;font-size:.85rem}
+/* ---------- Ads: what you get instead of the shaking (see CLAUDE.md, «Reklame») ---------- */
+/* The button sits on the countdown's lower edge, outside what cdShow() rebuilds, and shakes with it */
+.countdown{position:relative}
+.shakebtn{position:absolute;right:14px;bottom:-12px;font:inherit;font-size:.78rem;font-weight:700;line-height:1.4;color:var(--muted);background:var(--paper);border:1.5px solid var(--line);border-radius:999px;padding:2px 10px;cursor:pointer}
+.shakebtn:hover{color:var(--ink);border-color:var(--azure)}
+/* Slots: ad-in sits in the content on phones only, ad-side in fixed side columns (desktop, from 1100 px),
+   and ad-all (and the tiles under «Anbefalt for deg») everywhere. A slot with no ad left for it is .none */
+:root{--wrapw:560px}
+body[data-mode="prep"]{--wrapw:clamp(560px,60vw,960px)}
+.adslot,.adrecs{display:none}
+body.ads .adslot.ad-in,body.ads .adslot.ad-all,body.ads .adrecs,body.ads .adrecs .adslot{display:block}
+@media (min-width:1100px){
+  body.ads .adslot.ad-in{display:none}
+  body.ads .adslot.ad-side{display:block}
+}
+body.ads .adslot.none{display:none}
+/* Ads are meant to stand out as sharp white boxes in dark mode too, so they don't use the theme */
+/* Every line of an ad shows in every format: nothing is cut off or hidden, and a slot grows to fit its
+   ad. The ad is laid out (hidden) as soon as it is picked, so the slot has its final size before it shows */
+.adslot{position:relative;background:#E3E6E9;border-radius:4px;overflow:hidden;color:#111;text-align:left}
+.adslot[data-fmt="banner"]{min-height:100px;margin:0 0 20px}
+.adslot[data-fmt="card"]{min-height:124px}
+.adslot[data-fmt="box"]{min-height:250px;max-width:560px;margin:24px auto}   /* stays ad-sized in the wide desktop prep */
+.adslot[data-fmt="tile"]{min-height:210px}
+.adslot[data-fmt="side"]{container-type:inline-size;position:fixed;top:20px;z-index:1;width:clamp(160px,calc((100vw - var(--wrapw))/2 - 48px),300px);height:min(600px,calc(100vh - 40px))}
+.adslot.side-l{right:calc(50% + var(--wrapw)/2 + 24px)}
+.adslot.side-r{left:calc(50% + var(--wrapw)/2 + 24px)}
+.adlabel{position:absolute;top:3px;left:6px;z-index:2;font:500 10px/1.2 Arial,Helvetica,sans-serif;color:#80878E;letter-spacing:.02em;pointer-events:none}
+.adwhy{position:absolute;top:2px;right:2px;z-index:2;width:18px;height:18px;padding:0;border:0;border-radius:3px;background:rgba(255,255,255,.9);color:#2F8AD3;font:9px/18px Arial,Helvetica,sans-serif;cursor:pointer}
+.ad{position:relative;display:flex;min-height:inherit;height:100%;background:#fff;color:#111;border:1px solid #D5D9DD;border-radius:4px;overflow:hidden;cursor:pointer;font:13px/1.3 Arial,Helvetica,sans-serif}
+.ad.wait{visibility:hidden}
+.ad:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
+.adart{flex:none;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--adbg,#EEF1F4)}
+.adart img{width:100%;height:100%;object-fit:cover}
+.adart svg{width:100%;height:100%}
+.adart img+svg{position:absolute;right:6px;bottom:6px;width:38%;max-width:84px;height:auto}
+.adfullin .adart img+svg{max-width:120px}
+.adtxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:16px 12px 10px;overflow-wrap:break-word;hyphens:auto}
+.adtxt>*{flex-shrink:0}
+.adhead{font-size:15px;line-height:1.2}
+.adtext{color:#444}
+.adsrc,.adkick{font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.02em}
+.adsmall{font-size:9px;line-height:1.25;color:#888}
+.adcta{align-self:flex-start;margin-top:auto;padding:6px 12px;border-radius:4px;background:#1E9E5A;color:#fff;font-weight:700;font-size:13px}
+.adbuy{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin-top:auto}
+.adbuy .adcta{margin-top:0}
+.adprice b{font-size:20px;color:#D0021B}
+.adprice s{color:#888;margin-left:4px}
+.admast{font:900 13px/1 Georgia,"Times New Roman",serif;color:#fff;background:#B5121B;padding:4px 6px;align-self:flex-start;letter-spacing:.02em}
+.adplus{display:inline-block;width:1.15em;height:1.15em;line-height:1.15em;text-align:center;border-radius:50%;background:#0067C5;color:#fff;font:700 .8em/1.45 Arial,sans-serif;vertical-align:.1em;font-style:normal}
+/* Per type */
+.ad-pharma{--adbg:#E6F2FA}
+.ad-pharma .adhead{color:#0B5FA5}
+.ad-clickbait .adhead{font-size:16px}
+.ad-paywall .adhead{font:700 17px/1.15 Georgia,"Times New Roman",serif}
+.ad-paywall .adcta{background:#111}
+.ad-product{--adbg:#F1EEE8}
+.ad-product .adcta{background:#FF6A00}
+.ad-restaurant{--adbg:#F4EEE2}
+.ad-restaurant .adhead{font:700 17px/1.15 Georgia,"Times New Roman",serif;color:#2E4A3A}
+.ad-restaurant .adtext{color:#8A5A2B;font-weight:700}
+.ad-restaurant .adcta{background:#2E4A3A}
+.ad-dating{--adbg:#FFE1EA}
+.ad-dating .adhead{color:#C2185B}
+.ad-dating .adcta{background:#E91E63;border-radius:999px}
+/* Per format: banner and card are rows; box, side and tile are columns */
+.fmt-banner .adart{width:100px}
+.fmt-card .adart{width:124px}
+.fmt-banner .adtxt{padding:14px 24px 8px 10px}
+.fmt-card .adtxt{padding-right:24px}
+.fmt-banner .adcta,.fmt-card .adcta,.fmt-tile .adcta{padding:4px 10px;font-size:12px}
+.fmt-box,.fmt-side,.fmt-tile{flex-direction:column}
+.fmt-box .adart{height:120px}
+.fmt-box .adhead{font-size:17px}
+.fmt-side .adart{flex:1 1 auto;min-height:0}
+.fmt-side .adtxt{flex:none;gap:6px;padding:12px}
+.fmt-side .adhead{font-size:clamp(15px,10.5cqi,20px)}   /* a long word still fits at 160 px */
+.fmt-side .adcta{align-self:stretch;text-align:center;padding:10px;font-size:15px}
+.fmt-side .adbuy{flex-direction:column;align-items:stretch}
+.fmt-tile .adart{height:110px}
+.fmt-tile .adtxt{padding:8px 10px}
+.fmt-tile .adhead{font-size:14px}
+.fmt-tile .adprice b{font-size:15px}
+/* «Anbefalt for deg» at the bottom of the prep */
+.adrecs{margin:22px 0 0}
+.adrecs h2{display:flex;justify-content:space-between;align-items:baseline;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.2rem;margin:0 0 10px}
+.adrecs h2 span{font:500 .75rem "Figtree",system-ui,sans-serif;color:var(--muted)}
+.adrecgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+/* Full-screen fake landing page when an ad is tapped */
+.adfull{width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:#fff;color:#111;font:17px/1.5 Arial,Helvetica,sans-serif}
+.adfull:not([open]){display:none}
+.adfull::backdrop{background:#fff}
+.adfullx{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:12px;z-index:3;width:42px;height:42px;border-radius:50%;border:0;background:rgba(0,0,0,.08);color:#111;font:20px/42px Arial,sans-serif;cursor:pointer}
+.adfullin{position:relative;max-width:560px;margin:0 auto;padding:calc(60px + env(safe-area-inset-top,0px)) 18px calc(40px + env(safe-area-inset-bottom,0px))}
+.adfullin .adlabel{top:calc(24px + env(safe-area-inset-top,0px));left:18px;font-size:12px}
+.adfullin .adart{height:min(46vh,360px);border-radius:8px}
+.adfullin h2{font-size:1.9rem;line-height:1.1;margin:18px 0 10px}
+.adfullin.ad-paywall h2,.adfullin.ad-restaurant h2{font-family:Georgia,"Times New Roman",serif}
+.adfullin p{margin:0 0 12px}
+.adfullin .adprice b{font-size:2rem}
+.adfullin .adsmall{font-size:11px}
+.adfullin .adsrc,.adfullin .adkick,.adfullin .admast{display:inline-block;margin:18px 8px 0 0}
+.adfullin .adsrc+h2,.adfullin .adkick+h2{margin-top:6px}
+.adfullin .adlead{font-weight:700}
+.adfullin.ad-restaurant .adlead{color:#8A5A2B}
+.adbig{display:block;width:100%;margin:22px 0 14px;padding:20px 12px;font:900 1.6rem/1.1 "Arial Black",Arial,sans-serif;letter-spacing:.04em;color:#fff;background:linear-gradient(#FF3B30,#C40000);border:4px solid #FFD400;border-radius:14px;box-shadow:0 6px 0 #7A0000;cursor:pointer;animation:adpulse .8s step-end infinite}
+.adbig.done{font-size:1.1rem;letter-spacing:0;background:#555;border-color:#999;box-shadow:none;animation:none;cursor:default}
+@keyframes adpulse{50%{transform:scale(1.04)}}
+@media (prefers-reduced-motion:reduce){.adbig{animation:none}}
 </style>
 </head>
 <body>
+<div class="adslot ad-side side-l" data-fmt="side"></div>
+<div class="adslot ad-side side-r" data-fmt="side"></div>
 <div class="wrap">
   <section class="home" id="home" hidden>
     <button class="install" id="installBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="var(--azure)" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M12 8.5v6M9 11.5h6"/></svg>Legg til på hjemskjermen</button>
-    <div class="countdown" id="countdown" role="timer" aria-live="off"></div>
+    <div class="countdown" id="countdown"><div id="cdBody" role="timer" aria-live="off"></div><button class="shakebtn" id="shakeBtn" hidden>Skru av risting</button></div>
+    <div class="adslot ad-in" id="adTop" data-fmt="banner"></div>
     <h1>Kvisstreneren</h1>
     <p class="sub">Velg hva du vil øve på til onsdag.</p>
     <div class="modes">
       <button class="mode" id="goPrep"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><rect x="11" y="9" width="54" height="68" rx="9" fill="var(--paper)" stroke="var(--azure)" stroke-width="3.5"/><path d="M23 27h30M23 39h30M23 51h20" stroke="var(--azure)" stroke-width="4.5" stroke-linecap="round"/><circle cx="62" cy="61" r="15" fill="var(--or)"/><path d="M55.5 61.5l4.5 4.5 9-10" stroke="#1B2733" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong>Ukas prepp</strong><span id="prepTeaser">Nyheter, navnedager og datoen</span></div></button>
       <button class="mode" id="goDagens"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="14" width="64" height="62" rx="10" fill="var(--paper)" stroke="var(--azure)" stroke-width="3.5"/><path d="M12 24a10 10 0 0 1 10-10h44a10 10 0 0 1 10 10v8H12z" fill="var(--azure)"/><rect x="26" y="7" width="6" height="14" rx="3" fill="var(--ink)"/><rect x="56" y="7" width="6" height="14" rx="3" fill="var(--ink)"/><g fill="var(--ok)"><rect x="18" y="44" width="8" height="8" rx="2"/><rect x="29" y="44" width="8" height="8" rx="2"/><rect x="51" y="44" width="8" height="8" rx="2"/><rect x="62" y="44" width="8" height="8" rx="2"/><rect x="18" y="55" width="8" height="8" rx="2"/><rect x="29" y="55" width="8" height="8" rx="2"/><rect x="40" y="55" width="8" height="8" rx="2"/><rect x="62" y="55" width="8" height="8" rx="2"/></g><g fill="var(--bad)"><rect x="40" y="44" width="8" height="8" rx="2"/><rect x="51" y="55" width="8" height="8" rx="2"/></g></svg></div><div><strong>Dagens kviss</strong><span>Ti blandede spørsmål, nye hver dag</span></div></button>
+      <div class="adslot ad-all" data-fmt="card" data-label="Sponset"></div>
       <button class="mode" id="goBydel"><div class="omap" id="modeMapIcon" aria-hidden="true" style="margin:0"></div><div><strong>Bydelene</strong><span>Dagens 15 eller de nye 8</span></div></button>
       <button class="mode" id="goTbane"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12 L38 36 H78" stroke="var(--l1)"/><path d="M8 42 H80" stroke="var(--l2)"/><path d="M8 48 H48 L72 76" stroke="var(--l5)"/></g><path d="M44 30 V52" stroke="#1B2733" stroke-width="12" stroke-linecap="round"/><path d="M44 30 V52" stroke="#fff" stroke-width="7" stroke-linecap="round"/></svg></div><div><strong>T-banen</strong><span>Neste stopp på alle fem linjer</span></div></button>
       <button class="mode" id="goVapen"><div id="modeShieldIcon" aria-hidden="true"></div><div><strong>Våpenskjold</strong><span>Fylkesvåpen og kommunevåpen</span></div></button>
@@ -434,6 +550,15 @@ Nyhetsvinduet er komplett. Navnedagene 8. og 9. oktober ligger fram i tid, men e
     <button class="back" data-home>← Alle kvisser</button>
     <div class="prepstale" id="prepStale" role="status" hidden></div>
     <article class="card prose" id="prepBody"></article>
+    <section class="adrecs" aria-labelledby="adRecsTitle">
+      <h2 id="adRecsTitle">Anbefalt for deg <span>Sponset</span></h2>
+      <div class="adrecgrid">
+        <div class="adslot" data-fmt="tile" data-label="Sponset"></div>
+        <div class="adslot" data-fmt="tile" data-label="Sponset"></div>
+        <div class="adslot" data-fmt="tile" data-label="Sponset"></div>
+        <div class="adslot" data-fmt="tile" data-label="Sponset"></div>
+      </div>
+    </section>
     <p class="note">Oppdateres hver uke med rapporten fra quizprep.</p>
   </div>
 
@@ -753,6 +878,31 @@ Nyhetsvinduet er komplett. Navnedagene 8. og 9. oktober ligger fram i tid, men e
     <button class="primary" id="installClose">Skjønner</button>
     <button class="linkbtn" id="installNever">Ikke vis knappen igjen</button>
   </div>
+</dialog>
+
+<dialog class="sheet" id="shakeSheet" aria-labelledby="shakeTitle">
+  <h2 id="shakeTitle">Lei av ristingen?</h2>
+  <p>Det siste døgnet før kvissen rister nedtellingen, så du ikke glemmer den. Du kan slippe, men da må noen andre betale for Kvisstreneren, og da blir det reklame i stedet. Valget gjelder hver uke, fra tirsdag kl. 19 til kvissen begynner.</p>
+  <div class="sheetbtns">
+    <button class="primary" id="shakeAds">Ja takk, vis meg reklame</button>
+    <button class="premium" disabled>Kvisstreneren Premium: ingen risting, ingen reklame<span>Ikke tilgjengelig i ditt område</span></button>
+    <button class="linkbtn" id="shakeKeep">Nei, jeg vil riste</button>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="adWhySheet" aria-labelledby="adWhyTitle">
+  <h2 id="adWhyTitle">Hvorfor ser jeg denne annonsen?</h2>
+  <p>Du valgte reklame i stedet for risting. Annonsøren vil nå folk som</p>
+  <ul id="adWhyList"></ul>
+  <div class="sheetbtns">
+    <button class="primary" id="adWhyShake">Gi meg ristingen tilbake</button>
+    <button class="linkbtn" id="adWhyKeep">Behold reklamen</button>
+  </div>
+</dialog>
+
+<dialog class="adfull" id="adFull" aria-label="Annonse">
+  <button class="adfullx" id="adFullClose" aria-label="Lukk annonsen">✕</button>
+  <div id="adFullBody"></div>
 </dialog>
 
 <script>
@@ -2380,7 +2530,8 @@ function renderPrep(){
   const src = b$('prepSource');
   const md = (src.textContent||'').trim(), uke = src.dataset.uke;
   const stale = md ? prepStale(md, uke) : null;
-  b$('prepBody').innerHTML = md ? prepMarkdown(md)
+  let h2 = 0;   // an ad slot between each ## section (only shown with ads on; see fillAds())
+  b$('prepBody').innerHTML = md ? prepMarkdown(md).replace(/<h2>/g, m => h2++ ? '<div class="adslot ad-all" data-fmt="box"></div>' + m : m)
     : '<div class="prepsoon"><strong>Ukas prepp kommer snart</strong><p>Her dukker ferske nyhetssaker, navnedagene for uka og «på denne dagen» opp så snart ukas quizprep er kjørt.</p></div>';
   b$('prepStale').hidden = !stale;
   if(stale) b$('prepStale').innerHTML = '<strong>Denne preppen er utdatert</strong><p>Den var til kvissen ' + stale.was + '. '
@@ -2531,19 +2682,21 @@ document.addEventListener('keydown',e=>{
 const MODES=['prep','dagens','bydel','tbane','vapen','mgp','caesar'];
 let curMode=null;
 function goMode(m){
-  curMode=m;
+  curMode=m; document.body.dataset.mode=m;
   clearTimeout(autoTimer); autoTimer=null; clearTimeout(bTimer); bTimer=null; clearTimeout(tTimer); tTimer=null; clearTimeout(cTimer); cTimer=null; clearTimeout(mgTimer); mgTimer=null; clearTimeout(mxTimer); mxTimer=null;
   b$('home').hidden=m!=='home'; b$('prepApp').hidden=m!=='prep'; b$('dagensApp').hidden=m!=='dagens'; b$('vapenApp').hidden=m!=='vapen'; b$('bydelApp').hidden=m!=='bydel'; b$('tbaneApp').hidden=m!=='tbane'; b$('caesarApp').hidden=m!=='caesar'; b$('mgpApp').hidden=m!=='mgp';
   document.querySelector('.wrap').classList.toggle('wide', m==='prep');
   // The one countdown element moves between the home page and the prep, so it keeps its state
   if(m==='prep') b$('prepStale').before(b$('countdown'));
   else if(m==='home') b$('home').querySelector('h1').before(b$('countdown'));
+  b$('countdown').after(b$('adTop'));
   if(m==='bydel' && !bDeck.length) bUse('old');
   if(m==='tbane') tOpen();
   if(m==='caesar') cOpen();
   if(m==='mgp') mgOpen();
   if(m==='dagens') mxOpen();
   if(m==='prep' || m==='home') renderPrep(); // the page may have been open since before the quiz
+  if(adsOn()) fillAds();   // new ads on every page
   window.scrollTo(0,0);
 }
 function hashMode(){ const h=location.hash.slice(1); return MODES.includes(h) ? h : 'home'; }
@@ -2577,6 +2730,170 @@ b$('modeShieldIcon').innerHTML=shield(V,'rogaland');
 b$('modeMapIcon').innerHTML=(()=>{const s=BS; BS=BSETS.new; const out=bMap(4); BS=s; return out;})();
 renderPrep();
 
+// ---------- Shaking or ads ----------
+// The last day before the quiz (Tuesday 19:00 until it starts) the countdown shakes. The shaking
+// can be turned off, but then the page shows (fake) ads instead. The choice is kept for good
+// (localStorage 'shakeOff'), but only matters in that window: outside it there is no button,
+// no shaking and no ads. Those who ask for less motion get none of it.
+// ?ristetid in the address pretends it is the shaking time, so it can be tested any day.
+const SHAKE_TEST=new URLSearchParams(location.search).has('ristetid');
+const calmMotion=matchMedia('(prefers-reduced-motion: reduce)');
+let shakeOff=false; try{ shakeOff=localStorage.getItem('shakeOff')==='1'; }catch(e){}
+let shakeMode='';   // as last applied: 'off', 'shake' or 'ads'
+const adsOn=()=>shakeMode==='ads';
+// Decides both whether the countdown shakes and whether the ads show. renderCountdown() calls it
+// on every tick, so the ads come and go by themselves. Returns whether to shake.
+function shakeState(lastDay){
+  const m=calmMotion.matches||!(lastDay||SHAKE_TEST)?'off':shakeOff?'ads':'shake';
+  if(m!==shakeMode){
+    shakeMode=m;
+    document.body.classList.toggle('ads',m==='ads');
+    b$('shakeBtn').hidden=m!=='shake';
+    if(m!=='shake') b$('countdown').classList.remove('tick');
+    if(m==='ads') fillAds(); else adGen++;   // drops ads still on their way
+  }
+  return m==='shake';
+}
+function setShakeOff(off){
+  shakeOff=off;
+  try{ if(off) localStorage.setItem('shakeOff','1'); else localStorage.removeItem('shakeOff'); }catch(e){}
+  renderCountdown();
+}
+calmMotion.addEventListener('change',()=>renderCountdown());
+
+// The ads, as data like MGP and CAESAR: a new ad is a new row. `type` picks the template in
+// AD_TYPES; the slot's format (side, banner, card, box, tile) decides in CSS how it is laid out.
+// `img` is a photo in ads/, `svg` a drawing; with both, the drawing sits on the photo as a badge.
+// A drawing is scaled to fit its slot; `bg` colours the rest (otherwise the type's background).
+// `more` is extra text on the full-screen page, below everything the ad itself says (paragraphs
+// split by a blank line), `big` its button and `after` what the button says once pressed. `why` replaces
+// AD_WHY in «Hvorfor ser jeg denne annonsen?».
+const ADS=[
+  {id:'pille', type:'pharma', head:'KvissMax® forte', text:'Denne pillen gjør deg bedre i kviss.',
+    small:'Reseptfritt legemiddel. Les pakningsvedlegget nøye. Kan gi bivirkninger som skråsikkerhet og høylytt «det visste jeg!».',
+    cta:'Spør på apoteket', big:'BESTILL NÅ', after:'Utsolgt! Prøv igjen neste onsdag.',
+    more:'Klinisk testet på et lag på fire. Tre av fire merket ingen forskjell.\n\nTa én tablett onsdag kl. 18.30 for full effekt fra første spørsmål.',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(-30 100 70)"><rect x="40" y="48" width="120" height="44" rx="22" fill="#fff" stroke="#0B5FA5" stroke-width="4"/><path d="M100 48h38a22 22 0 0 1 0 44h-38z" fill="#2F8AD3"/></g><path d="M160 22l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#F5B700"/><path d="M38 100l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#F5B700"/></svg>'},
+  {id:'tiTing', type:'clickbait', head:'Ti ting kvissmasteren ikke vil at du skal vite', src:'Kvissnytt',
+    more:'Nummer sju vil sjokkere deg.\n\nNummer åtte også, egentlig.', big:'LES ALLE TI', after:'Nummer én: det finnes ingen liste.',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="200" height="140" fill="#2B3A4A"/><g transform="rotate(-6 82 73)"><rect x="40" y="18" width="84" height="110" rx="4" fill="#F4F1E8"/><path d="M54 44h52M54 60h52M54 76h40M54 92h48" stroke="#9AA3AD" stroke-width="5" stroke-linecap="round"/></g><circle cx="80" cy="76" r="22" fill="none" stroke="#E00" stroke-width="5"/><path d="M180 122L118 92" stroke="#E00" stroke-width="9" stroke-linecap="round"/><path d="M102 84l30-2-12 24z" fill="#E00"/></svg>'},
+  {id:'avis', type:'paywall', mast:'Lokalavisa', kick:'Avslører', head:'Nord-Trøndelag Samtykkelag legger ut om intern strid', cta:'Les for 1 kr',
+    more:'– Det begynte med et spørsmål om kommunevåpen, sier en kilde som ikke vil stå fram.\n\nResten av saken er bare for abonnenter.',
+    big:'BLI ABONNENT', after:'Takk! Første måned koster 1 kr. Den andre har vi ikke bestemt ennå.',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="200" height="140" fill="#6B5A48"/><rect y="98" width="200" height="42" fill="#3E2F22"/><g fill="#1E1A17"><circle cx="58" cy="52" r="16"/><path d="M30 100c0-24 12-34 28-34s28 10 28 34z"/><circle cx="142" cy="52" r="16"/><path d="M114 100c0-24 12-34 28-34s28 10 28 34z"/></g><rect x="93" y="78" width="14" height="22" rx="2" fill="#E8B422"/></svg>'},
+  {id:'tskjorte', type:'product', brand:'Lagbutikken', head:'Lagets offisielle t-skjorte', text:'100 % bomull. 0 % garanti for seier.',
+    price:'299,-', was:'349,-', cta:'Kjøp nå', big:'LEGG I HANDLEKURVEN', after:'Handlekurven er full. Den har vært full siden 2019.',
+    svg:'<svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg"><path d="M72 14Q100 30 128 14L178 38 164 80 146 73V168Q100 174 54 168V73L36 80 22 38Z" fill="#1B4F9C"/><path d="M72 14Q100 30 128 14Q100 42 72 14Z" fill="#0E2E5E"/><g text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700"><text x="100" y="80" font-size="8" letter-spacing="1.5" fill="#E8B422">KVISSLAGET:</text><text x="100" y="98" font-size="12" fill="#fff">DAN BØRGE</text><text x="100" y="113" font-size="12" fill="#fff">BUKKAKERØ</text></g><circle cx="168" cy="146" r="22" fill="#D0021B"/><text x="168" y="150" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="11" fill="#fff">−15 %</text></svg>'},
+  {id:'blyant', type:'product', brand:'Kvissutstyr', head:'Kvissblyanten Pro', text:'Skriver bare riktige svar.*', small:'* Gjelder svar som allerede er riktige.',
+    price:'49,-', was:'89,-', cta:'Kjøp nå', big:'KJØP TOLV', after:'Blyantene er sendt. Til feil adresse.',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(-25 100 70)"><rect x="32" y="58" width="118" height="24" fill="#F5B700"/><rect x="32" y="58" width="118" height="8" fill="#FFD54A"/><rect x="20" y="58" width="14" height="24" fill="#B0B6BC"/><rect x="8" y="58" width="14" height="24" rx="5" fill="#E88"/><path d="M150 58l28 12-28 12z" fill="#F1D3A8"/><path d="M168 66l10 4-10 4z" fill="#333"/></g></svg>'},
+  {id:'teknikk', type:'clickbait', head:'Denne enkle teknikken får deg til å huske alle kommunevåpen', src:'Hukommelsesguiden',
+    big:'LÆR TEKNIKKEN', after:'Teknikken er: øv på Kvisstreneren. Det var det.',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="200" height="140" fill="#FCE6EC"/><g fill="#F09AB0"><circle cx="80" cy="64" r="30"/><circle cx="116" cy="60" r="32"/><circle cx="98" cy="86" r="28"/></g><path d="M80 50q10 10 0 20M110 44q-8 14 6 24M100 80q10-6 18 2" stroke="#C45A78" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M152 18l-14 30h12l-10 28 26-38h-13l9-20z" fill="#F5B700"/></svg>'},
+  {id:'navnedagin', type:'pharma', head:'Navnedaxin® 20 mg', text:'For deg som aldri husker hvem som har navnedag.',
+    small:'Reseptfritt legemiddel. Les pakningsvedlegget nøye. Virker ikke på 29. februar.',
+    cta:'Les mer', big:'BESTILL NÅ', after:'Bestillingen er registrert på navnedagen din. Den var i går.',
+    more:'Én tablett hver morgen, så vet du hvem som har navnedag.\n\nTo tabletter, så vet du hvem som hadde det i går.',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg"><rect x="46" y="20" width="84" height="96" rx="8" fill="#fff" stroke="#0B5FA5" stroke-width="4"/><path d="M46 28a8 8 0 0 1 8-8h68a8 8 0 0 1 8 8v16H46z" fill="#D0021B"/><text x="88" y="38" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="12" fill="#fff">OKTOBER</text><text x="88" y="96" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="44" fill="#1B2733">9</text><g transform="rotate(-30 142 96)"><rect x="112" y="84" width="64" height="24" rx="12" fill="#fff" stroke="#0B5FA5" stroke-width="3"/><path d="M144 84h20a12 12 0 0 1 0 24h-20z" fill="#2F8AD3"/></g></svg>'},
+  {id:'legerHater', type:'clickbait', head:'Leger hater ham: Mann husket alle kommunevåpen på én uke', src:'Helsenytt i dag',
+    more:'Han brukte bare én uke, og han trengte verken flashcards eller hjernetrim.\n\nLegene er kontaktet, men har ingen kommentar.',
+    big:'SE TRIKSET', after:'Trikset er Kvisstreneren.', bg:'#FFE45C',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg"><path d="M60 22h80v52c0 30-18 46-40 52-22-6-40-22-40-52z" fill="#1B4F9C" stroke="#fff" stroke-width="4"/><path d="M100 40v60M78 62h44" stroke="#E8B422" stroke-width="10" stroke-linecap="round"/><circle cx="100" cy="70" r="46" fill="none" stroke="#E00" stroke-width="6"/><path d="M188 132L150 104" stroke="#E00" stroke-width="10" stroke-linecap="round"/><path d="M138 96l30 0-14 24z" fill="#E00"/><text x="28" y="40" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="34" fill="#E00">!</text></svg>'},
+  {id:'bydelRaseri', type:'paywall', mast:'Byavisa', kick:'Debatt', head:'Raser mot de nye bydelene: – Ingen kommer til å huske dem', cta:'Les for 1 kr',
+    more:'– Jeg har bodd i Oslo i 40 år og kan fortsatt ikke alle de femten gamle, sier en rasende innbygger.\n\nResten av saken er bare for abonnenter.',
+    big:'BLI ABONNENT', after:'Takk! Saken blir tilgjengelig for deg i 2028.', bg:'#D6E0D2',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg"><g stroke="#fff" stroke-width="3" stroke-linejoin="round"><path d="M10 20l50-8 14 40-44 18-24-16z" fill="#C8D2DB"/><path d="M60 12l60 4 6 38-52-2z" fill="#B7C3CE"/><path d="M30 70l44-18 52 2 4 44-60 14-38-12z" fill="#C8D2DB"/><path d="M126 54l60-12 8 50-64 6z" fill="#B7C3CE"/><path d="M70 112l60-14 64-6-6 44H74z" fill="#C8D2DB"/></g><path d="M120 16h70v34h-44l-14 12v-12h-12z" fill="#fff" stroke="#B5121B" stroke-width="3"/><text x="155" y="40" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="18" fill="#B5121B">– !?</text></svg>'},
+  {id:'dyne', type:'product', brand:'Sengetøysentralen', head:'Ruters linjekart som dynetrekk', text:'Sov deg til Vestli.',
+    price:'1 299,-', was:'1 899,-', cta:'Kjøp nå', big:'BESTILL TIL HELE FAMILIEN', after:'Bestillingen er sendt med T-banen. Forventet ankomst: Vestli.', bg:'#ECE6DD',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="dyS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient><clipPath id="dyC"><rect width="140" height="200"/></clipPath></defs><rect width="200" height="140" fill="#ECE6DD"/><ellipse cx="105.0" cy="133.0" rx="92" ry="9" fill="#000" opacity=".12"/><path d="M72.0 35.0 L182.0 49.0 L182.0 23.0 L72.0 9.0Z" fill="#8B6A4A"/><path d="M72.0 9.0 L182.0 23.0 L185.0 21.0 L75.0 7.0Z" fill="#A9845F"/><path d="M22.0 113.0 L132.0 127.0 L132.0 137.0 L22.0 123.0Z" fill="#7A5A3D"/><path d="M132.0 127.0 L182.0 65.0 L182.0 75.0 L132.0 137.0Z" fill="#6A4D33"/><path d="M22.0 97.0 L132.0 111.0 L132.0 127.0 L22.0 113.0Z" fill="#E9E6E0"/><path d="M132.0 111.0 L182.0 49.0 L182.0 65.0 L132.0 127.0Z" fill="#DCD8D0"/><path d="M36.1 98.8 v16" stroke="#EC700C" stroke-width="5.5" opacity=".85"/><path d="M114.7 108.8 v16" stroke="#78BE20" stroke-width="5.5" opacity=".85"/><path d="M156.0 81.2 v16" stroke="#E60000" stroke-width="3.2" opacity=".85"/><path d="M169.5 64.5 v16" stroke="#0B91EF" stroke-width="3.2" opacity=".85"/><path d="M139.5 101.7 v16" stroke="#7C2DB5" stroke-width="3.2" opacity=".85"/><g transform="matrix(0.786 0.1 0.25 -0.31 22 97)"><g clip-path="url(#dyC)"><rect width="140" height="200" fill="#FAF9F6"/><path d="M18 -40 V70 L58 110 V240" stroke="#EC700C" stroke-width="7" fill="none" stroke-linejoin="round"/><path d="M-20 96 H160" stroke="#E60000" stroke-width="7" fill="none" stroke-linejoin="round"/><path d="M-20 150 L40 150 L80 110 H160" stroke="#0B91EF" stroke-width="7" fill="none" stroke-linejoin="round"/><path d="M118 -40 V50 L84 84 V240" stroke="#78BE20" stroke-width="7" fill="none" stroke-linejoin="round"/><path d="M-20 30 H40 L100 150 V240" stroke="#7C2DB5" stroke-width="7" fill="none" stroke-linejoin="round"/><circle cx="18" cy="96" r="4.5" fill="#fff" stroke="#1B2733" stroke-width="2"/><circle cx="58" cy="150" r="4.5" fill="#fff" stroke="#1B2733" stroke-width="2"/><circle cx="84" cy="96" r="4.5" fill="#fff" stroke="#1B2733" stroke-width="2"/><circle cx="40" cy="30" r="4.5" fill="#fff" stroke="#1B2733" stroke-width="2"/><circle cx="118" cy="30" r="4.5" fill="#fff" stroke="#1B2733" stroke-width="2"/><circle cx="100" cy="150" r="4.5" fill="#fff" stroke="#1B2733" stroke-width="2"/><circle cx="18" cy="40" r="4.5" fill="#fff" stroke="#1B2733" stroke-width="2"/></g><rect width="140" height="200" fill="url(#dyS)"/><path d="M0 60 Q70 50 140 66" stroke="#000" stroke-opacity=".07" stroke-width="6" fill="none"/><path d="M0 128 Q70 120 140 132" stroke="#000" stroke-opacity=".06" stroke-width="5" fill="none"/></g><g transform="translate(0 -5) matrix(0.786 0.1 0.25 -0.31 22 97)"><rect x="8" y="160" width="60" height="34" rx="14" fill="#FFFFFF" stroke="#D9D4CB" stroke-width="2"/><path d="M16 177 H60" stroke="#E7E2D9" stroke-width="3"/></g><g transform="translate(0 -5) matrix(0.786 0.1 0.25 -0.31 22 97)"><rect x="72" y="160" width="60" height="34" rx="14" fill="#FFFFFF" stroke="#D9D4CB" stroke-width="2"/><path d="M80 177 H124" stroke="#E7E2D9" stroke-width="3"/></g></svg>'},
+  {id:'kontakt', type:'dating', brand:'KvissKontakt', head:'Det er 7 ensomme kvissmastere i nærheten av deg', cta:'Klikk her for å ta kontakt',
+    more:'De er svært interessert i nørdenøttene dine.\n\nFlere av dem vet allerede hva du svarte på spørsmål 7.',
+    big:'KLIKK HER FOR Å TA KONTAKT', after:'Alle sju er opptatt med å lage spørsmål til onsdag.',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg"><g fill="#E91E63"><path d="M100 104c-24-16-34-28-34-40a16 16 0 0 1 34-6 16 16 0 0 1 34 6c0 12-10 24-34 40z"/><circle cx="30" cy="40" r="6"/><circle cx="168" cy="30" r="6"/><circle cx="160" cy="98" r="6"/><circle cx="42" cy="110" r="6"/><circle cx="176" cy="66" r="6"/><circle cx="20" cy="80" r="6"/></g><text x="100" y="76" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="30" fill="#fff">7</text></svg>'},
+  /* Parked for now, maybe later: a bit too vague as it stands.
+  {id:'gullerasen', type:'paywall', mast:'Holmenkollen Tidende', kick:'Reportasje', head:'Bodde på Gulleråsen i 20 år – har aldri kommet seg til byen med T-banen', cta:'Les for 1 kr',
+    more:'– Toget stopper bare på vei opp. Skal jeg til byen, må jeg først til Frognerseteren, sier han.\n\nResten av saken er bare for abonnenter.',
+    big:'BLI ABONNENT', after:'Takk! Avisa leveres til Gulleråsen, men bare på vei opp.', bg:'#CFE3F2',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg"><path d="M0 110L60 60 110 84 160 40 200 70V140H0z" fill="#7FA77A"/><rect x="0" y="104" width="200" height="8" fill="#6B6F73"/><rect x="0" y="112" width="200" height="6" fill="#3E4246"/><rect x="24" y="86" width="72" height="18" fill="#B0B6BC"/><rect x="34" y="50" width="6" height="36" fill="#4A4F55"/><circle cx="37" cy="44" r="12" fill="#E60000"/><text x="37" y="49" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="14" fill="#fff">T</text><rect x="110" y="70" width="80" height="34" rx="6" fill="#3E6FB0"/><rect x="118" y="76" width="14" height="12" fill="#CFE3F2"/><rect x="138" y="76" width="14" height="12" fill="#CFE3F2"/><rect x="158" y="76" width="14" height="12" fill="#CFE3F2"/><path d="M128 58h40M128 58l10-8M128 58l10 8" stroke="#E60000" stroke-width="5" stroke-linecap="round" fill="none"/></svg>'}, */
+  {id:'neiu', type:'restaurant', head:'Neiu åpner opp for bordbestilling på onsdager', text:'Nicolas-bordet kan bli ditt!',
+    small:'Gjelder ikke onsdager når det er kviss.', cta:'Book her', big:'BOOK HER', after:'Nicolas-bordet er dessverre booket. Det er onsdag.',
+    more:'Nå kan du endelig reservere bord på onsdager.',
+    svg:'<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg"><ellipse cx="100" cy="86" rx="70" ry="22" fill="#7A4A2A"/><ellipse cx="100" cy="82" rx="70" ry="22" fill="#A8693E"/><rect x="94" y="100" width="12" height="32" fill="#5C371F"/><rect x="66" y="58" width="68" height="26" rx="3" fill="#fff" stroke="#2E4A3A" stroke-width="2"/><text x="100" y="75" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="9" letter-spacing=".5" fill="#2E4A3A">RESERVERT</text><g fill="#F3E2B3"><rect x="44" y="64" width="8" height="16" rx="2"/><rect x="148" y="64" width="8" height="16" rx="2"/></g><path d="M48 60q4-8 0-14M152 60q4-8 0-14" stroke="#E8B422" stroke-width="3" fill="none" stroke-linecap="round"/></svg>'},
+];
+const AD_WHY=['skal på kviss onsdag','har vært innom Kvisstreneren de siste sju dagene','bor i nærheten av en pub','har svart feil på minst ett kommunevåpen'];
+const adPart=(tag,cls,t)=>t?`<${tag} class="${cls}">${t}</${tag}>`:'';
+const adArt=ad=>'<div class="adart"'+(ad.bg?` style="--adbg:${ad.bg}"`:'')+'>'+(ad.img?`<img src="${ad.img}" alt="" onerror="this.remove()">`:'')+(ad.svg||'')+'</div>';
+const adPrice=ad=>ad.price?`<span class="adprice"><b>${ad.price}</b>${ad.was?' <s>'+ad.was+'</s>':''}</span>`:'';
+const AD_TYPES={
+  pharma:ad=>adArt(ad)+'<div class="adtxt">'+adPart('b','adhead',ad.head)+adPart('span','adtext',ad.text)+adPart('span','adcta',ad.cta)+adPart('small','adsmall',ad.small)+'</div>',
+  clickbait:ad=>adArt(ad)+'<div class="adtxt">'+adPart('b','adhead',ad.head)+adPart('span','adsrc',ad.src)+'</div>',
+  paywall:ad=>adArt(ad)+'<div class="adtxt">'+adPart('span','admast',ad.mast)+adPart('span','adkick',ad.kick)+adPart('b','adhead','<i class="adplus">+</i> '+ad.head)+adPart('span','adcta',ad.cta)+'</div>',
+  product:ad=>adArt(ad)+'<div class="adtxt">'+adPart('span','adsrc',ad.brand)+adPart('b','adhead',ad.head)+adPart('span','adtext',ad.text)+'<div class="adbuy">'+adPrice(ad)+adPart('span','adcta',ad.cta)+'</div>'+adPart('small','adsmall',ad.small)+'</div>',
+  restaurant:ad=>adArt(ad)+'<div class="adtxt">'+adPart('b','adhead',ad.head)+adPart('span','adtext',ad.text)+adPart('span','adcta',ad.cta)+adPart('small','adsmall',ad.small)+'</div>',
+  dating:ad=>adArt(ad)+'<div class="adtxt">'+adPart('span','adsrc',ad.brand)+adPart('b','adhead',ad.head)+adPart('span','adcta',ad.cta)+'</div>',
+};
+// Fills every slot that shows on this page at this width, at random and never the same ad twice
+// at once; slots left over are hidden. Each slot is an empty grey box at its final size first (the
+// ad is already in it, hidden), and the ad shows 50–500 ms later, one by one, like from a slow ad server.
+let adGen=0;
+function fillAds(){
+  const gen=++adGen, pool=shuffle(ADS);
+  document.querySelectorAll('.adslot').forEach(slot=>{
+    slot.classList.remove('none'); slot.innerHTML='';
+    if(!slot.getClientRects().length) return;
+    const ad=pool.pop();
+    if(!ad){ slot.classList.add('none'); return; }
+    const label=`<span class="adlabel">${slot.dataset.label||'Annonse'}</span>`;
+    slot.innerHTML=label+`<div class="ad wait ad-${ad.type} fmt-${slot.dataset.fmt}" role="link" tabindex="0" data-ad="${ad.id}">${label}<button class="adwhy" aria-label="Hvorfor ser jeg denne annonsen?">▷</button>${AD_TYPES[ad.type](ad)}</div>`;
+    setTimeout(()=>{
+      if(gen!==adGen) return;
+      slot.firstChild.remove(); slot.firstChild.classList.remove('wait');
+    },50+rnd()*450);
+  });
+}
+matchMedia('(min-width:1100px)').addEventListener('change',()=>{ if(adsOn()) fillAds(); });
+document.addEventListener('click',e=>{
+  const el=e.target.closest('.ad'), ad=el&&ADS.find(a=>a.id===el.dataset.ad);
+  if(!ad) return;
+  if(e.target.closest('.adwhy')) adWhy(ad); else adFull(ad);
+});
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ') && e.target.classList && e.target.classList.contains('ad')){ e.preventDefault(); e.target.click(); }
+});
+// The sheets: the button on the countdown, and «Hvorfor ser jeg denne annonsen?», the way back
+b$('shakeBtn').addEventListener('click',()=>b$('shakeSheet').showModal());
+b$('shakeAds').addEventListener('click',()=>{ b$('shakeSheet').close(); setShakeOff(true); });
+b$('shakeKeep').addEventListener('click',()=>b$('shakeSheet').close());
+function adWhy(ad){
+  b$('adWhyList').innerHTML=(ad.why||AD_WHY).map(t=>'<li>'+t+'</li>').join('');
+  b$('adWhySheet').showModal();
+}
+b$('adWhyShake').addEventListener('click',()=>{ b$('adWhySheet').close(); setShakeOff(false); });
+b$('adWhyKeep').addEventListener('click',()=>b$('adWhySheet').close());
+// Full screen, like a landing page. It gets a history entry of its own, so Android's back gesture
+// closes it; ✕ and Esc step back out of that entry.
+let adFullAd=null;
+function adFull(ad){
+  const d=b$('adFull');
+  if(d.open) return;
+  adFullAd=ad;
+  const more=(ad.more||'').split(/\n\n/).map(p=>adPart('p','',p)).join('');
+  b$('adFullBody').innerHTML=`<div class="adfullin ad-${ad.type}"><span class="adlabel">Annonse</span>${adArt(ad)}`
+    +adPart('span','admast',ad.mast)+adPart('span','adkick',ad.kick)+adPart('span','adsrc',ad.src||ad.brand)
+    +`<h2>${ad.type==='paywall'?'<i class="adplus">+</i> ':''}${ad.head}</h2>${adPart('p','adlead',ad.text)}${more}${adPrice(ad)}<button class="adbig">${ad.big||'BESTILL NÅ'}</button>${adPart('p','adsmall',ad.small)}</div>`;
+  d.showModal(); d.scrollTop=0;
+  history.pushState({adFull:true},'',location.href);
+}
+b$('adFullBody').addEventListener('click',e=>{
+  const btn=e.target.closest('.adbig');
+  if(!btn || btn.classList.contains('done')) return;
+  btn.textContent=adFullAd.after||'Beklager, noe gikk galt. Prøv igjen neste onsdag.';
+  btn.classList.add('done');
+});
+b$('adFullClose').addEventListener('click',()=>b$('adFull').close());
+b$('adFull').addEventListener('close',()=>{ if(history.state && history.state.adFull) history.back(); });
+addEventListener('popstate',()=>{ if(b$('adFull').open) b$('adFull').close(); });
+
 // ---------- Countdown to the next quiz ----------
 // The quiz runs Wednesdays 19:00–22:00, Oslo time, whatever the visitor's own time zone.
 // During it the countdown is replaced by a warning; after 22:00 it counts to next Wednesday.
@@ -2598,14 +2915,15 @@ function cdPlural(n,one,many){ return n===1?one:many; }
 // numbers are written, which keeps the millisecond ticking in the last hour cheap.
 let cdLayout='', cdLeft=-1;
 function cdShow(cls,html,nums){
-  const el=b$('countdown');
-  if(cls+html!==cdLayout){ cdLayout=cls+html; el.className=cls; el.innerHTML=html; }
+  const el=b$('cdBody');
+  if(cls+html!==cdLayout){ cdLayout=cls+html; b$('countdown').className=cls; el.innerHTML=html; }
   if(nums) el.querySelectorAll('b').forEach((b,i)=>{ if(b.textContent!==nums[i]) b.textContent=nums[i]; });
 }
 // Returns true while milliseconds are shown, so the caller ticks every frame instead of every second.
 function renderCountdown(){
   const now=Date.now(), w=osloWall(now), d=new Date(w), day=d.getUTCDay(), h=d.getUTCHours();
   if(day===QUIZ_DAY && h>=QUIZ_START && h<QUIZ_END){
+    shakeState(false);
     cdShow('countdown live','<strong>Kvissen pågår!</strong><p>Du har ikke lov til å være her nå. Juks er strengt forbudt.</p>');
     return false;
   }
@@ -2615,16 +2933,17 @@ function renderCountdown(){
   const ms=Math.max(0,osloInstant(tw,now)-now), fine=ms<3600000;
   // Rounded up to whole seconds, except in the last hour, where milliseconds are shown too
   const left=fine?Math.floor(ms/1000):Math.ceil(ms/1000);
+  const shake=shakeState(ms<86400000);   // from Tuesday 19:00, unless ads were chosen instead
   const units=[[Math.floor(left/86400),'dag','dager'],[Math.floor(left/3600)%24,'time','timer'],[Math.floor(left/60)%60,'minutt','minutter'],[left%60,'sekund','sekunder']];
   if(fine) units.push([ms%1000,'millisekund','millisekunder']);
   while(units.length>1 && units[0][0]===0) units.shift();   // drop leading zero units: no "0 dager"
   const td=new Date(tw), MONTHS=['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'];
   const when=ahead===0?'I kveld':ahead===1?'I morgen':'Onsdag '+td.getUTCDate()+'. '+MONTHS[td.getUTCMonth()];
   // Milliseconds always keep plural and three digits, so the layout stays put while they spin
-  cdShow(fine?'countdown rumble':'countdown','<p>Neste kviss begynner om</p><div class="cdunits">'+units.map(([n,one,many],i)=>'<div'+(fine&&i===units.length-1?' class="cdms"':'')+'><b></b><span>'+(fine&&i===units.length-1?many:cdPlural(n,one,many))+'</span></div>').join('')+'</div><p>'+when+' kl. '+QUIZ_START+'</p>',
+  cdShow(fine&&shake?'countdown rumble':'countdown','<p>Neste kviss begynner om</p><div class="cdunits">'+units.map(([n,one,many],i)=>'<div'+(fine&&i===units.length-1?' class="cdms"':'')+'><b></b><span>'+(fine&&i===units.length-1?many:cdPlural(n,one,many))+'</span></div>').join('')+'</div><p>'+when+' kl. '+QUIZ_START+'</p>',
     units.map(([n],i)=>fine&&i===units.length-1?String(n).padStart(3,'0'):String(n)));
   // Inside the last day, a short jolt each time the seconds tick down (the last hour shakes nonstop)
-  if(!fine && ms<86400000 && left!==cdLeft){ const el=b$('countdown'); el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); }
+  if(!fine && shake && left!==cdLeft){ const el=b$('countdown'); el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); }
   cdLeft=left;
   return fine;
 }
@@ -2660,10 +2979,9 @@ b$('installBtn').addEventListener('click',async()=>{
   b$('installIOS').hidden=!isIOS; b$('installOther').hidden=isIOS;
   b$('installSheet').showModal();
 });
-b$('installSheet').addEventListener('click',e=>{   // tap on the backdrop above the sheet
-  const sheet=b$('installSheet');
+document.querySelectorAll('dialog.sheet').forEach(sheet=>sheet.addEventListener('click',e=>{   // tap on the backdrop above the sheet
   if(e.target===sheet && e.clientY<sheet.getBoundingClientRect().top) sheet.close();
-});
+}));
 b$('installClose').addEventListener('click',()=>b$('installSheet').close());
 b$('installNever').addEventListener('click',()=>{
   try{ localStorage.setItem('installHidden','1'); }catch(e){}

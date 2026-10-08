@@ -2,7 +2,8 @@
 
 Én enkelt statisk side — `index.html` — med all HTML, CSS, JavaScript og alle data i samme fil.
 Ingen byggesteg, ingen avhengigheter, ingen pakkefil. Åpne fila i nettleseren for å teste.
-Det eneste utenfor er `manifest.webmanifest` og ikonene i `icons/` — se «Hjemskjermen».
+Det eneste utenfor er `manifest.webmanifest` og ikonene i `icons/` — se «Hjemskjermen» — og
+eventuelle fotoer til annonsene i `ads/` — se «Reklame».
 
 Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til brukeren, engelsk i koden.
 
@@ -314,7 +315,74 @@ igjen. Markupen bygges bare på nytt når oppsettet endres; ellers skrives bare 
 
 Det siste døgnet dirrer boksen kort (0,3 s, klassen `tick`) hver gang sekundet teller ned; den
 siste timen rister den kraftigere hele tiden (klassen `rumble`). Begge slås av med
-`prefers-reduced-motion`.
+`prefers-reduced-motion`. Ristingen kan skrus av, men da blir det reklame i stedet — se «Reklame».
+Derfor skriver `cdShow()` i `#cdBody`, mens klassene står på `#countdown` rundt den: knappen
+«Skru av risting» ligger i `#countdown`, utenfor det som bygges på nytt, og rister med boksen.
+
+## Reklame
+
+Det siste døgnet før kvissen (tirsdag kl. 19 til onsdag kl. 19 — det samme som `tick` over) kan
+man skru av ristingen i nedtellingen, men da får man falsk reklame på sida i stedet. Under
+kvissen og resten av uka er det ingen knapp, ingen risting og ingen reklame. Den som har slått på
+`prefers-reduced-motion`, får heller ingenting av det.
+
+- Valget lagres for godt i `localStorage` under `shakeOff`, men brukes bare i ristetida.
+- `shakeState()` avgjør både om det rister og om det vises reklame (klassen `ads` på `<body>`).
+  `renderCountdown()` kaller den hvert sekund, så reklamen kommer og går av seg selv.
+- **Knappen** «Skru av risting» (`#shakeBtn`) åpner arket `#shakeSheet`: «Ja takk, vis meg
+  reklame», en Premium-knapp som ikke går an å trykke på, og «Nei, jeg vil riste».
+- **Angre:** ▷-merket på hver annonse åpner «Hvorfor ser jeg denne annonsen?» (`#adWhySheet`), med
+  «Gi meg ristingen tilbake».
+- **Testbryter:** `?ristetid` i adressen (f.eks. `index.html?ristetid#prep`) later som det er
+  ristetid, så alt kan testes alle dager. Uten den: still klokka, f.eks. med `page.clock` i Playwright.
+
+### Annonsene
+
+Annonsene ligger i `ADS`, som `MGP` og `CAESAR`: en ny annonse er en ny rad. Feltene står
+beskrevet over lista i koden. `type` (`pharma`, `clickbait`, `paywall`, `product`, `restaurant`, `dating`) velger malen i
+`AD_TYPES`; formatet på plassen (`data-fmt`: `side`, `banner`, `card`, `box`, `tile`) avgjør i CSS
+hvordan den legges ut. En ny type trenger en mal i `AD_TYPES` og eventuelt CSS (`.ad-<type>`).
+
+- **Bilder:** `svg:'…'` (tegnet) og/eller `img:'ads/…'` (et foto i `ads/`). Alle annonsene er
+  tegnet i dag, og mappa finnes ikke ennå; fotostøtten er der i tilfelle. Med begge ligger
+  tegningen som et merke oppå fotoet. Hold fotoene under rundt 100 kB. `ads/` er et unntak fra
+  regelen om én fil, på lik linje med `icons/`. Får et foto ikke lastet, fjernes det.
+- **Utseende:** de skal se ut som ekte reklame, med egne skrifter og liten grå «Annonse»-merking
+  (eller «Sponset»), og står bevisst som skarpe hvite bokser også i mørk modus — de bruker ikke
+  temafargene.
+- **Utvalg:** `fillAds()` trekker på nytt hver gang man bytter side (fra `goMode()`), og samme annonse
+  vises aldri to ganger samtidig. Er det flere plasser enn annonser, skjules resten (`.none`).
+- **All tekst vises alltid:** hver linje i en annonse (overskrift, undertekst, liten skrift, knapp,
+  avsender) vises i alle formatene og i fullskjerm — ingenting kuttes eller skjules, fordi poenget
+  ofte ligger i undertekst eller liten skrift (Nicolas-bordet). Plassene har en minstehøyde og vokser
+  med annonsen. Sjekk nye annonser i alle formatene, også i den smaleste sidekolonnen (160 px).
+- **Innlasting:** annonsen legges inn skjult med en gang den er trukket, så plassen får riktig
+  størrelse og sida ikke hopper; en grå boks med «Annonse» vises til annonsen kommer, etter 50–500 ms,
+  så de dukker opp hver for seg.
+- **Fullskjerm:** trykk på en annonse åpner `#adFull`, en falsk landingsside med større bilde,
+  alt annonsen selv sier, ekstra tekst fra `more` og en overdreven knapp (`big`), som bare bytter
+  tekst til `after`. Den lukkes med ✕, Esc og tilbakegesten (den har sin egen historikkoppføring).
+- **Offentlig side:** pass på at alle som er med på bilder og internvitser, er med på det.
+
+Annonsene som ligger inne, er godkjent. Gulleråsen-annonsen er kommentert ut i `ADS` — den var
+litt for vag, men kan tas inn igjen senere. **Nye annonser legges bare inn etter klarsignal fra
+eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjent. Lagnavnet vårt er
+«Dan Børge Bukkakerø» (på t-skjorta); Nord-Trøndelag Samtykkelag er et tidligere rivallag og greit
+å bruke.
+
+### Plassene
+
+| Plass | Hvor | Skjerm |
+|---|---|---|
+| Sidekolonner (`side`) | Én høy annonse fast på hver side av innholdet, på alle sidene | Fra 1100 px |
+| Toppbanner (`#adTop`, `banner`) | Rett under nedtellingen; `goMode()` flytter den med | Under 1100 px |
+| «Sponset» i lista (`card`) | Mellom Dagens kviss og Bydelene på forsida | Alle |
+| I preppen (`box`) | Mellom hver `##`-del, lagt inn av `renderPrep()` | Alle |
+| «Anbefalt for deg» (`tile`) | Fire småsaker nederst i preppen | Alle |
+
+Kvissmodusene får ikke reklame inne i innholdet, bare sidekolonnene på desktop. Plassene som bare
+vises på mobil, har klassen `ad-in`, de som vises på alle skjermer `ad-all`, og sidekolonnene `ad-side`. Sidekolonnene er så brede det er plass til (160–300 px), regnet ut fra
+`--wrapw`, som er bredere når preppen vises.
 
 ## Hjemskjermen
 
@@ -345,7 +413,8 @@ node -e "const s=require('fs').readFileSync('index.html','utf8');[...s.matchAll(
 
 Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle sju modusene, og både
 lys og mørk modus (temaet følger `prefers-color-scheme`). Knappen for hjemskjermen vises bare
-med mobilemulering (berøring) i utviklerverktøyene.
+med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes med
+`?ristetid`, både smalt (under 1100 px) og bredt.
 
 ## Konvensjoner
 
