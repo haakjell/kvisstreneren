@@ -1,0 +1,17 @@
+/* Add-to-home-screen button (touch devices only, hidden once installed) and its instruction sheet */
+.install{display:flex;align-items:center;gap:6px;margin:-8px 0 12px auto;font:inherit;font-size:.9rem;font-weight:500;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:999px;padding:5px 12px 5px 8px;cursor:pointer}
+.install[hidden]{display:none}
+.install svg{width:20px;height:20px;flex:none}
+.sheet{width:100%;max-width:560px;margin:auto auto 0;border:0;border-radius:22px 22px 0 0;padding:24px 20px calc(20px + env(safe-area-inset-bottom,0px));background:var(--paper);color:var(--ink)}
+.sheet:not([open]){display:none}
+.sheet::backdrop{background:rgba(10,16,22,.45)}
+.sheet h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.45rem;line-height:1.15;margin:0 0 6px}
+.sheet p{color:var(--muted);margin:0 0 14px}
+.sheet ol{margin:0 0 18px;padding-left:1.4em}
+.sheet li{margin-bottom:8px}
+.sheet li svg{width:1.15em;height:1.15em;vertical-align:-.2em;margin:0 1px}
+.sheet .sheetbtns{display:flex;flex-direction:column;gap:6px}
+.sheet .linkbtn{font:inherit;font-size:.95rem;background:none;border:0;color:var(--muted);cursor:pointer;padding:8px;text-decoration:underline;text-underline-offset:3px}
+.sheet ul{margin:0 0 18px;padding-left:1.3em}
+.sheet .premium{font:inherit;font-weight:700;border-radius:12px;padding:10px 16px;border:1.5px dashed var(--line);background:none;color:var(--muted);cursor:not-allowed}
+.sheet .premium span{display:block;font-weight:500;font-size:.85rem}

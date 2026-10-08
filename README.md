@@ -13,11 +13,6 @@ Flere moduser for T-banen, som kan bygge på kartet som allerede finnes:
 5. **Hvor mange stopp?** Hvor mange stopp er det mellom to stasjoner på en linje?
 6. **Sett i rekkefølge.** Dra fem stopp på en linje i riktig rekkefølge.
 
-For Hotel Cæsar:
-
-- **Bilder av rollefigurene.** Vis bilde av rollefiguren i kvissen og i «Pugg», hentet fra
-  [Hotel Cæsar-wikien på Fandom](https://hotelcaesar.fandom.com) der det finnes et.
-
 For Melodi Grand Prix:
 
 - **Hør sangen.** Legg inn en YouTube-lenke eller en innebygd YouTube-spiller for vinnerlåta,

@@ -1,0 +1,95 @@
+/* Theme, layout and the parts every page shares: cards, buttons, tabs, options */
+:root{
+  --bg:#E4E9EE; --paper:#F7F8F9; --ink:#1B2733; --muted:#5A6875; --line:#C9D2DA;
+  --azure:#1B4F9C; --gules:#C4122F; --vert:#2D7A3E; --or:#E8B422;
+  --ok:#2D7A3E; --bad:#C4122F;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#111922; --paper:#1A2531; --ink:#E6EBEF; --muted:#9AA8B5; --line:#2C3A48;
+    --azure:#6C9BE0; --ok:#5DBB72; --bad:#F06A7E;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111922; --paper:#1A2531; --ink:#E6EBEF; --muted:#9AA8B5; --line:#2C3A48;
+  --azure:#6C9BE0; --ok:#5DBB72; --bad:#F06A7E;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:17px;line-height:1.45;
+}
+.wrap{max-width:560px;margin:0 auto;padding:20px 18px 40px}
+/* Ukas prepp is pure reading, so on desktop it gets about half the screen width */
+@media (min-width:900px){
+  .wrap.wide{max-width:clamp(560px,60vw,960px)}
+  .wrap.wide .prose{padding:30px 40px 34px}
+}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
+h1{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:2.1rem;line-height:1;margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:.95rem;margin-top:4px}
+.tabs{display:flex;border:1.5px solid var(--line);border-radius:999px;padding:3px;background:var(--paper)}
+.tabs button{border:0;background:none;color:var(--muted);font:inherit;font-weight:500;padding:6px 14px;border-radius:999px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.setswitch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 16px}
+.setswitch button{font:inherit;font-weight:700;padding:10px 12px;border-radius:14px;border:1.5px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer}
+.setswitch button span{font-weight:500;opacity:.7;margin-left:4px}
+.setswitch button[aria-checked="true"]{border-color:var(--azure);color:var(--ink);box-shadow:inset 0 0 0 1px var(--azure)}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:20px;padding:22px 20px 20px}
+.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:.95rem;margin-bottom:6px}
+.bar{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin-bottom:16px}
+.bar i{display:block;height:100%;background:var(--azure);width:0;transition:width .3s}
+.shield{display:flex;justify-content:center;margin:4px 0 18px}
+.shield svg,.shield img{width:min(62vw,230px);height:auto;max-height:280px;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.18))}
+.shield.pop svg,.shield.pop img{animation:pop .35s ease}
+@keyframes pop{from{transform:scale(.94);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+.q{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:1.2rem;margin-bottom:8px;text-align:center}
+.row{display:flex;gap:8px}
+input[type=text]{
+  flex:1;min-width:0;font:inherit;font-size:1.1rem;padding:12px 14px;border-radius:12px;
+  border:1.5px solid var(--line);background:var(--bg);color:var(--ink)
+}
+input[type=text]:focus{outline:2px solid var(--azure);outline-offset:1px;border-color:transparent}
+button.primary,button.ghost{font:inherit;font-weight:700;border-radius:12px;padding:12px 16px;cursor:pointer}
+button.primary{background:var(--azure);color:#fff;border:0}
+button.ghost{background:none;color:var(--ink);border:1.5px solid var(--line);font-weight:500}
+button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
+.aux{display:flex;justify-content:center;gap:10px;margin-top:12px}
+.aux button{font:inherit;background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px 6px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.options button{font:inherit;font-weight:500;font-size:1.02rem;padding:12px 10px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;line-height:1.2;min-height:52px}
+.options button:hover:not(:disabled){border-color:var(--azure)}
+.options button:disabled{cursor:default}
+.options button.right{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:700}
+.options button.wrong{background:var(--bad);border-color:var(--bad);color:#fff}
+.options button.dim{opacity:.45}
+.feedback{min-height:3.2em;margin-top:14px;text-align:center}
+.feedback .verdict{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.35rem}
+.feedback .ok{color:var(--ok)} .feedback .bad{color:var(--bad)}
+.feedback .motif{color:var(--muted);font-size:.95rem}
+.hint{color:var(--muted);text-align:center;margin-top:8px;font-size:.95rem}
+.done h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.8rem;margin:0 0 4px;text-align:center}
+.done p{text-align:center;color:var(--muted);margin:0 0 16px}
+.minigrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:12px;margin:10px 0 18px}
+.minigrid figure{margin:0;text-align:center}
+.minigrid svg,.minigrid img{width:64px;height:auto}
+.minigrid figcaption{font-size:.85rem;line-height:1.2;margin-top:4px}
+.btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.study{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.study figure{margin:0;background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:14px 10px 12px;text-align:center}
+.study svg,.study img{width:96px;height:96px;object-fit:contain}
+.study figcaption strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.1rem;margin-top:6px}
+.study figcaption span{display:block;color:var(--muted);font-size:.85rem;line-height:1.3;margin-top:2px}
+/* Study lists with the answers hidden («Skjul navn»): tap an item to show its answer (ui.js, hideAnswers) */
+.hide-answers [tabindex]{cursor:pointer}
+.hide-answers .ans{visibility:hidden}
+.hide-answers .show .ans{visibility:visible}
+.studybar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;color:var(--muted);font-size:.95rem;gap:10px}
+.note{color:var(--muted);font-size:.82rem;text-align:center;margin-top:22px}
+[hidden]{display:none!important}

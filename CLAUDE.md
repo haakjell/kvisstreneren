@@ -1,40 +1,130 @@
 # Kvisstreneren
 
-Én enkelt statisk side — `index.html` — med all HTML, CSS, JavaScript og alle data i samme fil.
-Ingen byggesteg, ingen avhengigheter, ingen pakkefil. Åpne fila i nettleseren for å teste.
-Det eneste utenfor er `manifest.webmanifest` og ikonene i `icons/` — se «Hjemskjermen» — og
-eventuelle fotoer til annonsene i `ads/` — se «Reklame».
+En statisk side på GitHub Pages som trener til onsdagskvissen: `index.html` med markupen, og CSS,
+JavaScript og data i egne filer ved siden av. Ingen byggesteg, ingen avhengigheter, ingen
+pakkefil. Åpne `index.html` i nettleseren for å teste — det virker også som lokal fil (`file://`),
+fordi skriptene er vanlige `<script src>`, ikke ES-moduler. Hold det sånn: moduler
+(`import`/`export`) lastes ikke fra `file://`.
 
 Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til brukeren, engelsk i koden.
 
+## Filene
+
+```
+index.html            markupen: forsida, alle modusene, arkene — og ukas prepp (#prepSource)
+css/base.css          tema (lys/mørk), layout, kort, knapper, faner, alternativer, «Skjul navn»
+css/modes.css         forsida og hver modus, i hver sin bolk
+css/countdown.css · install.css · ads.css
+js/core.js            felles hjelpere: $(), store, tekst (normName(), nearly()), tilfeldighet (rnd()),
+                      tid (serverNow(), osloWall(), quizLive() …), modusregisteret (addMode()) og MIX
+js/ui.js              felles grensesnitt: tabs(), radios(), hideAnswers(), dropBrokenPics()
+js/quiz.js            spillmotoren, makeQuiz(): spørsmåls- og resultatkortet for alle kvissene
+js/modes/<modus>.js   hver kvissmodus: spørsmålene, valgene øverst, «Pugg» og kilden i MIX
+js/prep.js · dagens.js · ads.js · countdown.js · install.js
+js/app.js             modusbytte og ruting (goMode()) og oppstart
+data/<navn>.js        dataene, én fil per tema — se tabellen under
+tools/                skript som oppdaterer data og prepp, og regresjonstesten — se «Verktøy»
+prep/                 arkivet over ukas prepp, én markdown-fil per kviss
+manifest.webmanifest, icons/   for hjemskjermen — se «Hjemskjermen»
+ads/                  fotoer til annonsene, om det kommer noen — se «Reklame»
+```
+
+Skriptene lastes i rekkefølgen nederst i `index.html`: `core.js`, `ui.js` og `quiz.js`, så alle
+`data/`-filene, så modusene og resten, og `app.js` til slutt. Alle deler samme globale navnerom,
+så kode på toppnivå i en fil kan bare bruke det som er lastet før den. Ny fil = ny
+`<script src>`-linje på riktig plass. Det som er privat for en modus, har modusens prefiks
+(`t…` for T-banen, `mg…` for MGP osv.), så navnene ikke kolliderer.
+
+Hvor ny kode hører hjemme: data i `data/`, alt som gjelder én modus i `js/modes/<modus>.js` (og
+CSS-en i dens bolk i `modes.css`), og bare det flere filer bruker, i `core.js` (logikk) eller
+`ui.js` (grensesnitt). Ingen inline `<script>` eller `<style>` i `index.html`, bortsett fra
+preppens markdown-blokk.
+
+GitHub Pages lar nettleseren mellomlagre filene i ti minutter, så rett etter en publisering kan
+noen få ny `index.html` med gamle skript; en oppdatering av sida retter det.
+
 ## Struktur
 
-Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og åtte visninger som byttes med `goMode()`.
-Tabellen står i samme rekkefølge som knappene på forsida.
+Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og åtte
+moduser. Tabellen står i samme rekkefølge som knappene på forsida.
 
-| Modus | Seksjon | Innhold |
-|---|---|---|
-| `prep` | `#prepApp` | Ukas prepp — se under |
-| `dagens` | `#dagensApp` | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`) — se under |
-| `bydel` | `#bydelApp` | Bydelene: Oslos bydeler (`BSETS`) |
-| `tbane` | `#tbaneApp` | T-banen: «neste stopp»-kviss og kart (`TBANE`) — se under |
-| `regjering` | `#regjeringApp` | Regjeringen: statsrådene og postene deres (`STATSRAD`) — se under |
-| `vapen` | `#vapenApp` | Fylkes- og kommunevåpen (`FYLKER`, `KOMMUNER`, `SETS`) |
-| `mgp` | `#mgpApp` | Melodi Grand Prix: vinnere og årstall (`MGP`, `MGP_GAPS`) — se under |
-| `caesar` | `#caesarApp` | Hotel Cæsar: roller og skuespillere (`CAESAR`, `CAESAR_OUT`) — se under |
+| Modus | Kode | Data | Innhold |
+|---|---|---|---|
+| `prep` | `js/prep.js` | `#prepSource` i `index.html` | Ukas prepp — se under |
+| `dagens` | `js/dagens.js` | — | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`) — se under |
+| `bydel` | `js/modes/bydel.js` | `data/bydeler.js` | Bydelene: Oslos bydeler (`BSETS`) |
+| `tbane` | `js/modes/tbane.js` | `data/tbane.js`, `data/ruter-map.js` | T-banen: «neste stopp»-kviss og kart — se under |
+| `regjering` | `js/modes/regjering.js` | `data/statsrad.js` | Regjeringen: statsrådene og postene deres — se under |
+| `vapen` | `js/modes/vapen.js` | `data/vapen.js` | Fylkes- og kommunevåpen (`FYLKER`, `KOMMUNER`, `SETS`) |
+| `mgp` | `js/modes/mgp.js` | `data/mgp.js` | Melodi Grand Prix: vinnere og årstall — se under |
+| `caesar` | `js/modes/caesar.js` | `data/caesar.js`, `data/caesar-img.js` | Hotel Cæsar: roller og skuespillere — se under |
 
-`goMode()` viser/skjuler seksjonene. Hver modus har sin egen adresse med hash — `#prep`, `#dagens`,
-`#tbane`, `#regjering`, `#vapen`, `#bydel`, `#caesar`, `#mgp`; forsida har ingen hash — så tilbakeknappen i nettleseren,
-tilbakegesten på Android, oppdatering og lenker rett til en modus virker. Hash er valgt fordi
-GitHub Pages bare serverer `index.html`: stier som `/kvisstreneren/tbane` ville gitt 404.
-Knappene på forsida går via `openMode()` (`pushState`); «← Alle kvisser» (`goHome()`) går ett
+Hver modus melder seg på selv med `addMode(navn, open)` nederst i fila si. Navnet gir alt annet:
+seksjonen i markupen er `#<navn>App`, adressen er `#<navn>`, og knappen på forsida har
+`data-mode="<navn>"`. `goMode()` i `app.js` viser den ene seksjonen, skjuler resten og kaller
+modusens `open()` hver gang den vises. Forsida er den eneste visningen som ikke er en modus.
+
+Adressen med hash — `#prep`, `#dagens`, `#tbane` …; forsida har ingen — gjør at tilbakeknappen i
+nettleseren, tilbakegesten på Android, oppdatering og lenker rett til en modus virker. Hash er
+valgt fordi GitHub Pages bare serverer `index.html`: stier som `/kvisstreneren/tbane` ville gitt
+404. Knappene på forsida går via `openMode()` (`pushState`); «← Alle kvisser» (`goHome()`) går ett
 steg tilbake i historikken hvis man kom fra forsida, og bytter ellers ut oppføringen, så
 historikken ikke hoper seg opp. `syncMode()` følger `popstate`/`hashchange`; ukjent hash gir
 forsida. Fanene inne i en modus («Kviss», «Kart», «Pugg» …) har ingen egen adresse.
 
-Ny modus krever fire ting: en `<section>`/`<div>` i HTML, en linje i `goMode()`, navnet i
-`MODES`, og en `addEventListener` med `openMode()` på knappen på forsida. Skal den være med i
-Dagens kviss, trenger den også en kilde i `MIX` — se «Dagens kviss».
+Ny modus krever tre ting: en `<div id="<navn>App" hidden>` i HTML med en tom `<main>` til
+kvisskortet, en knapp på forsida med `data-mode="<navn>"`, og en fil i `js/modes/` (og data i
+`data/`) med `<script src>` i `index.html`, som avslutter med `addMode('<navn>', open)`. Kvissen
+selv er `makeQuiz()` — se «Spillmotoren». Skal den være med i Dagens kviss, trenger den også en
+kilde i `MIX` — se «Dagens kviss».
+
+### Spillmotoren
+
+Alle kvissene, også Dagens kviss, kjøres av `makeQuiz()` i `js/quiz.js`. Den skriver
+spørsmålskortet og resultatkortet inn i modusens `<main>` og står for alt som er likt:
+telleren, poengene, fremdriftslinja, alternativene eller feltet for skrevet svar, «Riktig!» /
+«Det var X», videre etter 1000 ms ved riktig svar (`QUIZ_AUTO`), lista over bom, «Øv på dem du
+bommet på» og «Ti nye spørsmål», og tastene 1–6 og Enter (én lytter for alle).
+
+En modus gir motoren spørsmål på én felles form, beskrevet øverst i `quiz.js`: spørsmålstekst,
+HTML i boksen (`prompt()`), eventuelt ny HTML etter svaret (`reveal()`), alternativene som
+`{label, ok, info}` eller `typed` for skrevet svar, faktateksten og raden i lista over bom. Hver
+modus har én funksjon som lager et spørsmål — `vQuestion()`, `bQuestion()`, `tQuestion()`,
+`rgQuestion()`, `cQuestion()`, `mgQuestion()` — og den brukes både av modusens egen kviss (via
+`ask`) og av kilden i `MIX`. Det modusen selv gjør, er å lage stokken (`newDeck`), valgene øverst
+og «Pugg».
+
+Motoren gir tilbake `start(stokk)`, `stop()` (stopper tidtakeren; `goMode()` og fanene kaller den),
+`redrawBox()` (tegner boksen på nytt, f.eks. når bilder slås av), `reshow()` (spør det samme
+spørsmålet på nytt med nye alternativer, for T-banens karttype), `renderMissed()`, `button(act)`
+og noen flere — se slutten av `makeQuiz()`.
+
+### Felles byggeklosser
+
+Bruk det som finnes i stedet for å lage nye varianter:
+
+- `$(id)` for `document.getElementById`.
+- `store.get/set/getJSON/setJSON` for `localStorage` — de tåler at lagringen mangler eller nekter
+  (privat modus), så ingen try/catch rundt. `store.set(nøkkel, null)` fjerner nøkkelen.
+- `tabs()` for «Kviss»/«Pugg»-fanene, `radios()` for en rad med valgknapper (`role="radio"`).
+- `hideAnswers()` for «Skjul navn»-knappen i «Pugg»: svaret i hver rad har klassen `ans`, og raden
+  har `tabindex`, så den kan trykkes fram. CSS-en ligger én gang i `base.css` (`.hide-answers`).
+- `dropBrokenPics()` fjerner bilder som ikke laster, i stedet for å vise dem ødelagt.
+- `normName()` og `nearly()` for skrevne svar: navn sammenlignes uten store bokstaver, aksenter og
+  bindestreker, med en skrivefeil tillatt fra 5 bokstaver og to fra 12.
+
+### Tid
+
+**All tid kommer fra serveren, ikke fra enheten**, siden alle kan stille klokka si. `syncClock()`
+(i `core.js`) sender en HEAD-forespørsel etter sida selv og leser `Date`-headeren (pluss `Age`, om
+det var en mellomlagring som svarte). Derfra regner `serverNow()` seg videre med
+`performance.now()`, som ikke flytter seg når klokka på enheten endres. Klokka spørres ved
+oppstart, hver gang sida kommer tilbake på skjermen (`visibilitychange` — `performance.now()` kan
+stå stille mens en telefon sover), og hver gang Dagens kviss åpnes. Bruk `serverNow()`, aldri
+`Date.now()` eller `new Date()`, når noe avhenger av hva klokka er. Datoer og klokkeslett regnes i
+norsk tid uansett hvilken tidssone enheten står i: `osloWall()`, `osloDay()` og `quizLive()`
+(onsdag 19–22), med sommertid. Før serveren har svart, og når sida er åpnet som lokal fil
+(`file://`, bare for testing), gir `serverNow()` enhetens klokke.
 
 ### Tilfeldighet
 
@@ -49,7 +139,7 @@ To steder er involvert:
 
 - `#prepSource` i markupen (inne i `#prepApp`) — en `<script type="text/markdown">`-blokk som
   holder selve rapporten, ordrett. Attributtet `data-uke` holder quizdatoen.
-- Nederst i `<script>`: `prepMarkdown()` / `prepInline()` (en liten markdown-renderer) og
+- `js/prep.js`: `prepMarkdown()` / `prepInline()` (en liten markdown-renderer) og
   `renderPrep()`, som fyller `#prepBody` og teksten på forsideknappen ved oppstart.
 
 ### Slik legger du inn ny prep
@@ -82,16 +172,17 @@ som den er.
 Sida viser bare den nyeste prepen; `prep/`-mappa er arkivet.
 
 På desktop (fra 900 px) er preppen bredere enn resten av sida, siden den bare er tekst:
-`goMode()` setter klassen `wide` på `.wrap` når preppen vises, og den får da
-`clamp(560px, 60vw, 960px)` — omtrent halve skjermen på en vanlig 1920-skjerm. Forsida og
+`goMode()` setter klassen `wide` på `.wrap` når preppen vises (`addMode('prep', …, {wide:true})`),
+og den får da `clamp(560px, 60vw, 960px)` — omtrent halve skjermen på en vanlig 1920-skjerm. Forsida og
 kvissene beholder 560 px.
 
 Når kvissdagen er over (fra dagen etter datoen i `data-uke`, eller i rapportens første linje om
 attributtet mangler), viser `renderPrep()` et varsel øverst (`#prepStale`) om at preppen er
-utdatert («Denne preppen er utdatert») og at ny kommer neste onsdag — på selve onsdagen «Ny prepp til i kveld kommer snart». Forsideknappen
-sier det samme i stedet for «Klar til …». Datoen leses fra teksten, så den må ha dag, måned og
+utdatert («Denne preppen er utdatert») og at ny kommer neste onsdag — på selve onsdagen «Ny prepp
+til i kveld kommer snart». Forsideknappen sier det samme i stedet for «Klar til …». Datoen leses fra teksten, så den må ha dag, måned og
 år («onsdag 7. oktober 2026»). Varselet regnes ut på nytt hver gang man går til forsida eller
-prepen, og forsvinner av seg selv når `set-prep.mjs` legger inn en ny rapport.
+prepen (og når klokka er spurt på nytt), og forsvinner av seg selv når `set-prep.mjs` legger inn
+en ny rapport. «Dagen etter» regnes i norsk tid etter serverens klokke (se «Tid»).
 
 ### Hva rendreren støtter
 
@@ -124,14 +215,11 @@ samme dag, og nye ved midnatt. Hver modus' trekning og hvert spørsmåls tegning
 tegnes, ut fra hvilke navn som får plass, og kan derfor variere litt med skjermbredden og
 karttypen; spørsmålene er de samme.
 
-**Datoen kommer fra serveren, ikke fra enheten**, siden alle kan stille klokka si. Hver gang modusen
-åpnes, sender `mxSync()` en HEAD-forespørsel etter sida selv og leser `Date`-headeren (pluss `Age`,
-om det var en mellomlagring som svarte). Derfra regner `mxNow()` seg videre med
-`performance.now()`, som ikke flytter seg når klokka på enheten endres. Bruk `mxNow()`, aldri
-`Date.now()`, i Dagens kviss. Får sida ikke kontakt og har ingen tid fra før, vises «Fikk ikke
-hentet datoen» med en knapp for å prøve igjen (`#mxOffline`). Åpnet som lokal fil (`file://`)
-finnes det ingen server, og da brukes enhetens klokke; det er bare for testing. Også stengingen
-onsdag 19–22 går etter serverens klokke.
+**Datoen kommer fra serveren** (se «Tid»), og hver gang modusen åpnes, eller sida kommer tilbake
+på skjermen mens den er åpen, spør `mxOpen()` serveren på nytt før den bestemmer hvilken dag det
+er. Er det blitt en ny dag, starter dagens runde. Dagens kviss starter aldri på enhetens klokke:
+får sida ikke kontakt og har ingen tid fra før, vises «Fikk ikke hentet datoen» med en knapp for
+å prøve igjen (`#mxOffline`). Også stengingen onsdag 19–22 går etter serverens klokke.
 
 Svarene lagres etter hvert spørsmål i `localStorage` under `dagens` (`day`, `marks` som «1»/«0»
 per spørsmål, og `log` med poeng per dag). Oppdaterer man sida midt i runden, fortsetter den
@@ -148,19 +236,19 @@ Kvisstreneren #N
 https://haakjell.github.io/kvisstreneren/#dagens
 ```
 
-Lenken står i `MX_URL`. «Ti blandede spørsmål til» gir en fri runde uten frø, som ikke lagres. Onsdag 19–22 er modusen stengt, som
-nedtellingen. Endres dataene i en modus (en ny rad i `MGP`), kan dagens spørsmål bli andre for dem
+Lenken står i `MX_URL`. «Ti blandede spørsmål til» gir en fri runde uten frø, som ikke lagres.
+Onsdag 19–22 er modusen stengt, som nedtellingen. Endres dataene i en modus (en ny rad i `MGP`), kan dagens spørsmål bli andre for dem
 som ikke har spilt ennå; det er greit.
 
 ### Kildene i `MIX`
 
 Hver modus legger inn sin egen kilde, `MIX.<modus> = {label, deal(n)}`, rett etter sin egen kviss.
-`deal(n)` gir `n` ulike spørsmål på formen som står beskrevet over `MIX` i koden: spørsmålstekst,
-HTML over spørsmålet, eventuelt ny HTML etter svaret, alternativene som `{label, ok, info}`,
-faktateksten og raden i lista over bom. Kildene bygges av de samme hjelpefunksjonene som modusens
-egen kviss bruker (`cOptions()`, `mgOptions()`, `tPickOpts()`, `tFact()`, `bMap()`, `otherIx()` …),
-så det finnes bare én versjon av logikken. Endrer du hvordan en modus lager spørsmål, gjør det i
-hjelpefunksjonen, så følger Dagens kviss med.
+`deal(n)` gir `n` ulike spørsmål på motorens form (se «Spillmotoren»), laget av den samme
+`…Question()`-funksjonen som modusens egen kviss bruker, så det finnes bare én versjon av
+logikken. Kilden bytter bare ut det som er annerledes i Dagens kviss, som raden i lista over bom.
+Endrer du hvordan en modus lager spørsmål, gjør det i `…Question()`, så følger Dagens kviss med.
+Pass på rekkefølgen av `rnd()`-kallene: flytter du dem, blir dagens spørsmål andre for dem som
+allerede har startet (regresjonstesten fanger det).
 
 Valgene i modusene selv gjelder ikke i Dagens kviss. Utvalget der er fast:
 
@@ -184,7 +272,7 @@ node tools/update-tbane.mjs
 ```
 
 Skriptet henter linjene fra Entur (der Ruter publiserer rutene), tar det lengste stoppmønsteret
-i hver retning per linje, og legger stasjoner, stoppfølger og spor inn i `index.html`.
+i hver retning per linje, og skriver stasjoner, stoppfølger og spor til `data/tbane.js`.
 Stoppfølgen er per retning fordi den ikke alltid er lik begge veier — Gulleråsen har bare
 plattform mot Frognerseteren. Sentrum forstørres med en fiskeøyeprojeksjon (`FISH_R`/`FISH_P`
 i skriptet). Linjefargene ligger i CSS som `--l1`…`--l5`, ikke i dataene.
@@ -202,8 +290,8 @@ Etter svaret vises alle navnene. I «Kart» kan man trykke på navnene; linjevel
 den ikke kan dimme linjer i et bilde. Får ikke sida hentet bildet, faller begge fanene tilbake til
 det geografiske kartet med en melding (`#tMapNote`).
 
-`T_RUTER` holder bildelenken og hvor hvert navn står på bildet (senter, lengde, høyde og vinkel i
-bildepiksler). Den er generert; ikke rediger den for hånd:
+`T_RUTER` (`data/ruter-map.js`) holder bildelenken og hvor hvert navn står på bildet (senter,
+lengde, høyde og vinkel i bildepiksler). Den er generert; ikke rediger den for hånd:
 
 ```bash
 node tools/update-ruter-map.mjs
@@ -228,8 +316,8 @@ Kviss om hvem som har hvilken post i regjeringen. To spørsmålstyper, valgt med
 navnet; bildet vises etter svaret). Alle statsrådene kommer før noen gjentas. «Pugg»-fanen viser
 hele regjeringen, med en knapp som skjuler navnene.
 
-- `STATSRAD` — én rad per regjeringsmedlem, i samme rekkefølge som i «Pugg»: `p` posten slik
-  regjeringen skriver tittelen, `n` navnet, `d` departementet, `s` i posten siden, og `f`
+- `STATSRAD` (`data/statsrad.js`) — én rad per regjeringsmedlem, i samme rekkefølge som i
+  «Pugg»: `p` posten slik regjeringen skriver tittelen, `n` navnet, `d` departementet, `s` i posten siden, og `f`
   filnavnet til et portrett på Wikimedia Commons (tom når Commons ikke har noe). Bildene lenkes via
   `WM()` med `?width=320`, som våpnene; får et bilde ikke lastet, fjernes det.
 - `RG_ASOF` er datoen lista gjelder fra, og står i teksten under kortet.
@@ -249,8 +337,8 @@ Kviss om hvem som spilte hvem i TV 2-såpen (1998–2017). Tre spørsmålstyper,
 øverst: rolle → skuespiller, skuespiller → rolle, og «Skriv svaret» (begge veier, uten
 alternativer, med litt slingringsmonn for skrivefeil). «Pugg»-fanen viser hele lista.
 
-- `CAESAR` — én rad per rollefigur: `r` rolle, `a` skuespiller, `also` andre som har spilt samme
-  rolle (omcasting eller barneversjonen; teller som riktig og brukes aldri som feil alternativ),
+- `CAESAR` (`data/caesar.js`, sammen med `CAESAR_OUT`) — én rad per rollefigur: `r` rolle, `a`
+  skuespiller, `also` andre som har spilt samme rolle (omcasting eller barneversjonen; teller som riktig og brukes aldri som feil alternativ),
   `g` rollefigurens kjønn (`'k'`/`'m'`, så feilalternativene blir troverdige), `y` år i serien,
   `n` kort beskrivelse, og `top:1` for de største rollene.
 - Spørsmålene hentes bare fra `top:1`-radene. De andre rollene brukes som feil alternativer når
@@ -263,15 +351,15 @@ alternativer, med litt slingringsmonn for skrivefeil). «Pugg»-fanen viser hele
 
 Hvert spørsmål viser et bilde av rollefiguren, og «Pugg» (og lista over bom på slutten) viser
 miniatyrbilder. Bare `top:1`-rollene har bilde — det er bare de det spørres om; de andre rollene
-vises uten bilde i «Pugg». Bryteren «Vis bilder» slår dem av og på for både «Kviss» og «Pugg», og huskes i
-`localStorage` under `cPics` (bilder er på som standard). Bildene er infoboksbildene fra
+vises uten bilde i «Pugg». Bryteren «Vis bilder» slår dem av og på for både «Kviss» og «Pugg»,
+og huskes i `localStorage` under `cPics` (bilder er på som standard). Bildene er infoboksbildene fra
 rollefigur-artiklene på hotelcaesar.fandom.com. De lenkes direkte fra Fandoms CDN, på samme måte som
 våpnene lenkes fra Wikimedia, og ligger ikke i repoet. Fandom avviser forespørsler med en
 fremmed `Referer`, så `<img>` må ha `referrerpolicy="no-referrer"` (det har `cPic()`). Får et bilde
 ikke lastet, fjernes det, og resten av sida virker som før.
 
-`CAESAR_IMG` (rolle → bildelenke) er generert; ikke rediger den for hånd. Når du har endret
-`top:1`-rollene i `CAESAR`, eller vil ha nye bilder fra wikien, kjør fra reporoten:
+`CAESAR_IMG` (`data/caesar-img.js`, rolle → bildelenke) er generert; ikke rediger den for hånd.
+Når du har endret `top:1`-rollene i `CAESAR`, eller vil ha nye bilder fra wikien, kjør fra reporoten:
 
 ```bash
 node tools/update-caesar-images.mjs
@@ -303,8 +391,8 @@ svaret» (begge veier; årstall kan skrives med to sifre, «85»). Chipene «Fra
 tidligste år som spørres om (Alle, 1980, 1990, 2000, 2010) og huskes i `localStorage` under
 `mgpFrom`. Det finnes bevisst ingen øvre grense. «Pugg»-fanen viser alle år i utvalget, per tiår.
 
-- `MGP` — én rad per MGP-finale fra 1971: `y` år, `a` artisten som representerte Norge i
-  Eurovision (det er svaret), `s` låta slik den het i Eurovision, `e` plassering i
+- `MGP` (`data/mgp.js`, sammen med `MGP_GAPS`) — én rad per MGP-finale fra 1971: `y` år, `a`
+  artisten som representerte Norge i Eurovision (det er svaret), `s` låta slik den het i Eurovision, `e` plassering i
   Eurovision-finalen (`'semi'` = røk ut i semifinalen, `'x'` = avlyst i 2020), `last`/`zero` for
   sisteplass og null poeng, `m` medlemmer av en gruppe, `also` andre som sang vinnerlåta i
   MGP-finalen, `al` andre skrivemåter som godtas, og `n` en merknad som vises etter svaret.
@@ -324,11 +412,11 @@ Eurovision Song Contest» på en.wikipedia (plasseringene), sjekket september 20
 
 Øverst på forsida (`#countdown`) står en nedtelling til neste kviss, onsdag kl. 19. Den vises
 også øverst i Ukas prepp (under «← Alle kvisser»), men ikke i de andre modusene. Det er ett og
-samme element, som `goMode()` flytter mellom forsida og preppen. Mens kvissen
+samme element, som flyttes mellom forsida (`goMode()`) og preppen (preppens `open()`). Mens kvissen
 pågår, onsdag 19–22, står det i stedet at man ikke har lov til å være her, og at juks er strengt
-forbudt. Fra kl. 22 teller den ned til neste onsdag. Tidene gjelder norsk tid (`Europe/Oslo`)
-uansett hvilken tidssone enheten står i, og sommertidsskiftet er regnet med. Dag og klokkeslett
-står i `QUIZ_DAY`, `QUIZ_START` og `QUIZ_END`; `renderCountdown()` kjøres hvert sekund.
+forbudt. Fra kl. 22 teller den ned til neste onsdag. Den går etter serverens klokke, i norsk tid
+(se «Tid»). Dag og klokkeslett står i `QUIZ_DAY`, `QUIZ_START` og `QUIZ_END` i `core.js`;
+`renderCountdown()` kjøres hvert sekund.
 
 Enheter som er null foran, vises ikke («5 timer 0 minutter 30 sekunder», ikke «0 dager …»);
 nuller i midten blir stående. Den siste timen vises også millisekunder, og da tegnes nedtellingen
@@ -361,15 +449,14 @@ kvissen og resten av uka er det ingen knapp, ingen risting og ingen reklame. Den
 
 ### Annonsene
 
-Annonsene ligger i `ADS`, som `MGP` og `CAESAR`: en ny annonse er en ny rad. Feltene står
-beskrevet over lista i koden. `type` (`pharma`, `clickbait`, `paywall`, `product`, `restaurant`, `dating`) velger malen i
-`AD_TYPES`; formatet på plassen (`data-fmt`: `side`, `banner`, `card`, `box`, `tile`) avgjør i CSS
+Annonsene ligger i `ADS` (`data/ads.js`), som `MGP` og `CAESAR`: en ny annonse er en ny rad.
+Feltene står beskrevet over lista. `type` (`pharma`, `clickbait`, `paywall`, `product`,
+`restaurant`, `dating`) velger malen i `AD_TYPES` (`js/ads.js`); formatet på plassen (`data-fmt`: `side`, `banner`, `card`, `box`, `tile`) avgjør i CSS
 hvordan den legges ut. En ny type trenger en mal i `AD_TYPES` og eventuelt CSS (`.ad-<type>`).
 
 - **Bilder:** `svg:'…'` (tegnet) og/eller `img:'ads/…'` (et foto i `ads/`). Alle annonsene er
   tegnet i dag, og mappa finnes ikke ennå; fotostøtten er der i tilfelle. Med begge ligger
-  tegningen som et merke oppå fotoet. Hold fotoene under rundt 100 kB. `ads/` er et unntak fra
-  regelen om én fil, på lik linje med `icons/`. Får et foto ikke lastet, fjernes det.
+  tegningen som et merke oppå fotoet. Hold fotoene under rundt 100 kB. Får et foto ikke lastet, fjernes det.
 - **Utseende:** de skal se ut som ekte reklame, med egne skrifter og liten grå «Annonse»-merking
   (eller «Sponset»), og står bevisst som skarpe hvite bokser også i mørk modus — de bruker ikke
   temafargene.
@@ -404,8 +491,9 @@ eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjen
 | «Anbefalt for deg» (`tile`) | Fire småsaker nederst i preppen | Alle |
 
 Kvissmodusene får ikke reklame inne i innholdet, bare sidekolonnene på desktop. Plassene som bare
-vises på mobil, har klassen `ad-in`, de som vises på alle skjermer `ad-all`, og sidekolonnene `ad-side`. Sidekolonnene er så brede det er plass til (160–300 px), regnet ut fra
-`--wrapw`, som er bredere når preppen vises.
+vises på mobil, har klassen `ad-in`, de som vises på alle skjermer `ad-all`, og sidekolonnene
+`ad-side`. Sidekolonnene er så brede det er plass til (160–300 px), regnet ut fra `--wrapw`, som er
+bredere når preppen vises.
 
 ## Hjemskjermen
 
@@ -428,16 +516,60 @@ rendret fra den. Endrer du ikonet, rendre PNG-ene på nytt, f.eks. med Playwrigh
 
 ## Testing
 
-Det finnes ingen testpakke. Etter en endring:
+Etter en endring, fra reporoten:
 
 ```bash
-node -e "const s=require('fs').readFileSync('index.html','utf8');[...s.matchAll(/<script>([\s\S]*?)<\/script>/g)].forEach((b,i)=>{new Function(b[1]);console.log('block',i,'ok')})"
+for f in js/*.js js/modes/*.js data/*.js tools/*.mjs tools/regression/*.mjs; do node --check "$f" || echo "FEIL i $f"; done
 ```
 
-Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle åtte modusene, og både
+Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle åtte modusene, og både
 lys og mørk modus (temaet følger `prefers-color-scheme`). Knappen for hjemskjermen vises bare
 med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes med
 `?ristetid`, både smalt (under 1100 px) og bredt.
+
+### Regresjonstest
+
+`tools/regression/` er et Playwright-oppsett som kjører gjennom hele sida bare via grensesnittet
+(ingen interne funksjonsnavn), og lagrer et øyeblikksbilde etter hvert steg: markup, synlig tekst,
+fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene med alle
+spørsmålstypene, «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
+og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke,
+stengt onsdag kveld, uten nett og som lokal fil, reklamen, og at nedtellingen og preppen følger
+serverens klokke når enheten tar feil. `Math.random`, klokka, serverdatoen og alle eksterne bilder
+og fonter er låst, så to kjøringer av samme kode gir identisk resultat. Trenger Playwright (Chromium), og
+Python med Pillow for å sammenligne skjermbilder.
+
+Kjør det på koden før en endring (f.eks. en `git worktree` på forrige commit) og etter, og
+sammenlign. Ved en ren refaktorering skal alt være likt; ved en endring skal bare det man ventet,
+være annerledes:
+
+```bash
+node tools/regression/run.mjs <gammel-kopi> /tmp/reg-for
+node tools/regression/run.mjs . /tmp/reg-etter
+node tools/regression/compare.mjs /tmp/reg-for /tmp/reg-etter          # alt må være likt
+node tools/regression/compare.mjs /tmp/reg-for /tmp/reg-etter --text   # bare synlig tekst o.l.
+```
+
+Skjermbilder som bare skiller seg med kantutjevning (maks 8 i fargeforskjell), regnes som like.
+`compare.mjs` viser de første forskjellene per test med litt tekst rundt; `--max N` viser flere.
+Testen klikker seg fram med vanlige klasser (`.options`, `.card.done`, `.qnext`, `[role=tab]`,
+`.setswitch` …) og leser `MGP` og `CAESAR` for å skrive riktige svar. Endres de, må
+`tools/regression/run.mjs` følge med. Legg til nye tester der når en ny modus eller funksjon
+kommer.
+
+## Verktøy
+
+Alle kjøres fra reporoten med `node`. Ingen av dem trengs for at sida skal virke.
+
+| Skript | Gjør | Se |
+|---|---|---|
+| `tools/set-prep.mjs` | Legger ukas prepp inn i `index.html` (eller tømmer den) | «Ukas prepp» |
+| `tools/update-tbane.mjs` | Henter linjene fra Entur og skriver `data/tbane.js` | «T-banen» |
+| `tools/update-ruter-map.mjs` | Finner navnene på Ruters linjekart og skriver `data/ruter-map.js` | «T-banen» |
+| `tools/update-caesar-images.mjs` | Henter bilder fra Hotel Cæsar-wikien og skriver `data/caesar-img.js` | «Hotel Cæsar» |
+| `tools/regression/` | Regresjonstesten (Playwright) | «Testing» |
+
+De tre `update-`skriptene skriver datafila si helt på nytt; ikke rediger de filene for hånd.
 
 ## Konvensjoner
 
