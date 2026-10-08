@@ -28,7 +28,7 @@ data/<navn>.js        dataene, én fil per tema — se tabellen under
 tools/                skript som oppdaterer data og prepp, og regresjonstesten — se «Verktøy»
 prep/                 arkivet over ukas prepp, én markdown-fil per kviss
 manifest.webmanifest, icons/   for hjemskjermen — se «Hjemskjermen»
-ads/                  fotoer til annonsene, om det kommer noen — se «Reklame»
+ads/                  fotoer til annonsene — se «Reklame»
 ```
 
 Skriptene lastes i rekkefølgen nederst i `index.html`: `core.js`, `ui.js` og `quiz.js`, så alle
@@ -487,9 +487,9 @@ Feltene står beskrevet over lista. `type` (`pharma`, `clickbait`, `paywall`, `p
 `restaurant`, `dating`) velger malen i `AD_TYPES` (`js/ads.js`); formatet på plassen (`data-fmt`: `side`, `banner`, `card`, `box`, `tile`) avgjør i CSS
 hvordan den legges ut. En ny type trenger en mal i `AD_TYPES` og eventuelt CSS (`.ad-<type>`).
 
-- **Bilder:** `svg:'…'` (tegnet) og/eller `img:'ads/…'` (et foto i `ads/`). Alle annonsene er
-  tegnet i dag, og mappa finnes ikke ennå; fotostøtten er der i tilfelle. Med begge ligger
-  tegningen som et merke oppå fotoet. Hold fotoene under rundt 100 kB. Får et foto ikke lastet, fjernes det.
+- **Bilder:** `svg:'…'` (tegnet) og/eller `img:'ads/…'` (et foto i `ads/`). Fem av annonsene har
+  foto (KvissMax, Kvissblyanten, Navnedaxin, «Leger hater ham» og Neiu), resten er tegnet. Med begge
+  ligger tegningen som et merke oppå fotoet (kalenderen på Navnedaxin, våpenet på «Leger hater ham»). Hold fotoene under rundt 100 kB. Får et foto ikke lastet, fjernes det.
 - **Utseende:** de skal se ut som ekte reklame, med egne skrifter og liten grå «Annonse»-merking
   (eller «Sponset»), og står bevisst som skarpe hvite bokser også i mørk modus — de bruker ikke
   temafargene.
