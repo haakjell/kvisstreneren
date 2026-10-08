@@ -15,7 +15,7 @@ index.html            markupen: forsida, alle modusene, innstillingene, arkene �
 css/base.css          tema (lys/mørk), layout, kort, knapper, faner, alternativer, brytere, «Skjul navn»
 css/modes.css         forsida, hver modus og innstillingene, i hver sin bolk
 css/countdown.css · install.css · ads.css
-js/core.js            felles hjelpere: $(), store, tekst (normName(), nearly()), tilfeldighet (rnd()),
+js/core.js            felles hjelpere: $(), store, navn (normName()), tilfeldighet (rnd()),
                       tid (serverNow(), osloWall(), quizLive() …), modusregisteret (addMode()) og MIX
 js/ui.js              felles grensesnitt: tabs(), radios(), hideAnswers(), dropBrokenPics()
 js/quiz.js            spillmotoren, makeQuiz(): spørsmåls- og resultatkortet for alle kvissene
@@ -86,14 +86,14 @@ kilde i `MIX` — se «Dagens kviss».
 
 Alle kvissene, også Dagens kviss, kjøres av `makeQuiz()` i `js/quiz.js`. Den skriver
 spørsmålskortet og resultatkortet inn i modusens `<main>` og står for alt som er likt:
-telleren, poengene, fremdriftslinja, alternativene eller feltet for skrevet svar, «Riktig!» /
+telleren, poengene, fremdriftslinja, alternativene, «Riktig!» /
 «Det var X», videre etter 1000 ms ved riktig svar (`QUIZ_AUTO`; kan skrus av i innstillingene,
 `quizAuto()`), lista over bom, «Øv på dem du
 bommet på» og «Ti nye spørsmål», og tastene 1–6 og Enter (én lytter for alle).
 
 En modus gir motoren spørsmål på én felles form, beskrevet øverst i `quiz.js`: spørsmålstekst,
 HTML i boksen (`prompt()`), eventuelt ny HTML etter svaret (`reveal()`), alternativene som
-`{label, ok, info}` eller `typed` for skrevet svar, faktateksten og raden i lista over bom. Hver
+`{label, ok, info}`, faktateksten og raden i lista over bom. Hver
 modus har én funksjon som lager et spørsmål — `vQuestion()`, `bQuestion()`, `tQuestion()`,
 `rgQuestion()`, `cQuestion()`, `mgQuestion()` — og den brukes både av modusens egen kviss (via
 `ask`) og av kilden i `MIX`. Det modusen selv gjør, er å lage stokken (`newDeck`), valgene øverst
@@ -115,8 +115,8 @@ Bruk det som finnes i stedet for å lage nye varianter:
 - `hideAnswers()` for «Skjul navn»-knappen i «Pugg»: svaret i hver rad har klassen `ans`, og raden
   har `tabindex`, så den kan trykkes fram. CSS-en ligger én gang i `base.css` (`.hide-answers`).
 - `dropBrokenPics()` fjerner bilder som ikke laster, i stedet for å vise dem ødelagt.
-- `normName()` og `nearly()` for skrevne svar: navn sammenlignes uten store bokstaver, aksenter og
-  bindestreker, med en skrivefeil tillatt fra 5 bokstaver og to fra 12.
+- `normName()` for å sammenligne navn uten store bokstaver, aksenter og bindestreker (MGP bruker
+  den for å holde artistene i et år utenfor feilalternativene).
 
 ### Tid
 
@@ -366,9 +366,8 @@ hver statsråd. Det finnes ikke noe skript: **ved en ny regjering eller en rokad
 
 ## Hotel Cæsar
 
-Kviss om hvem som spilte hvem i TV 2-såpen (1998–2017). Tre spørsmålstyper, valgt med knappene
-øverst: rolle → skuespiller, skuespiller → rolle, og «Skriv svaret» (begge veier, uten
-alternativer, med litt slingringsmonn for skrivefeil). «Pugg»-fanen viser hele lista.
+Kviss om hvem som spilte hvem i TV 2-såpen (1998–2017). To spørsmålstyper, valgt med knappene
+øverst: rolle → skuespiller og skuespiller → rolle. «Pugg»-fanen viser hele lista.
 
 - `CAESAR` (`data/caesar.js`, sammen med `CAESAR_OUT`) — én rad per rollefigur: `r` rolle, `a`
   skuespiller, `also` andre som har spilt samme rolle (omcasting eller barneversjonen; teller som riktig og brukes aldri som feil alternativ),
@@ -418,9 +417,8 @@ og skuespillernes egne Wikipedia-artikler (september 2026). Det finnes ikke noe 
 
 ## Melodi Grand Prix
 
-Kviss om hvem som vant MGP hvilket år. Tre spørsmålstyper, som i Hotel Cæsar: år → artist,
-artist → år (med låttittelen, så artister med flere seire får et entydig spørsmål), og «Skriv
-svaret» (begge veier; årstall kan skrives med to sifre, «85»). Chipene «Fra og med» setter
+Kviss om hvem som vant MGP hvilket år. To spørsmålstyper, som i Hotel Cæsar: år → artist og
+artist → år (med låttittelen, så artister med flere seire får et entydig spørsmål). Chipene «Fra og med» setter
 tidligste år som spørres om (Alle, 1980, 1990, 2000, 2010) og huskes i `localStorage` under
 `mgpFrom`. Det finnes bevisst ingen øvre grense. «Pugg»-fanen viser alle år i utvalget, per tiår.
 
@@ -428,14 +426,14 @@ tidligste år som spørres om (Alle, 1980, 1990, 2000, 2010) og huskes i `localS
   artisten som representerte Norge i Eurovision (det er svaret), `s` låta slik den het i Eurovision, `e` plassering i
   Eurovision-finalen (`'semi'` = røk ut i semifinalen, `'x'` = avlyst i 2020), `last`/`zero` for
   sisteplass og null poeng, `m` medlemmer av en gruppe, `also` andre som sang vinnerlåta i
-  MGP-finalen, `al` andre skrivemåter som godtas, og `n` en merknad som vises etter svaret.
+  MGP-finalen, og `n` en merknad som vises etter svaret.
 - Ingen i `a`, `m` eller `also` brukes som feil alternativ for sitt eget år — så Jahn Teigen
   dukker ikke opp som feil svar for 1974, og Hanne Krogh ikke for 1985 (Bobbysocks). Når du
   legger til en gruppe, før opp medlemmene som har vunnet på egen hånd i `m`.
 - `MGP_GAPS` — år uten MGP-finale, som vises i «Pugg», men aldri spørres om: 1970 (boikott),
   1991 (NRK avlyste finalen og valgte «Mrs. Thompson» med Just 4 Fun selv) og 2002 (rykket ned).
 - 1972–1976 ble hver låt framført to ganger i MGP, av to ulike artister; bare den som dro til
-  Eurovision står i `a`, den andre står i `also` og godtas som svar i «Skriv svaret».
+  Eurovision står i `a`, den andre står i `also`.
 
 Kilder: «Melodi Grand Prix» (vinnertabellen) og årsartiklene på no.wikipedia, og «Norway in the
 Eurovision Song Contest» på en.wikipedia (plasseringene), sjekket september 2026. Etter hvert
@@ -587,7 +585,7 @@ node tools/regression/compare.mjs /tmp/reg-for /tmp/reg-etter --text   # bare sy
 Skjermbilder som bare skiller seg med kantutjevning (maks 8 i fargeforskjell), regnes som like.
 `compare.mjs` viser de første forskjellene per test med litt tekst rundt; `--max N` viser flere.
 Testen klikker seg fram med vanlige klasser (`.options`, `.card.done`, `.qnext`, `[role=tab]`,
-`.setswitch` …) og leser `MGP` og `CAESAR` for å skrive riktige svar. Endres de, må
+`.setswitch` …) og leser `MGP` og `CAESAR` for å finne riktige svar. Endres de, må
 `tools/regression/run.mjs` følge med. Legg til nye tester der når en ny modus eller funksjon
 kommer.
 

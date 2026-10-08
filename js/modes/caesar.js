@@ -14,7 +14,7 @@ function cPreload(deck){
 // Rounds walk through a shuffled queue of the top roles, so all of them come up before any repeats
 function cNewDeck(){
   if(cQueue.length<C_DECK) cQueue=cQueue.concat(shuffle(cTop.filter(i=>!cQueue.includes(i))));
-  return cQueue.splice(0,C_DECK).map(i=>({i,dir:cMode==='type'?(rnd()<.5?'role':'actor'):cMode}));
+  return cQueue.splice(0,C_DECK).map(i=>({i,dir:cMode}));
 }
 // dir 'role': the role is shown and the answer is an actor. dir 'actor': the other way round.
 function cOptions(q){
@@ -40,39 +40,19 @@ function cPromptHTML(q){
   return cPic(e,'cpic','Bilde av rollefiguren')+`<small>${q.dir==='role'?'Rollefigur':'Skuespiller'}</small><strong>${q.dir==='role'?e.r:e.a}</strong>`;
 }
 function cFact(e){ return `${e.a} spilte ${e.r}${e.y?` (${e.y})`:''}. ${e.n}`; }
-// Typed answers: accept the full name, and for roles also the first name alone when no other role
-// shares it ("Juni", "Jens August"). One or two typos are forgiven, depending on the length.
-const cFirst=r=>r.split(' ').slice(0,-1).join(' ');
-function cTargets(q){
-  const e=CAESAR[q.i];
-  if(q.dir==='role') return cActors(e);
-  const t=[e.r,...(e.alias||[])], f=cFirst(e.r);
-  if(f&&CAESAR.filter(x=>normName(cFirst(x.r))===normName(f)).length===1) t.push(f);
-  return t;
-}
-function cJudge(input,q){
-  const x=normName(input); if(!x) return 'empty';
-  const t=cTargets(q).map(normName);
-  if(t.includes(x)) return 'exact';
-  if(t.some(s=>nearly(x,s))) return 'close';
-  return 'wrong';
-}
 const cMissLi=q=>{const e=CAESAR[q.i]; return `${cPic(e,'thumb')}<div><strong>${e.r}</strong><small>${e.a}</small></div>`;};
-// A question about role q = {i, dir}, for the quiz here and the mixed one; typed asks for the
-// answer to be written instead of picked
-function cQuestion(q, typed){
+// A question about role q = {i, dir}, for the quiz here and the mixed one
+function cQuestion(q){
   const e=CAESAR[q.i];
-  return {q:cQText(q), cls:'cprompt', prompt:()=>cPromptHTML(q), fact:cFact(e), miss:()=>cMissLi(q),
-    ...(typed?{typed:{answer:q.dir==='role'?e.a:e.r, placeholder:q.dir==='role'?'Skuespillerens navn':'Rollefigurens navn', judge:x=>cJudge(x,q)}}
-      :{opts:cOptions(q)})};
+  return {q:cQText(q), cls:'cprompt', prompt:()=>cPromptHTML(q), fact:cFact(e), miss:()=>cMissLi(q), opts:cOptions(q)};
 }
-const cQuiz=makeQuiz('cQuiz',{ask:q=>cQuestion(q,cMode==='type'), newDeck:cNewDeck, onStart:cPreload, typed:true});
+const cQuiz=makeQuiz('cQuiz',{ask:cQuestion, newDeck:cNewDeck, onStart:cPreload});
 
-// Mixed quiz: the top roles, role → actor only, with options
+// Mixed quiz: the top roles, role → actor only
 MIX.caesar={label:'Hotel Cæsar', deal(n){
   const deck=shuffle(cTop).slice(0,n).map(i=>({i,dir:'role'}));
   cPreload(deck);
-  return deck.map(q=>({...cQuestion(q,false), miss:cMissLi(q)}));
+  return deck.map(q=>({...cQuestion(q), miss:cMissLi(q)}));
 }};
 
 // Study list
@@ -94,9 +74,9 @@ $('cPics').setAttribute('aria-checked',cPics);
 $('cPics').addEventListener('click',()=>cSetPics(!cPics));
 dropBrokenPics('caesarApp');
 dropBrokenPics('dagensApp');
-tabs('cTabQuiz','cTabStudy','cQuiz','cStudy',q=>{ cQuiz.stop(); if(q) cQuiz.refocus(); });
-const C_SUBS={role:'Finn skuespilleren',actor:'Finn rollen',type:'Uten alternativer, begge veier'};
-const cMarkMode=radios({role:'cSetRole',actor:'cSetActor',type:'cSetType'},m=>cUse(m));
+tabs('cTabQuiz','cTabStudy','cQuiz','cStudy',()=>cQuiz.stop());
+const C_SUBS={role:'Finn skuespilleren',actor:'Finn rollen'};
+const cMarkMode=radios({role:'cSetRole',actor:'cSetActor'},m=>cUse(m));
 function cUse(m){
   cMode=m;
   cMarkMode(m);

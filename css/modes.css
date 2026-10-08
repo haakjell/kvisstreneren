@@ -102,13 +102,10 @@
 .tmissed li{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:12px;padding:8px 12px;line-height:1.3}
 .tmissed small{display:block;color:var(--muted)}
 /* ---------- Hotel Cæsar ---------- */
-.setswitch.three{grid-template-columns:repeat(3,1fr)}
 .cprompt{text-align:center;margin:8px 0 18px}
 .cprompt small{display:block;color:var(--muted);font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .cprompt strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:2rem;line-height:1.1;margin:4px 0 0}
 .cprompt.pop strong{animation:pop .35s ease}
-.row input.right{border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}
-.row input.wrong{border-color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
 .clist{list-style:none;padding:0;margin:0 0 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .clist li{background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;line-height:1.3}
 .clist strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.1rem}

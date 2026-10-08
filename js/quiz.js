@@ -1,11 +1,10 @@
 // ---------- The quiz engine ----------
 // One question card and its result card, used by every mode and by Dagens kviss. makeQuiz()
-// writes the markup into the mode's <main> and runs the round: counter, score, options or a typed
-// answer, the verdict, on to the next question, the list of misses, retry and restart.
+// writes the markup into the mode's <main> and runs the round: counter, score, options, the verdict, on to the next question, the list of misses, retry and restart.
 //
 // A question is
 //   {q, head?, src?, cls, prompt(box), redraw?(box), reveal?(r, box), opts:[{label, ok, info?}],
-//    answer?, fact, miss, typed?}
+//    answer?, fact, miss}
 // q is the question, head HTML above the box (T-banen's line and direction), src an addition to
 // the counter ("· Bydelene"), and prompt() the HTML of the box, which gets the class cls. prompt()
 // runs before opts are read, so a question may fill opts in there: T-banen picks options that the
@@ -14,15 +13,11 @@
 // «Det var <answer>», answer defaulting to the right option's label, and the picked option's info
 // goes before fact. miss (a string, or a function for HTML that can change) is the inside of the
 // row in the list of misses.
-// typed = {answer, placeholder, inputMode?, autocapitalize?, judge(input)} asks for the answer to
-// be written instead of picked; judge() returns 'exact', 'close' (a typo), 'part' (half of a duo),
-// 'wrong' or 'empty'.
 //
 // Options:
 //   ask(item, i)  turns an item of the deck into a question when it is shown (default: the item is one)
 //   newDeck()     a new round, for «Ti nye spørsmål»
 //   qFirst        the question goes above the box, with head (T-banen); otherwise below it
-//   typed         the card has a field for typed answers
 //   missed        class of the list of misses: 'tmissed' rows (default), or a grid ('minigrid', 'minimaps')
 //   restartLabel  the restart button's text (default «Ti nye spørsmål»)
 //   marks         a row of green and red squares on the result card (Dagens kviss)
@@ -48,11 +43,6 @@ function makeQuiz(mount, o={}){
       <div class="qbox"></div>
       ${o.qFirst?'':`<div class="q" id="${qid}"></div>`}
       <div class="options" role="group" aria-labelledby="${qid}"></div>
-      ${o.typed?`<form class="row" hidden autocomplete="off">
-        <input type="text" aria-labelledby="${qid}" spellcheck="false">
-        <button class="primary" type="submit">Svar</button>
-      </form>
-      <div class="aux" hidden><button type="button">Vis svaret</button></div>`:''}
       <div class="feedback" aria-live="polite"></div>
       <div class="btns"><button class="primary qnext" hidden>Neste</button></div>
     </section>
@@ -66,7 +56,7 @@ function makeQuiz(mount, o={}){
     </section>`);
   const el=s=>root.querySelector(s);
   const play=el('.qplay'), done=el('.qdone'), head=el('.qhead'), box=el('.qbox'), qEl=el('.q'), opts=el('.options');
-  const form=el('form'), inp=el('form input'), aux=el('.aux'), feedback=el('.feedback'), next=el('.qnext');
+  const feedback=el('.feedback'), next=el('.qnext');
   const count=el('.qcount'), score=el('.qscore'), bar=el('.bar i'), missEl=done.querySelector('.'+list);
   let deck=[], asked=[], pos=0, marks='', cur=null, answered=false, last=null, timer=null;
 
@@ -94,16 +84,6 @@ function makeQuiz(mount, o={}){
     score.textContent=`${right()} riktige`;
     bar.style.width=`${pos/deck.length*100}%`;
     feedback.innerHTML=''; next.hidden=true;
-    const typed=!!q.typed;
-    opts.hidden=typed; if(form){ form.hidden=!typed; aux.hidden=!typed; }
-    if(typed){
-      const t=q.typed;
-      inp.value=''; inp.disabled=false; inp.className='';
-      inp.placeholder=t.placeholder; inp.inputMode=t.inputMode||'text'; inp.autocapitalize=t.autocapitalize||'words';
-      form.querySelector('button').disabled=false; aux.querySelector('button').disabled=false;
-      inp.focus({preventScroll:true});
-      return;
-    }
     opts.innerHTML=q.opts.map((x,k)=>`<button data-k="${k}">${x.label}</button>`).join('');
   }
   function pick(k){
@@ -113,17 +93,6 @@ function makeQuiz(mount, o={}){
       b.classList.add(q.opts[bk].ok?'right':bk===k?'wrong':'dim'); });
     resolve(ok, ok?'Riktig!':`Det var ${q.answer??q.opts.find(y=>y.ok).label}`, ok?'':x.info, {ok,pick:x});
   }
-  function submit(giveUp){
-    if(answered) return;
-    const t=cur.typed, v=giveUp?'wrong':t.judge(inp.value);
-    if(v==='empty'){ inp.focus(); return; }
-    inp.disabled=true; form.querySelector('button').disabled=true; aux.querySelector('button').disabled=true;
-    const ok=v!=='wrong'; inp.className=ok?'right':'wrong';
-    if(giveUp) inp.value=t.answer;
-    resolve(ok, ok?(v==='close'?'Nesten riktig!':'Riktig!'):`Det var ${t.answer}`,
-      v==='close'?`Det staves ${t.answer}.`:v==='part'?`Hele svaret er ${t.answer}.`:'', {ok});
-  }
-  // Shared tail of answering, for both buttons and typed answers
   function resolve(ok, verdict, extra, r){
     answered=true; last=r;
     if(cur.reveal){ box.classList.remove('pop'); box.innerHTML=cur.reveal(r,box); }
@@ -159,10 +128,6 @@ function makeQuiz(mount, o={}){
   done.addEventListener('click',e=>{ const b=e.target.closest('[data-act]'); if(b) actions[b.dataset.act](); });
   next.addEventListener('click',advance);
   opts.addEventListener('click',e=>{ const b=e.target.closest('button'); if(b) pick(+b.dataset.k); });
-  if(form){
-    form.addEventListener('submit',e=>{ e.preventDefault(); submit(false); });
-    aux.querySelector('button').addEventListener('click',()=>submit(true));
-  }
 
   const api={
     start, stop, renderMissed, button,
@@ -179,11 +144,9 @@ function makeQuiz(mount, o={}){
     },
     // Ask the current question again, with new options, unless it has been answered (T-banen's map kind)
     reshow(){ if(!cur) return; if(!answered){ show(); return; } api.redrawBox(); },
-    // Back on the quiz tab: the field for a typed answer gets the focus again
-    refocus(){ if(cur&&cur.typed&&!answered&&!play.closest('[hidden]')) inp.focus({preventScroll:true}); },
     active:()=>!!cur&&!play.closest('[hidden]'),
     key(e){
-      if(!answered&&!cur.typed&&/^[1-6]$/.test(e.key)){ const b=opts.children[+e.key-1]; if(b) pick(+b.dataset.k); }
+      if(!answered&&/^[1-6]$/.test(e.key)){ const b=opts.children[+e.key-1]; if(b) pick(+b.dataset.k); }
       else if(answered&&e.key==='Enter'&&document.activeElement!==next){ e.preventDefault(); advance(); }
     }
   };

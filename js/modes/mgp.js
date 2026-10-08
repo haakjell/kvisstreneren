@@ -23,7 +23,7 @@ function mgNewDeck(){
   const pool=mgPool().map(e=>e.y);
   mgQueue=mgQueue.filter(y=>y>=mgFrom);
   if(mgQueue.length<MG_DECK) mgQueue=mgQueue.concat(shuffle(pool.filter(y=>!mgQueue.includes(y))));
-  return mgQueue.splice(0,MG_DECK).map(y=>({y,dir:mgMode==='type'?(rnd()<.5?'year':'artist'):mgMode}));
+  return mgQueue.splice(0,MG_DECK).map(y=>({y,dir:mgMode}));
 }
 // dir 'year': the year is shown and the answer is an artist. dir 'artist': the other way round.
 // Wrong options come from nearby years, so they are plausible.
@@ -49,41 +49,21 @@ function mgPromptHTML(q){
 }
 const mgQText=q=>q.dir==='year'?'Hvem vant MGP det året?':'Hvilket år vant låta MGP?';
 const mgMissLi=q=>{const e=mgByYear(q.y); return `<div><strong>${e.y}: ${e.a}</strong><small>«${e.s}»</small></div>`;};
-// Typed artists: the full name or an accepted spelling, with one or two typos forgiven depending on
-// the length. Half of a duo, or someone who also sang the song in the MGP final, counts too.
-// Typed years: four digits, or the last two ("85").
-function mgJudge(input,q){
+// A question about year q = {y, dir}, for the quiz here and the mixed one. pool and names as in
+// mgOptions().
+function mgQuestion(q, pool, names){
   const e=mgByYear(q.y);
-  if(q.dir==='artist'){
-    const d=input.replace(/\D/g,''); if(!d) return input.trim()?'wrong':'empty';
-    const y=d.length===2?(+d>=60?1900:2000)+ +d:+d;
-    return y===e.y?'exact':'wrong';
-  }
-  const x=normName(input); if(!x) return 'empty';
-  const full=[e.a,...(e.al||[])].map(normName);
-  const part=[...(mgHalves(e).length>1?mgHalves(e):[]),...(e.also||[])].map(normName);
-  if(full.includes(x)) return 'exact';
-  if(full.some(t=>nearly(x,t))) return 'close';
-  if(part.some(t=>t===x||nearly(x,t))) return 'part';
-  return 'wrong';
-}
-// A question about year q = {y, dir}, for the quiz here and the mixed one; typed asks for the
-// answer to be written instead of picked. pool and names as in mgOptions().
-function mgQuestion(q, typed, pool, names){
-  const e=mgByYear(q.y), year=q.dir==='year';
   return {q:mgQText(q), cls:'cprompt', prompt:()=>mgPromptHTML(q), fact:mgFact(e), miss:mgMissLi(q),
-    ...(typed?{typed:{answer:year?e.a:String(e.y), placeholder:year?'Artistens navn':'Årstall',
-        inputMode:year?'text':'numeric', autocapitalize:year?'words':'off', judge:x=>mgJudge(x,q)}}
-      :{opts:mgOptions(q,pool,names)})};
+    opts:mgOptions(q,pool,names)};
 }
-const mgQuiz=makeQuiz('mgQuiz',{ask:q=>mgQuestion(q,mgMode==='type'), newDeck:mgNewDeck, typed:true});
+const mgQuiz=makeQuiz('mgQuiz',{ask:q=>mgQuestion(q), newDeck:mgNewDeck});
 
 // Mixed quiz: only from 2000 on (wrong options too), whatever "Fra og med" is set to, either way
-// round, with options
+// round
 const MG_MIX_FROM=2000;
 MIX.mgp={label:`MGP fra og med ${MG_MIX_FROM}`, deal(n){
   const pool=MGP.filter(e=>e.y>=MG_MIX_FROM);
-  return shuffle(pool).slice(0,n).map(e=>mgQuestion({y:e.y,dir:rnd()<.5?'year':'artist'},false,pool,pool));
+  return shuffle(pool).slice(0,n).map(e=>mgQuestion({y:e.y,dir:rnd()<.5?'year':'artist'},pool,pool));
 }};
 // Study list: every year in range, grouped by decade, with the years without a final in between
 function mgRenderStudy(){
@@ -98,10 +78,10 @@ function mgRenderStudy(){
   $('mgStudyList').innerHTML=html;
 }
 hideAnswers('mgToggle','mgStudyList',['Skjul artistene','Vis artistene']);
-tabs('mgTabQuiz','mgTabStudy','mgQuiz','mgStudy',q=>{ mgQuiz.stop(); if(q) mgQuiz.refocus(); });
-const MG_SUBS={year:'Finn vinneren',artist:'Finn året',type:'Uten alternativer, begge veier'};
+tabs('mgTabQuiz','mgTabStudy','mgQuiz','mgStudy',()=>mgQuiz.stop());
+const MG_SUBS={year:'Finn vinneren',artist:'Finn året'};
 function mgSub(){ $('mgSub').textContent=`${MG_SUBS[mgMode]} · ${mgPool()[0].y}–${MG_LAST}`; }
-const mgMarkMode=radios({year:'mgSetYear',artist:'mgSetArtist',type:'mgSetType'},m=>mgUse(m));
+const mgMarkMode=radios({year:'mgSetYear',artist:'mgSetArtist'},m=>mgUse(m));
 function mgUse(m){
   mgMode=m;
   mgMarkMode(m);

@@ -69,8 +69,6 @@ const INIT = () => {
       const a = T.app(); if (!a) return 'none';
       const o = [...a.querySelectorAll('.options')].find(x => T.vis(x) && x.querySelector('button:not(:disabled)'));
       if (o) return 'options';
-      const f = [...a.querySelectorAll('form')].find(x => T.vis(x) && x.querySelector('input:not(:disabled)'));
-      if (f) return 'typed';
       if ([...a.querySelectorAll('.card.done')].some(T.vis)) return 'done';
       return 'none';
     },
@@ -83,21 +81,13 @@ const INIT = () => {
       if (small === 'Skuespiller') return CAESAR.find(x => x.a === s).r;
       return null;
     },
-    // Answer the current question (options: button step%n; typed: give up / wrong / exact / typo),
-    // snapshot right after, then press the visible primary action button.
+    // Answer the current question (button step%n), snapshot right after, then press the visible primary action button.
     answer(step) {
       const a = T.app(), st = T.state(), before = T.snap();
       let how = '';
       if (st === 'options') {
         const bs = [...[...a.querySelectorAll('.options')].find(T.vis).querySelectorAll('button')];
         const b = bs[step % bs.length]; how = 'pick:' + b.textContent; b.click();
-      } else if (st === 'typed') {
-        const f = [...a.querySelectorAll('form')].find(T.vis), inp = f.querySelector('input'), exp = T.expected(), m = step % 4;
-        const submit = v => { inp.value = v; f.querySelector('button[type=submit]').click(); };
-        if (m === 0) { const g = [...a.querySelectorAll('.aux button')].find(T.vis); how = 'giveup'; g.click(); }
-        else if (m === 1) { submit(''); submit('feil svar'); how = 'wrong'; }
-        else if (m === 2) { submit(exp); how = 'exact:' + exp; }
-        else { const t = exp.length >= 5 ? exp.slice(0, 1) + exp.slice(2) : exp; submit(t); how = 'typo:' + t; }
       } else return { before, how: 'state:' + st };
       const after = T.snap();
       const act = [...a.querySelectorAll('.card .btns .primary')].find(T.vis);
@@ -163,7 +153,7 @@ class Rec {
 }
 
 async function waitReady(page) {
-  await page.waitForFunction(() => window.__T && ['options', 'typed', 'done'].includes(__T.state()), null, { timeout: 5000 }).catch(() => {});
+  await page.waitForFunction(() => window.__T && ['options', 'done'].includes(__T.state()), null, { timeout: 5000 }).catch(() => {});
 }
 
 // Play until the done card shows; records before/after of each answer.

@@ -13,24 +13,15 @@ const store={
 
 const WM=n=>'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(n);
 
-// ---------- Typed answers ----------
+// ---------- Names ----------
+// For comparing names: no case, accents, punctuation or hyphens ("Anker-Hansen", "Anker Hansen")
 function norm(s){
   return s.toLowerCase().trim()
     .replace(/&/g,' og ')
     .replace(/æ/g,'ae').replace(/[øö]/g,'o').replace(/[åä]/g,'a')
     .replace(/[^a-z ]/g,'').replace(/\s+/g,' ').trim();
 }
-// Names: a hyphen counts as a space ("Anker-Hansen", "Anker Hansen")
 const normName=s=>norm(s.replace(/-/g,' '));
-function lev(a,b){
-  const m=a.length,n=b.length; const d=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
-  for(let j=1;j<=n;j++) d[0][j]=j;
-  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
-    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
-  return d[m][n];
-}
-// A typo or two, depending on the length: none under 5 letters, one from 5, two from 12
-const nearly=(x,t)=>lev(x,t)<=(t.length>=12?2:t.length>=5?1:0);
 
 // ---------- Randomness ----------
 // Every random choice the quizzes make goes through rnd(), so the daily quiz can swap in a seeded

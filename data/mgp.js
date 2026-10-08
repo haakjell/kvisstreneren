@@ -1,7 +1,7 @@
 // One entry per MGP final, 1971 onwards. a = the artist who represented Norway in Eurovision
 // (the answer), s = the song as sung there. m = members of a group, and also = others who sang
 // the winning song in the MGP final (1972–1976 every song was performed twice). Anyone in a, m or
-// also is never offered as a wrong option for that year. al = other spellings accepted when typed.
+// also is never offered as a wrong option for that year.
 // e = placing in the Eurovision final: 'semi' = out in the semi-final, 'x' = contest cancelled;
 // last:1 = last place, zero:1 = no points. n = a note shown after answering.
 const MGP=[
@@ -27,12 +27,12 @@ const MGP=[
  {y:1990,a:'Ketil Stokkan',s:'Brandenburger Tor',e:21,last:1},
  {y:1992,a:'Merethe Trøan',s:'Visjoner',e:18},
  {y:1993,a:'Silje Vige',s:'Alle mine tankar',e:5},
- {y:1994,a:'Elisabeth Andreassen og Jan Werner Danielsen',s:'Duett',e:6,al:['Elisabeth Andreasson og Jan Werner Danielsen']},
+ {y:1994,a:'Elisabeth Andreassen og Jan Werner Danielsen',s:'Duett',e:6},
  {y:1995,a:'Secret Garden',s:'Nocturne',e:1},
  {y:1996,a:'Elisabeth Andreassen',s:'I evighet',e:2},
  {y:1997,a:'Tor Endresen',s:'San Francisco',e:24,last:1,zero:1},
- {y:1998,a:'Lars A. Fredriksen',s:'Alltid sommer',e:8,al:['Lars Fredriksen'],n:'I MGP ble låta sunget på engelsk, som «All I Ever Wanted (Was You)».'},
- {y:1999,a:'Stig van Eijk',s:'Living My Life Without You',e:14,al:['Van Eijk']},
+ {y:1998,a:'Lars A. Fredriksen',s:'Alltid sommer',e:8,n:'I MGP ble låta sunget på engelsk, som «All I Ever Wanted (Was You)».'},
+ {y:1999,a:'Stig van Eijk',s:'Living My Life Without You',e:14},
  {y:2000,a:'Charmed',s:'My Heart Goes Boom',e:11},
  {y:2001,a:'Haldor Lægreid',s:'On My Own',e:22,last:1},
  {y:2003,a:'Jostein Hasselgård',s:'I\'m Not Afraid to Move On',e:4},
@@ -40,22 +40,22 @@ const MGP=[
  {y:2005,a:'Wig Wam',s:'In My Dreams',e:9},
  {y:2006,a:'Christine Guldbrandsen',s:'Alvedansen',e:14},
  {y:2007,a:'Guri Schanke',s:'Ven a bailar conmigo',e:'semi'},
- {y:2008,a:'Maria Haukaas Storeng',s:'Hold On Be Strong',e:5,al:['Maria Haukaas Mittet','Maria Haukaas','Maria']},
+ {y:2008,a:'Maria Haukaas Storeng',s:'Hold On Be Strong',e:5},
  {y:2009,a:'Alexander Rybak',s:'Fairytale',e:1},
  {y:2010,a:'Didrik Solli-Tangen',s:'My Heart Is Yours',e:20},
  {y:2011,a:'Stella Mwangi',s:'Haba Haba',e:'semi'},
  {y:2012,a:'Tooji',s:'Stay',e:26,last:1},
  {y:2013,a:'Margaret Berger',s:'I Feed You My Love',e:4},
  {y:2014,a:'Carl Espen',s:'Silent Storm',e:8},
- {y:2015,a:'Mørland og Debrah Scarlett',s:'A Monster Like Me',e:8,al:['Kjetil Mørland og Debrah Scarlett']},
- {y:2016,a:'Agnete',s:'Icebreaker',e:'semi',al:['Agnete Johnsen']},
- {y:2017,a:'JOWST',s:'Grab the Moment',e:10,m:['Aleksander Walmann'],al:['Jowst og Aleksander Walmann'],n:'Aleksander Walmann sang.'},
+ {y:2015,a:'Mørland og Debrah Scarlett',s:'A Monster Like Me',e:8},
+ {y:2016,a:'Agnete',s:'Icebreaker',e:'semi'},
+ {y:2017,a:'JOWST',s:'Grab the Moment',e:10,m:['Aleksander Walmann'],n:'Aleksander Walmann sang.'},
  {y:2018,a:'Alexander Rybak',s:'That\'s How You Write a Song',e:15},
  {y:2019,a:'KEiiNO',s:'Spirit in the Sky',e:6},
- {y:2020,a:'Ulrikke',s:'Attention',e:'x',al:['Ulrikke Brandstorp']},
+ {y:2020,a:'Ulrikke',s:'Attention',e:'x'},
  {y:2021,a:'TIX',s:'Fallen Angel',e:18},
  {y:2022,a:'Subwoolfer',s:'Give That Wolf a Banana',e:10},
- {y:2023,a:'Alessandra',s:'Queen of Kings',e:5,al:['Alessandra Mele']},
+ {y:2023,a:'Alessandra',s:'Queen of Kings',e:5},
  {y:2024,a:'Gåte',s:'Ulveham',e:25,last:1},
  {y:2025,a:'Kyle Alessandro',s:'Lighter',e:18},
  {y:2026,a:'Jonas Lovv',s:'Ya Ya Ya',e:14}
