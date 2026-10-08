@@ -9,7 +9,7 @@ Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til bruker
 
 ## Struktur
 
-Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og sju visninger som byttes med `goMode()`.
+Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og åtte visninger som byttes med `goMode()`.
 Tabellen står i samme rekkefølge som knappene på forsida.
 
 | Modus | Seksjon | Innhold |
@@ -18,12 +18,13 @@ Tabellen står i samme rekkefølge som knappene på forsida.
 | `dagens` | `#dagensApp` | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`) — se under |
 | `bydel` | `#bydelApp` | Bydelene: Oslos bydeler (`BSETS`) |
 | `tbane` | `#tbaneApp` | T-banen: «neste stopp»-kviss og kart (`TBANE`) — se under |
+| `regjering` | `#regjeringApp` | Regjeringen: statsrådene og postene deres (`STATSRAD`) — se under |
 | `vapen` | `#vapenApp` | Fylkes- og kommunevåpen (`FYLKER`, `KOMMUNER`, `SETS`) |
 | `mgp` | `#mgpApp` | Melodi Grand Prix: vinnere og årstall (`MGP`, `MGP_GAPS`) — se under |
 | `caesar` | `#caesarApp` | Hotel Cæsar: roller og skuespillere (`CAESAR`, `CAESAR_OUT`) — se under |
 
 `goMode()` viser/skjuler seksjonene. Hver modus har sin egen adresse med hash — `#prep`, `#dagens`,
-`#tbane`, `#vapen`, `#bydel`, `#caesar`, `#mgp`; forsida har ingen hash — så tilbakeknappen i nettleseren,
+`#tbane`, `#regjering`, `#vapen`, `#bydel`, `#caesar`, `#mgp`; forsida har ingen hash — så tilbakeknappen i nettleseren,
 tilbakegesten på Android, oppdatering og lenker rett til en modus virker. Hash er valgt fordi
 GitHub Pages bare serverer `index.html`: stier som `/kvisstreneren/tbane` ville gitt 404.
 Knappene på forsida går via `openMode()` (`pushState`); «← Alle kvisser» (`goHome()`) går ett
@@ -220,6 +221,28 @@ viste stoppene ikke avgjør svaret, droppes (linje 5 passerer Tøyen og Carl Ber
 ganger). Er det skjulte stoppet en endestasjon, spørres det etter endestasjonen i stedet, siden
 «mot X» ellers ville røpet svaret.
 
+## Regjeringen
+
+Kviss om hvem som har hvilken post i regjeringen. To spørsmålstyper, valgt med knappene øverst:
+«Statsråd → post» (navn og bilde, velg posten) og «Post → statsråd» (bare posten, uten bilde, velg
+navnet; bildet vises etter svaret). Alle statsrådene kommer før noen gjentas. «Pugg»-fanen viser
+hele regjeringen, med en knapp som skjuler navnene.
+
+- `STATSRAD` — én rad per regjeringsmedlem, i samme rekkefølge som i «Pugg»: `p` posten slik
+  regjeringen skriver tittelen, `n` navnet, `d` departementet, `s` i posten siden, og `f`
+  filnavnet til et portrett på Wikimedia Commons (tom når Commons ikke har noe). Bildene lenkes via
+  `WM()` med `?width=320`, som våpnene; får et bilde ikke lastet, fjernes det.
+- `RG_ASOF` er datoen lista gjelder fra, og står i teksten under kortet.
+- Feilalternativene er de andre statsrådene (eller postene deres).
+
+Modusen er ikke med i Dagens kviss.
+
+Lista er satt sammen for hånd fra «Jonas Gahr Støres regjering» på no.wikipedia og regjeringen.no
+(«Endringer i regjeringen», 11. september 2026). Regjeringen.no står bak en Cloudflare-sjekk som
+stopper skript, så sida kan ikke hentes automatisk. Portrettene er bildet i Wikidata (P18) for
+hver statsråd. Det finnes ikke noe skript: **ved en ny regjering eller en rokade**, oppdater
+`STATSRAD` og `RG_ASOF` for hånd.
+
 ## Hotel Cæsar
 
 Kviss om hvem som spilte hvem i TV 2-såpen (1998–2017). Tre spørsmålstyper, valgt med knappene
@@ -411,7 +434,7 @@ Det finnes ingen testpakke. Etter en endring:
 node -e "const s=require('fs').readFileSync('index.html','utf8');[...s.matchAll(/<script>([\s\S]*?)<\/script>/g)].forEach((b,i)=>{new Function(b[1]);console.log('block',i,'ok')})"
 ```
 
-Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle sju modusene, og både
+Det fanger syntaksfeil. Resten må sjekkes i nettleseren: forsida, alle åtte modusene, og både
 lys og mørk modus (temaet følger `prefers-color-scheme`). Knappen for hjemskjermen vises bare
 med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes med
 `?ristetid`, både smalt (under 1100 px) og bredt.

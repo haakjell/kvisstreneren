@@ -238,6 +238,7 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.switch::before,.switch::after{transition:none}}
 .chead{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.25rem;margin:4px 0 10px}
 /* ---------- Melodi Grand Prix ---------- */
+.cprompt .rgpost{font-size:1.6rem;hyphens:auto}
 .cprompt .song{display:block;color:var(--muted);font-size:1.1rem;font-weight:500;margin-top:4px}
 .mgfrom{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:-4px 0 16px}
 .mgfrom > span{color:var(--muted);font-size:.95rem}
@@ -429,6 +430,7 @@ body.ads .adslot.none{display:none}
       <div class="adslot ad-all" data-fmt="card" data-label="Sponset"></div>
       <button class="mode" id="goBydel"><div class="omap" id="modeMapIcon" aria-hidden="true" style="margin:0"></div><div><strong>Bydelene</strong><span>Dagens 15 eller de nye 8</span></div></button>
       <button class="mode" id="goTbane"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12 L38 36 H78" stroke="var(--l1)"/><path d="M8 42 H80" stroke="var(--l2)"/><path d="M8 48 H48 L72 76" stroke="var(--l5)"/></g><path d="M44 30 V52" stroke="#1B2733" stroke-width="12" stroke-linecap="round"/><path d="M44 30 V52" stroke="#fff" stroke-width="7" stroke-linecap="round"/></svg></div><div><strong>T-banen</strong><span>Neste stopp på alle fem linjer</span></div></button>
+      <button class="mode" id="goRegjering"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><circle cx="38" cy="32" r="14" fill="var(--ink)"/><path d="M10 84C10 63 21 53 38 53S66 63 66 84Z" fill="var(--azure)"/><path d="M30 53L38 68L46 53Z" fill="var(--paper)"/><path d="M36 55H40L42.5 71L38 77L33.5 71Z" fill="var(--gules)"/><rect x="58" y="8" width="24" height="17.5" rx="1.5" fill="#BA0C2F"/><path d="M65.6 8V25.5M58 16.7H82" stroke="#fff" stroke-width="4.4"/><path d="M65.6 8V25.5M58 16.7H82" stroke="#00205B" stroke-width="2.2"/></svg></div><div><strong>Regjeringen</strong><span>Statsrådene og postene deres</span></div></button>
       <button class="mode" id="goVapen"><div id="modeShieldIcon" aria-hidden="true"></div><div><strong>Våpenskjold</strong><span>Fylkesvåpen og kommunevåpen</span></div></button>
       <button class="mode" id="goMgp"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><path d="M22 36a22 22 0 0 0 44 0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round"/><path d="M44 58v16M31 78h26" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round"/><rect x="31" y="6" width="26" height="44" rx="13" fill="var(--gules)"/><path d="M31 20h26M31 28h26M31 36h26" stroke="#fff" stroke-width="2.5" opacity=".45"/><path d="M72 8l2.8 6.7 6.7 2.8-6.7 2.8L72 27l-2.8-6.7-6.7-2.8 6.7-2.8z" fill="var(--or)"/><path d="M14 44l1.8 4.2 4.2 1.8-4.2 1.8L14 56l-1.8-4.2L8 50l4.2-1.8z" fill="var(--or)"/></svg></div><div><strong>Melodi Grand Prix</strong><span>Vinnerne fra 1971 til i dag</span></div></button>
       <button class="mode" id="goCaesar"><div id="modeCaesarIcon" aria-hidden="true"></div><div><strong>Hotel Cæsar</strong><span>Hvem spilte hvem</span></div></button>
@@ -654,6 +656,52 @@ Nyhetsvinduet er komplett. Navnedagene 8. og 9. oktober ligger fram i tid, men e
     <div class="tinfo" id="tInfo" aria-live="polite"></div>
   </main>
   <p class="note">Linjer og stopp: Ruter, via Entur (åpne data), september 2026. Det geografiske kartet følger sporene, men sentrum er forstørret.</p>
+  </div>
+
+  <div id="regjeringApp" hidden>
+  <button class="back" data-home>← Alle kvisser</button>
+  <header>
+    <div>
+      <h1>Regjeringen</h1>
+      <div class="sub" id="rgSub">Finn posten</div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="rgTabQuiz" aria-selected="true">Kviss</button>
+      <button role="tab" id="rgTabStudy" aria-selected="false">Pugg</button>
+    </div>
+  </header>
+  <div class="setswitch" role="radiogroup" aria-label="Velg spørsmålstype">
+    <button role="radio" id="rgSetPerson" aria-checked="true">Statsråd → post</button>
+    <button role="radio" id="rgSetPost" aria-checked="false">Post → statsråd</button>
+  </div>
+  <main id="rgQuiz">
+    <section class="card" id="rgPlay">
+      <div class="meta"><span id="rgCount">1 / 10</span><span id="rgScore">0 riktige</span></div>
+      <div class="bar"><i id="rgBar"></i></div>
+      <div class="cprompt" id="rgPrompt"></div>
+      <div class="q" id="rgQ"></div>
+      <div class="options" id="rgOptions" role="group" aria-labelledby="rgQ"></div>
+      <div class="feedback" id="rgFeedback" aria-live="polite"></div>
+      <div class="btns"><button class="primary" id="rgAction" hidden>Neste</button></div>
+    </section>
+    <section class="card done" id="rgDone" hidden>
+      <h2 id="rgDoneTitle"></h2>
+      <p id="rgDoneText"></p>
+      <ul class="tmissed" id="rgMissed"></ul>
+      <div class="btns">
+        <button class="primary" id="rgRetry">Øv på dem du bommet på</button>
+        <button class="ghost" id="rgRestart">Ti nye spørsmål</button>
+      </div>
+    </section>
+  </main>
+  <main id="rgStudy" hidden>
+    <div class="studybar">
+      <span>Trykk på en post for å se hvem som har den når navnene er skjult.</span>
+      <button class="ghost" id="rgToggle" style="padding:8px 12px">Skjul navn</button>
+    </div>
+    <div id="rgStudyList"></div>
+  </main>
+  <p class="note" id="rgNote"></p>
   </div>
 
   <div id="vapenApp" hidden>
@@ -2050,6 +2098,150 @@ c$('modeCaesarIcon').innerHTML=`<svg viewBox="100 50 1006 624" xmlns="http://www
 </svg>`;
 </script>
 <script>
+// ---------- Regjeringen ----------
+// One entry per member of the government, as listed on regjeringen.no: p = the post (the title as
+// the government writes it), n = the name, d = the ministry, s = in the post since, f = portrait
+// on Wikimedia Commons (empty when Commons has none). Update by hand after a reshuffle.
+const RG_ASOF='11. september 2026';
+const STATSRAD=[
+ {p:'Statsminister',n:'Jonas Gahr Støre',d:'Statsministerens kontor',s:'14. oktober 2021',f:'Jonas Gahr Støre under åpningen av det nye regjeringskvartalet 130426 (cropped).jpg'},
+ {p:'Utenriksminister',n:'Espen Barth Eide',d:'Utenriksdepartementet',s:'16. oktober 2023',f:'Espen Barth Eide in Washington, D.C. 2024.jpg'},
+ {p:'Utviklingsminister',n:'Åsmund Aukrust',d:'Utenriksdepartementet',s:'4. februar 2025',f:'Åsmund Aukrust 2025 (cropped).jpg'},
+ {p:'Finansminister',n:'Jens Stoltenberg',d:'Finansdepartementet',s:'4. februar 2025',f:'Jens Stoltenberg, Minister of Finance of Norway, at the Munich Security Conference in Munich, Germany on February 14, 2025 (cropped).jpg'},
+ {p:'Arbeids- og inkluderingsminister',n:'Kjersti Stenseng',d:'Arbeids- og inkluderingsdepartementet',s:'16. september 2025',f:'Kjersti Stenseng (2017).jpeg'},
+ {p:'Barne- og familieminister',n:'Lene Vågslid',d:'Barne- og familiedepartementet',s:'4. februar 2025',f:'Lene Vågslid (cropped).jpg'},
+ {p:'Digitaliserings- og forvaltningsminister',n:'Torgeir Micaelsen',d:'Digitaliserings- og forvaltningsdepartementet',s:'11. september 2026',f:'Torgeir Micaelsen - Arbeiderpartiet.jpg'},
+ {p:'Forsvarsminister',n:'Tore O. Sandvik',d:'Forsvarsdepartementet',s:'4. februar 2025',f:'Energy Secretary Ed Miliband attends COP29 (54150088131) (cropped).jpg'},
+ {p:'Helse- og omsorgsminister',n:'Jan Christian Vestre',d:'Helse- og omsorgsdepartementet',s:'19. april 2024',f:'JanChristianVestre.jpg'},
+ {p:'Justis- og beredskapsminister',n:'Astri Aas-Hansen',d:'Justis- og beredskapsdepartementet',s:'4. februar 2025',f:'Astri Aas-Hansen, 2025.jpg'},
+ {p:'Kommunal- og distriktsminister',n:'Bjørnar Selnes Skjæran',d:'Kommunal- og distriktsdepartementet',s:'16. september 2025',f:'Kommunal- og distriktsminister Bjørnar Selnes Skjæran.jpg'},
+ {p:'Kultur- og likestillingsminister',n:'Lubna Jaffery',d:'Kultur- og likestillingsdepartementet',s:'28. juni 2023',f:'2025-03-27 Event, Leipziger Buchmesse und Manga-Comic-Con 2025 STP 1603.jpg'},
+ {p:'Kunnskapsminister',n:'Kari Nessa Nordtun',d:'Kunnskapsdepartementet',s:'16. oktober 2023',f:'Kari Nessa Nordtun.png'},
+ {p:'Forsknings- og høyere utdanningsminister',n:'Eileen Fugelsnes',d:'Kunnskapsdepartementet',s:'11. september 2026',f:''},
+ {p:'Landbruks- og matminister',n:'Nils Kristen Sandtrøen',d:'Landbruks- og matdepartementet',s:'4. februar 2025',f:'Sandtrøen Ski-VM Foto Amanda Ramstad IMG 0214 (cropped).jpg'},
+ {p:'Klima- og miljøminister',n:'Sigrun Aasland',d:'Klima- og miljødepartementet',s:'11. september 2026',f:'Sigrun Gjerløw Aasland, NTP-konferanse, april 2024 (cropped).jpg'},
+ {p:'Næringsminister',n:'Cecilie Myrseth',d:'Nærings- og fiskeridepartementet',s:'19. april 2024',f:'Cecilie Myrseth.jpg'},
+ {p:'Fiskeri- og havminister',n:'Marianne Sivertsen Næss',d:'Nærings- og fiskeridepartementet',s:'19. april 2024',f:'Marianne Sivertsen Næss, 2025 (cropped).jpg'},
+ {p:'Energiminister',n:'Terje Aasland',d:'Energidepartementet',s:'7. mars 2022',f:'Terje Aasland, 2025 (cropped).jpg'},
+ {p:'Samferdselsminister',n:'Kamzy Gunaratnam',d:'Samferdselsdepartementet',s:'11. september 2026',f:'NMD 2019 Aarebrotsamtalen 17 (40851056673) (cropped2).jpg'}
+];
+const RG_DECK=10;
+const rg$=id=>document.getElementById(id);
+const rgLow=p=>p[0].toLowerCase()+p.slice(1);
+let rgMode='person', rgQueue=[], rgDeck=[], rgPos=0, rgCorrect=0, rgMissed=[], rgAnswered=false, rgTimer=null, rgOpts=[];
+const rgSrc=e=>e.f?WM(e.f)+'?width=320':'';
+const rgPic=(e,cls,alt='')=>e.f?`<img class="${cls}" src="${rgSrc(e)}" alt="${alt}">`:'';
+function rgPreload(deck){ deck.forEach(q=>{ const src=rgSrc(STATSRAD[q.i]); if(src) new Image().src=src; }); }
+
+// Rounds walk through a shuffled queue, so everyone comes up before any repeats
+function rgNewDeck(){
+  if(rgQueue.length<RG_DECK) rgQueue=rgQueue.concat(shuffle(STATSRAD.map((_,i)=>i).filter(i=>!rgQueue.includes(i))));
+  return rgQueue.splice(0,RG_DECK).map(i=>({i,dir:rgMode}));
+}
+function rgStart(deck){
+  clearTimeout(rgTimer); rgTimer=null;
+  rgDeck=deck; rgPos=0; rgCorrect=0; rgMissed=[];
+  rg$('rgPlay').hidden=false; rg$('rgDone').hidden=true; rgPreload(deck); rgShow();
+}
+// dir 'person': the name and picture are shown and the answer is the post.
+// dir 'post': the post is shown, without a picture, and the answer is the name.
+function rgOptions(q){
+  const e=STATSRAD[q.i], others=shuffle(STATSRAD.filter(x=>x!==e)).slice(0,5);
+  return q.dir==='person'
+    ? shuffle([{label:e.p,ok:true},...others.map(x=>({label:x.p,info:`${x.p} er ${x.n}.`}))])
+    : shuffle([{label:e.n,ok:true},...others.map(x=>({label:x.n,info:`${x.n} er ${rgLow(x.p)}.`}))]);
+}
+const rgQText=q=>q.dir==='person'?'Hvilken post har statsråden?':'Hvem har posten?';
+// The picture is part of the question for 'person', and shows up after answering for 'post'
+function rgPromptHTML(q,answered){
+  const e=STATSRAD[q.i];
+  if(q.dir==='person') return rgPic(e,'cpic','Bilde av statsråden')+`<small>Statsråd</small><strong>${e.n}</strong>`;
+  return (answered?rgPic(e,'cpic',e.n):'')+`<small>Post</small><strong class="rgpost">${e.p}</strong>`;
+}
+function rgShow(){
+  const q=rgDeck[rgPos]; rgAnswered=false;
+  const box=rg$('rgPrompt');
+  box.innerHTML=rgPromptHTML(q,false);
+  box.classList.remove('pop'); void box.offsetWidth; box.classList.add('pop');
+  rg$('rgQ').textContent=rgQText(q);
+  rg$('rgCount').textContent=`${rgPos+1} / ${rgDeck.length}`;
+  rg$('rgScore').textContent=`${rgCorrect} riktige`;
+  rg$('rgBar').style.width=`${rgPos/rgDeck.length*100}%`;
+  rg$('rgFeedback').innerHTML=''; rg$('rgAction').hidden=true;
+  rgOpts=rgOptions(q);
+  rg$('rgOptions').innerHTML=rgOpts.map((o,k)=>`<button data-k="${k}">${o.label}</button>`).join('');
+}
+const rgFact=e=>`${e.n} har vært ${rgLow(e.p)} siden ${e.s} (${e.d}).`;
+function rgPick(k){
+  if(rgAnswered) return;
+  rgAnswered=true;
+  const q=rgDeck[rgPos], e=STATSRAD[q.i], o=rgOpts[k];
+  rg$('rgOptions').querySelectorAll('button').forEach(el=>{ const bk=+el.dataset.k; el.disabled=true;
+    el.classList.add(rgOpts[bk].ok?'right':bk===k?'wrong':'dim'); });
+  if(o.ok) rgCorrect++; else if(!rgMissed.includes(q)) rgMissed.push(q);
+  if(q.dir==='post') rg$('rgPrompt').innerHTML=rgPromptHTML(q,true);
+  rg$('rgFeedback').innerHTML=`<div class="verdict ${o.ok?'ok':'bad'}">${o.ok?'Riktig!':q.dir==='person'?`Posten er ${rgLow(e.p)}`:`Det var ${e.n}`}</div><div class="motif">${o.ok?'':o.info+' '}${rgFact(e)}</div>`;
+  rg$('rgScore').textContent=`${rgCorrect} riktige`;
+  rg$('rgAction').textContent=rgPos===rgDeck.length-1?'Se resultat':'Neste';
+  rg$('rgAction').hidden=false;
+  if(o.ok){ rg$('rgAction').blur(); rgTimer=setTimeout(rgAct,1100); } else rg$('rgAction').focus({preventScroll:true});
+}
+function rgAct(){ clearTimeout(rgTimer); rgTimer=null; if(!rgAnswered) return; rgPos++; rgPos<rgDeck.length?rgShow():rgFinish(); }
+function rgFinish(){
+  rg$('rgBar').style.width='100%'; rg$('rgPlay').hidden=true; rg$('rgDone').hidden=false;
+  const n=rgDeck.length;
+  rg$('rgDoneTitle').textContent=rgCorrect===n?'Alle riktige!':`${rgCorrect} av ${n}`;
+  rg$('rgDoneText').textContent=rgMissed.length?'Disse bommet du på:':'Klar til onsdag.';
+  rg$('rgMissed').innerHTML=rgMissed.map(q=>{ const e=STATSRAD[q.i]; return `<li>${rgPic(e,'thumb')}<div><strong>${e.n}</strong><small>${e.p}</small></div></li>`; }).join('');
+  rg$('rgRetry').hidden=!rgMissed.length;
+  (rgMissed.length?rg$('rgRetry'):rg$('rgRestart')).focus({preventScroll:true});
+}
+rg$('rgAction').addEventListener('click',rgAct);
+rg$('rgOptions').addEventListener('click',e=>{const el=e.target.closest('button'); if(el) rgPick(+el.dataset.k);});
+rg$('rgRetry').addEventListener('click',()=>rgStart(shuffle(rgMissed)));
+rg$('rgRestart').addEventListener('click',()=>rgStart(rgNewDeck()));
+document.addEventListener('keydown',e=>{
+  if(rg$('regjeringApp').hidden||rg$('rgQuiz').hidden||rg$('rgPlay').hidden) return;
+  if(!rgAnswered&&/^[1-6]$/.test(e.key)){ const el=rg$('rgOptions').children[+e.key-1]; if(el) rgPick(+el.dataset.k); }
+  else if(rgAnswered&&e.key==='Enter'&&document.activeElement!==rg$('rgAction')){ e.preventDefault(); rgAct(); }
+});
+
+// Study list: post, name and since when. The names can be hidden and revealed one by one.
+function rgRenderStudy(){
+  const hide=rg$('rgToggle').dataset.hide==='1';
+  const li=e=>{ const pic=rgPic(e,'thumb'); return `<li tabindex="0"${pic?' class="pic"':''}>${pic}<strong>${e.p}</strong><span class="act">${e.n}</span><small>Siden ${e.s}</small></li>`; };
+  rg$('rgStudyList').innerHTML=`<h2 class="chead">Støres regjering</h2><ul class="clist${hide?' hide-actors':''}">${STATSRAD.map(li).join('')}</ul>`;
+}
+const rgReveal=li=>{ if(li&&li.closest('.hide-actors')) li.classList.toggle('show'); };
+rg$('rgStudyList').addEventListener('click',e=>rgReveal(e.target.closest('li')));
+rg$('rgStudyList').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ const li=e.target.closest('li'); if(li){ e.preventDefault(); rgReveal(li); } } });
+rg$('rgToggle').addEventListener('click',()=>{
+  const hide=rg$('rgToggle').dataset.hide!=='1';
+  rg$('rgToggle').dataset.hide=hide?'1':''; rg$('rgToggle').textContent=hide?'Vis navn':'Skjul navn';
+  rgRenderStudy();
+});
+rg$('regjeringApp').addEventListener('error',cDropPic,true);
+function rgTab(which){
+  clearTimeout(rgTimer); rgTimer=null;
+  const q=which==='quiz';
+  rg$('rgTabQuiz').setAttribute('aria-selected',q); rg$('rgTabStudy').setAttribute('aria-selected',!q);
+  rg$('rgQuiz').hidden=!q; rg$('rgStudy').hidden=q;
+}
+rg$('rgTabQuiz').addEventListener('click',()=>rgTab('quiz'));
+rg$('rgTabStudy').addEventListener('click',()=>rgTab('study'));
+const RG_SUBS={person:'Finn posten',post:'Finn statsråden'};
+function rgUse(m){
+  rgMode=m;
+  [['person','rgSetPerson'],['post','rgSetPost']].forEach(([k,id])=>rg$(id).setAttribute('aria-checked',k===m));
+  rg$('rgSub').textContent=RG_SUBS[m];
+  rgStart(rgNewDeck());
+}
+rg$('rgSetPerson').addEventListener('click',()=>rgUse('person'));
+rg$('rgSetPost').addEventListener('click',()=>rgUse('post'));
+function rgOpen(){ if(!rgDeck.length){ rgRenderStudy(); rgUse('person'); } }
+rg$('rgNote').textContent=`Statsrådene per ${RG_ASOF}: regjeringen.no og Wikipedia. Bilder: Wikimedia Commons.`;
+</script>
+<script>
 // ---------- Melodi Grand Prix ----------
 // One entry per MGP final, 1971 onwards. a = the artist who represented Norway in Eurovision
 // (the answer), s = the song as sung there. m = members of a group, and also = others who sang
@@ -2679,12 +2871,12 @@ document.addEventListener('keydown',e=>{
 // ---------- Mode switching ----------
 // Each mode has its own URL hash (#tbane, #mgp …; the home page has none), so the browser's
 // back button, Android's back gesture and reloads all work. Tabs inside a mode are not routed.
-const MODES=['prep','dagens','bydel','tbane','vapen','mgp','caesar'];
+const MODES=['prep','dagens','bydel','tbane','regjering','vapen','mgp','caesar'];
 let curMode=null;
 function goMode(m){
   curMode=m; document.body.dataset.mode=m;
-  clearTimeout(autoTimer); autoTimer=null; clearTimeout(bTimer); bTimer=null; clearTimeout(tTimer); tTimer=null; clearTimeout(cTimer); cTimer=null; clearTimeout(mgTimer); mgTimer=null; clearTimeout(mxTimer); mxTimer=null;
-  b$('home').hidden=m!=='home'; b$('prepApp').hidden=m!=='prep'; b$('dagensApp').hidden=m!=='dagens'; b$('vapenApp').hidden=m!=='vapen'; b$('bydelApp').hidden=m!=='bydel'; b$('tbaneApp').hidden=m!=='tbane'; b$('caesarApp').hidden=m!=='caesar'; b$('mgpApp').hidden=m!=='mgp';
+  clearTimeout(autoTimer); autoTimer=null; clearTimeout(bTimer); bTimer=null; clearTimeout(tTimer); tTimer=null; clearTimeout(cTimer); cTimer=null; clearTimeout(mgTimer); mgTimer=null; clearTimeout(mxTimer); mxTimer=null; clearTimeout(rgTimer); rgTimer=null;
+  b$('home').hidden=m!=='home'; b$('prepApp').hidden=m!=='prep'; b$('dagensApp').hidden=m!=='dagens'; b$('vapenApp').hidden=m!=='vapen'; b$('bydelApp').hidden=m!=='bydel'; b$('tbaneApp').hidden=m!=='tbane'; b$('caesarApp').hidden=m!=='caesar'; b$('mgpApp').hidden=m!=='mgp'; b$('regjeringApp').hidden=m!=='regjering';
   document.querySelector('.wrap').classList.toggle('wide', m==='prep');
   // The one countdown element moves between the home page and the prep, so it keeps its state
   if(m==='prep') b$('prepStale').before(b$('countdown'));
@@ -2692,6 +2884,7 @@ function goMode(m){
   b$('countdown').after(b$('adTop'));
   if(m==='bydel' && !bDeck.length) bUse('old');
   if(m==='tbane') tOpen();
+  if(m==='regjering') rgOpen();
   if(m==='caesar') cOpen();
   if(m==='mgp') mgOpen();
   if(m==='dagens') mxOpen();
@@ -2723,6 +2916,7 @@ b$('goDagens').addEventListener('click',()=>openMode('dagens'));
 b$('goVapen').addEventListener('click',()=>openMode('vapen'));
 b$('goBydel').addEventListener('click',()=>openMode('bydel'));
 b$('goTbane').addEventListener('click',()=>openMode('tbane'));
+b$('goRegjering').addEventListener('click',()=>openMode('regjering'));
 b$('goCaesar').addEventListener('click',()=>openMode('caesar'));
 b$('goMgp').addEventListener('click',()=>openMode('mgp'));
 document.querySelectorAll('[data-home]').forEach(el=>el.addEventListener('click',goHome));
