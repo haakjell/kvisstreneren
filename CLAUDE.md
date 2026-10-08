@@ -49,8 +49,8 @@ noen få ny `index.html` med gamle skript; en oppdatering av sida retter det.
 ## Struktur
 
 Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og åtte
-moduser. I tillegg er det innstillingene (`#settings`), som åpnes med tannhjulet øverst til høyre
-på forsida — se «Innstillinger». Tabellen står i samme rekkefølge som knappene på forsida.
+moduser. I tillegg er det innstillingene (`#settings`), som åpnes med tannhjulet til høyre for
+tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølge som knappene på forsida.
 
 | Modus | Kode | Data | Innhold |
 |---|---|---|---|
@@ -139,8 +139,8 @@ Alle tilfeldige valg i kvissene (`shuffle()`, feilalternativer, retning på spø
 
 ## Innstillinger
 
-Tannhjulet øverst til høyre på forsida (`.gear` i `.homebar`, ved siden av «Legg til på
-hjemskjermen») åpner `#settingsApp`. Den er registrert med `addMode('settings', …)` som en modus,
+Tannhjulet på forsida (`.gear`, høyrestilt på linje med tittelen i `.hometitle`, under
+nedtellingen) åpner `#settingsApp`. Den er registrert med `addMode('settings', …)` som en modus,
 så den får adresse (`#settings`) og tilbakeknappen virker, men den er ingen kviss, ikke med i
 tabellen over og ikke i Dagens kviss. Alt lagres i `localStorage` på enheten.
 

@@ -10,7 +10,7 @@ function goMode(m){
   for(const k in MODES) $(k+'App').hidden=k!==m;
   document.querySelector('.wrap').classList.toggle('wide',!!MODES[m]?.wide);
   if(m==='home'){
-    $('home').querySelector('h1').before($('countdown'));   // back from the prep, if it was there
+    $('home').querySelector('.hometitle').before($('countdown'));   // back from the prep, if it was there
     renderPrep();   // the button's text; the page may have been open since before the quiz
   } else MODES[m].open();
   $('countdown').after($('adTop'));
