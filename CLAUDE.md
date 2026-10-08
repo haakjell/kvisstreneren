@@ -11,16 +11,18 @@ Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til bruker
 ## Filene
 
 ```
-index.html            markupen: forsida, alle modusene, arkene — og ukas prepp (#prepSource)
-css/base.css          tema (lys/mørk), layout, kort, knapper, faner, alternativer, «Skjul navn»
-css/modes.css         forsida og hver modus, i hver sin bolk
+index.html            markupen: forsida, alle modusene, innstillingene, arkene — og ukas prepp (#prepSource)
+css/base.css          tema (lys/mørk), layout, kort, knapper, faner, alternativer, brytere, «Skjul navn»
+css/modes.css         forsida, hver modus og innstillingene, i hver sin bolk
 css/countdown.css · install.css · ads.css
 js/core.js            felles hjelpere: $(), store, tekst (normName(), nearly()), tilfeldighet (rnd()),
                       tid (serverNow(), osloWall(), quizLive() …), modusregisteret (addMode()) og MIX
 js/ui.js              felles grensesnitt: tabs(), radios(), hideAnswers(), dropBrokenPics()
 js/quiz.js            spillmotoren, makeQuiz(): spørsmåls- og resultatkortet for alle kvissene
 js/modes/<modus>.js   hver kvissmodus: spørsmålene, valgene øverst, «Pugg» og kilden i MIX
+js/theme.js           lyst/mørkt tema fra innstillingene — lastes i <head>, se «Innstillinger»
 js/prep.js · dagens.js · ads.js · countdown.js · install.js
+js/settings.js        Innstillinger — se under
 js/app.js             modusbytte og ruting (goMode()) og oppstart
 data/<navn>.js        dataene, én fil per tema — se tabellen under
 tools/                skript som oppdaterer data og prepp, og regresjonstesten — se «Verktøy»
@@ -30,7 +32,8 @@ ads/                  fotoer til annonsene, om det kommer noen — se «Reklame�
 ```
 
 Skriptene lastes i rekkefølgen nederst i `index.html`: `core.js`, `ui.js` og `quiz.js`, så alle
-`data/`-filene, så modusene og resten, og `app.js` til slutt. Alle deler samme globale navnerom,
+`data/`-filene, så modusene og resten, og `app.js` til slutt. Unntaket er `theme.js`, som lastes i
+`<head>` så sida ikke blinker i feil tema før skriptene nederst har kjørt. Alle deler samme globale navnerom,
 så kode på toppnivå i en fil kan bare bruke det som er lastet før den. Ny fil = ny
 `<script src>`-linje på riktig plass. Det som er privat for en modus, har modusens prefiks
 (`t…` for T-banen, `mg…` for MGP osv.), så navnene ikke kolliderer.
@@ -46,7 +49,8 @@ noen få ny `index.html` med gamle skript; en oppdatering av sida retter det.
 ## Struktur
 
 Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og åtte
-moduser. Tabellen står i samme rekkefølge som knappene på forsida.
+moduser. I tillegg er det innstillingene (`#settings`), som åpnes med tannhjulet øverst til høyre
+på forsida — se «Innstillinger». Tabellen står i samme rekkefølge som knappene på forsida.
 
 | Modus | Kode | Data | Innhold |
 |---|---|---|---|
@@ -83,7 +87,8 @@ kilde i `MIX` — se «Dagens kviss».
 Alle kvissene, også Dagens kviss, kjøres av `makeQuiz()` i `js/quiz.js`. Den skriver
 spørsmålskortet og resultatkortet inn i modusens `<main>` og står for alt som er likt:
 telleren, poengene, fremdriftslinja, alternativene eller feltet for skrevet svar, «Riktig!» /
-«Det var X», videre etter 1000 ms ved riktig svar (`QUIZ_AUTO`), lista over bom, «Øv på dem du
+«Det var X», videre etter 1000 ms ved riktig svar (`QUIZ_AUTO`; kan skrus av i innstillingene,
+`quizAuto()`), lista over bom, «Øv på dem du
 bommet på» og «Ti nye spørsmål», og tastene 1–6 og Enter (én lytter for alle).
 
 En modus gir motoren spørsmål på én felles form, beskrevet øverst i `quiz.js`: spørsmålstekst,
@@ -131,6 +136,34 @@ norsk tid uansett hvilken tidssone enheten står i: `osloWall()`, `osloDay()` og
 Alle tilfeldige valg i kvissene (`shuffle()`, feilalternativer, retning på spørsmålet) går gjennom
 `rnd()`, ikke `Math.random()`. Det er det som lar Dagens kviss bytte inn en generator med frø
 (`withSeed()`) og gi alle de samme spørsmålene. Bruk `rnd()` også i ny kode.
+
+## Innstillinger
+
+Tannhjulet øverst til høyre på forsida (`.gear` i `.homebar`, ved siden av «Legg til på
+hjemskjermen») åpner `#settingsApp`. Den er registrert med `addMode('settings', …)` som en modus,
+så den får adresse (`#settings`) og tilbakeknappen virker, men den er ingen kviss, ikke med i
+tabellen over og ikke i Dagens kviss. Alt lagres i `localStorage` på enheten.
+
+| Innstilling | Nøkkel | Bor i |
+|---|---|---|
+| Gå videre av seg selv ved riktig svar (standard på) | `autoNext` (`'0'` = av) | `quizAuto()` i `quiz.js` |
+| Bilder i Hotel Cæsar (standard på) | `cPics` | `cSetPics()` i `caesar.js` |
+| T-banekartet: Geografisk / Linjekart | `tMapKind` | `tSetKind()` i `tbane.js` |
+| Utseende: Som enheten / Lyst / Mørkt | `theme` (ingen = som enheten) | `applyTheme()` i `theme.js` |
+| Vis «Legg til på hjemskjermen» (bare på berøringsskjerm, ikke installert) | `installHidden` | `installShow()` i `install.js` |
+
+Hver innstilling bor hos koden som bruker den; `js/settings.js` viser dem bare og endrer dem med
+de samme funksjonene som modusenes egne brytere, så de alltid er enige, og leser dem på nytt hver
+gang sida åpnes. Ny innstilling: en rad i `#settingsApp` (`.switch` for av/på, `.setswitch` for
+valg), og koden i `settings.js`. Når automatisk videre er av, venter et riktig svar på «Neste»
+(eller Enter), akkurat som et feil.
+
+Temaet setter `data-theme="light|dark"` på `<html>`; CSS-en har fargene for begge, både under
+`prefers-color-scheme` og for `[data-theme]`. `applyTheme()` bytter også fargen på nettleserlinja
+(`theme-color`). Skjuler man «Legg til på hjemskjermen» med «Ikke vis knappen igjen», kan den slås
+på igjen her.
+
+Reklamevalget (`shakeOff`) står bevisst ikke i innstillingene ennå — det kommer senere.
 
 ## Ukas prepp
 
@@ -256,7 +289,7 @@ Valgene i modusene selv gjelder ikke i Dagens kviss. Utvalget der er fast:
   i spørsmålet («Hvilken av de nye bydelene er markert?») og i telleren («Bydelene, de nye fra
   2028», via `tag` i kilden).
 - **T-banen:** alle linjer, på det kartet som er valgt i T-banemodusen («Geografisk» eller
-  «Linjekart», `tMapKind`). Bryteren finnes bare der.
+  «Linjekart», `tMapKind`), eller i innstillingene.
 - **Våpenskjold:** tilfeldig blant alle, både fylkesvåpen og kommunevåpen.
 - **MGP:** bare fra og med 2000 (`MG_MIX_FROM`), også feilalternativene, og det står i telleren
   («MGP fra og med 2000») og i teksten under kortet. År → artist eller artist → år, tilfeldig.
@@ -278,7 +311,7 @@ plattform mot Frognerseteren. Sentrum forstørres med en fiskeøyeprojeksjon (`F
 i skriptet). Linjefargene ligger i CSS som `--l1`…`--l5`, ikke i dataene.
 
 Bryteren øverst («Geografisk» / «Linjekart») gjelder både «Kviss» og «Kart», og huskes i
-`localStorage` under `tMapKind`. «Linjekart» er standard. Nøkkelen skrives bare når noen trykker
+`localStorage` under `tMapKind`. «Linjekart» er standard. Valget finnes også i innstillingene. Nøkkelen skrives bare når noen trykker
 på bryteren, så en lagret `'geo'` er et valg og blir respektert; alle uten lagret verdi får
 linjekartet. «Geografisk» er SVG-en fra `TBANE`. «Linjekart» er Ruters eget
 schematiske linjekart: et bilde som lenkes direkte fra Ruters CDN, på samme måte som våpnene lenkes
@@ -352,7 +385,7 @@ alternativer, med litt slingringsmonn for skrivefeil). «Pugg»-fanen viser hele
 Hvert spørsmål viser et bilde av rollefiguren, og «Pugg» (og lista over bom på slutten) viser
 miniatyrbilder. Bare `top:1`-rollene har bilde — det er bare de det spørres om; de andre rollene
 vises uten bilde i «Pugg». Bryteren «Vis bilder» slår dem av og på for både «Kviss» og «Pugg»,
-og huskes i `localStorage` under `cPics` (bilder er på som standard). Bildene er infoboksbildene fra
+og huskes i `localStorage` under `cPics` (bilder er på som standard). Den finnes også i innstillingene. Bildene er infoboksbildene fra
 rollefigur-artiklene på hotelcaesar.fandom.com. De lenkes direkte fra Fandoms CDN, på samme måte som
 våpnene lenkes fra Wikimedia, og ligger ikke i repoet. Fandom avviser forespørsler med en
 fremmed `Referer`, så `<img>` må ha `referrerpolicy="no-referrer"` (det har `cPic()`). Får et bilde
@@ -499,7 +532,8 @@ bredere når preppen vises.
 
 På mobil (berøringsskjerm) viser forsida knappen «Legg til på hjemskjermen» øverst til høyre
 (`#installBtn`). Knappen skjules når sida allerede kjører som app fra hjemskjermen, og når
-brukeren har trykket «Ikke vis knappen igjen» (`localStorage`-nøkkelen `installHidden`).
+brukeren har trykket «Ikke vis knappen igjen» (`localStorage`-nøkkelen `installHidden`; kan slås
+på igjen i innstillingene).
 I Chrome på Android åpner knappen nettleserens egen installeringsdialog (`beforeinstallprompt`);
 ellers, blant annet på iPhone, der det ikke finnes noen slik dialog, åpner den et ark
 (`#installSheet`) med stegene for iOS eller for andre nettlesere. Chrome kan også vise sitt eget
@@ -522,8 +556,8 @@ Etter en endring, fra reporoten:
 for f in js/*.js js/modes/*.js data/*.js tools/*.mjs tools/regression/*.mjs; do node --check "$f" || echo "FEIL i $f"; done
 ```
 
-Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle åtte modusene, og både
-lys og mørk modus (temaet følger `prefers-color-scheme`). Knappen for hjemskjermen vises bare
+Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle åtte modusene, innstillingene, og både
+lys og mørk modus (temaet følger `prefers-color-scheme`, eller valget i innstillingene). Knappen for hjemskjermen vises bare
 med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes med
 `?ristetid`, både smalt (under 1100 px) og bredt.
 
@@ -533,7 +567,7 @@ med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for ri
 (ingen interne funksjonsnavn), og lagrer et øyeblikksbilde etter hvert steg: markup, synlig tekst,
 fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene med alle
 spørsmålstypene, «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
-og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke,
+og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også en runde uten automatisk videre),
 stengt onsdag kveld, uten nett og som lokal fil, reklamen, og at nedtellingen og preppen følger
 serverens klokke når enheten tar feil. `Math.random`, klokka, serverdatoen og alle eksterne bilder
 og fonter er låst, så to kjøringer av samme kode gir identisk resultat. Trenger Playwright (Chromium), og

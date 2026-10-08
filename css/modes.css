@@ -10,6 +10,11 @@
 .mode svg{width:88px;height:88px}
 .mode strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.45rem;line-height:1.1}
 .mode span{display:block;color:var(--muted);font-size:.95rem;margin-top:4px}
+/* The bar above the countdown: «Legg til på hjemskjermen» (install.css) and the settings cog */
+.homebar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:-8px 0 12px}
+.gear{display:grid;place-items:center;flex:none;width:36px;height:36px;padding:0;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:50%;cursor:pointer}
+.gear:hover{border-color:var(--azure)}
+.gear svg{width:20px;height:20px}
 .back{font:inherit;font-size:.95rem;background:none;border:0;color:var(--muted);cursor:pointer;padding:4px 0;margin:0 0 10px;text-decoration:underline;text-underline-offset:3px}
 .omap{display:flex;justify-content:center;margin:0 0 14px}
 .omap svg{width:100%;max-width:420px;height:auto;max-height:50vh}
@@ -115,12 +120,6 @@
 .cpic{display:block;width:150px;height:150px;margin:0 auto 12px;border-radius:18px;object-fit:cover;object-position:center 15%;background:var(--bg);border:1.5px solid var(--line)}
 .tmissed .thumb{flex:none;width:40px;height:40px;border-radius:8px;object-fit:cover;object-position:center 15%;background:var(--paper)}
 .picbar{display:flex;justify-content:flex-end;margin:-6px 0 10px}
-.switch{position:relative;font:inherit;font-size:.92rem;color:var(--muted);background:none;border:0;padding:4px 46px 4px 0;cursor:pointer}
-.switch::before{content:"";position:absolute;right:0;top:50%;width:38px;height:22px;margin-top:-11px;border-radius:999px;background:var(--line);transition:background .2s}
-.switch::after{content:"";position:absolute;right:19px;top:50%;width:17px;height:17px;margin-top:-8.5px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:right .2s}
-.switch[aria-checked="true"]::before{background:var(--azure)}
-.switch[aria-checked="true"]::after{right:2.5px}
-@media (prefers-reduced-motion:reduce){.switch::before,.switch::after{transition:none}}
 .chead{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.25rem;margin:4px 0 10px}
 /* ---------- Melodi Grand Prix ---------- */
 .cprompt .rgpost{font-size:1.6rem;hyphens:auto}
@@ -152,3 +151,11 @@
 /* The question's picture, map or name pops in (quiz.js); not for those who ask for less motion.
    Last, so it wins over the .pop rules of every mode above. */
 @media (prefers-reduced-motion:reduce){.shield.pop svg,.shield.pop img,.omap.pop svg,.tmap.pop svg,.cprompt.pop strong{animation:none}}
+/* ---------- Innstillinger ---------- */
+.settings h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.2rem;margin:24px 0 10px}
+.settings>h2:first-child{margin-top:0}
+.settings .setswitch{margin:0}
+.setrow{margin:0 0 14px}
+.settings .switch{display:block;width:100%;text-align:left;color:var(--ink);font-size:1rem;font-weight:500;padding:6px 52px 6px 0}
+.setrow p,.setnote{color:var(--muted);font-size:.88rem;margin:2px 0 0}
+.setnote{margin-top:8px}

@@ -90,6 +90,13 @@ button:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
 .hide-answers [tabindex]{cursor:pointer}
 .hide-answers .ans{visibility:hidden}
 .hide-answers .show .ans{visibility:visible}
+/* An on/off switch (role="switch", aria-checked): Hotel Cæsar's «Vis bilder» and Innstillinger */
+.switch{position:relative;font:inherit;font-size:.92rem;color:var(--muted);background:none;border:0;padding:4px 46px 4px 0;cursor:pointer}
+.switch::before{content:"";position:absolute;right:0;top:50%;width:38px;height:22px;margin-top:-11px;border-radius:999px;background:var(--line);transition:background .2s}
+.switch::after{content:"";position:absolute;right:19px;top:50%;width:17px;height:17px;margin-top:-8.5px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:right .2s}
+.switch[aria-checked="true"]::before{background:var(--azure)}
+.switch[aria-checked="true"]::after{right:2.5px}
+@media (prefers-reduced-motion:reduce){.switch::before,.switch::after{transition:none}}
 .studybar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;color:var(--muted);font-size:.95rem;gap:10px}
 .note{color:var(--muted);font-size:.82rem;text-align:center;margin-top:22px}
 [hidden]{display:none!important}

@@ -82,14 +82,16 @@ function cRenderStudy(){
     `<h2 class="chead">Flere rollefigurer</h2><ul class="clist">${CAESAR.filter(e=>!e.top).map(li).join('')}</ul>`;
 }
 hideAnswers('cToggle','cStudyList',['Skjul skuespillere','Vis skuespillere']);
-$('cPics').setAttribute('aria-checked',cPics);
-$('cPics').addEventListener('click',()=>{
-  cPics=!cPics; $('cPics').setAttribute('aria-checked',cPics);
-  store.set('cPics',cPics?'1':'0');
+// «Vis bilder», here and in Innstillinger
+function cSetPics(on){
+  cPics=on; $('cPics').setAttribute('aria-checked',on);
+  store.set('cPics',on?'1':'0');
   // On the result screen there is no question left to redraw, only the list of misses
   cQuiz.redrawBox(); cQuiz.renderMissed(); cPreload(cQuiz.upcoming());
   cRenderStudy();
-});
+}
+$('cPics').setAttribute('aria-checked',cPics);
+$('cPics').addEventListener('click',()=>cSetPics(!cPics));
 dropBrokenPics('caesarApp');
 dropBrokenPics('dagensApp');
 tabs('cTabQuiz','cTabStudy','cQuiz','cStudy',q=>{ cQuiz.stop(); if(q) cQuiz.refocus(); });

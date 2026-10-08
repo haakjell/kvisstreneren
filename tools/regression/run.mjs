@@ -385,6 +385,37 @@ tests['dagens-flow'] = async () => {
   rec.save();
 };
 
+// Innstillinger: every setting, that the modes follow them, and a round without auto-advance
+tests.settings = async () => {
+  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
+    const rec = new Rec('settings-' + cfg), page = await newPage(rec.name, opt);
+    const click = async (sel, label) => { await page.click(sel); await page.waitForTimeout(80); await rec.snap(page, label); };
+    await page.evaluate(() => document.querySelector('#home .gear').click()); await page.waitForTimeout(150);
+    await rec.snap(page, 'open'); await rec.shoot(page, 'open');
+    await click('#stAuto', 'auto-off');
+    await click('#stPics', 'pics-off');
+    await click('#stMapGeo', 'map-geo');
+    await click('#stThemeDark', 'theme-dark'); await rec.shoot(page, 'dark');
+    if (cfg === 'mobile') { await click('#stInstall', 'install-off'); await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'home-no-install', true); }
+    // The modes follow, also after a reload
+    await page.reload(); await page.waitForTimeout(150);
+    await page.goto(BASE + '#tbane'); await waitReady(page); await rec.snap(page, 'tbane');
+    await page.goto(BASE + '#caesar'); await waitReady(page); await rec.snap(page, 'caesar');
+    // A right answer waits for «Neste» instead of going on by itself
+    await page.goto(BASE + '#mgp'); await waitReady(page);
+    await page.evaluate(() => { const a = __T.expected(); [...__T.app().querySelectorAll('.options button')].find(b => b.textContent === a).click(); });
+    await page.waitForTimeout(1300); await rec.snap(page, 'mgp-right-waits');
+    await page.keyboard.press('Enter'); await page.waitForTimeout(80); await rec.snap(page, 'mgp-enter');
+    await playRound(page, rec, 'mgp', 1);
+    // Back to the defaults
+    await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
+    for (const id of ['#stAuto', '#stPics', '#stMapRuter', '#stThemeAuto']) await page.click(id);
+    if (cfg === 'mobile') await page.click('#stInstall');
+    await page.waitForTimeout(80); await rec.snap(page, 'defaults');
+    rec.save(); await page.context().close();
+  }
+};
+
 // Ads (?ristetid), and the real shaking window
 tests.ads = async () => {
   const rec = new Rec('ads');

@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="js/theme.js"></script>
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/modes.css">
 <link rel="stylesheet" href="css/countdown.css">
@@ -26,7 +27,10 @@
 <div class="adslot ad-side side-r" data-fmt="side"></div>
 <div class="wrap">
   <section class="home" id="home" hidden>
+    <div class="homebar">
     <button class="install" id="installBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="var(--azure)" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M12 8.5v6M9 11.5h6"/></svg>Legg til på hjemskjermen</button>
+    <button class="gear" data-mode="settings" aria-label="Innstillinger" title="Innstillinger"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    </div>
     <div class="countdown" id="countdown"><div id="cdBody" role="timer" aria-live="off"></div><button class="shakebtn" id="shakeBtn" hidden>Skru av risting</button></div>
     <div class="adslot ad-in" id="adTop" data-fmt="banner"></div>
     <h1>Kvisstreneren</h1>
@@ -367,6 +371,43 @@ Nyhetsvinduet er komplett. Navnedagene 8. og 9. oktober ligger fram i tid, men e
   <p class="note" id="mgNote"></p>
   </div>
 
+  <div id="settingsApp" hidden>
+  <button class="back" data-home>← Alle kvisser</button>
+  <header>
+    <div>
+      <h1>Innstillinger</h1>
+      <div class="sub">Lagres bare på denne enheten</div>
+    </div>
+  </header>
+  <section class="card settings">
+    <h2>Kvissene</h2>
+    <div class="setrow">
+      <button type="button" class="switch" role="switch" id="stAuto" aria-checked="true" aria-describedby="stAutoNote">Gå videre av seg selv ved riktig svar</button>
+      <p id="stAutoNote">Etter et riktig svar kommer neste spørsmål etter ett sekund. Skrur du det av, står svaret til du trykker «Neste» eller Enter.</p>
+    </div>
+    <div class="setrow">
+      <button type="button" class="switch" role="switch" id="stPics" aria-checked="true" aria-describedby="stPicsNote">Bilder i Hotel Cæsar</button>
+      <p id="stPicsNote">Bilder av rollefigurene, også i Dagens kviss.</p>
+    </div>
+    <h2 id="stMapLabel">T-banekartet</h2>
+    <div class="setswitch" role="radiogroup" aria-labelledby="stMapLabel" aria-describedby="stMapNote">
+      <button role="radio" id="stMapGeo" aria-checked="false">Geografisk</button>
+      <button role="radio" id="stMapRuter" aria-checked="true">Linjekart</button>
+    </div>
+    <p class="setnote" id="stMapNote">Gjelder både kvissen og kartet i T-banen, og T-banespørsmålene i Dagens kviss.</p>
+    <h2 id="stThemeLabel">Utseende</h2>
+    <div class="setswitch three" role="radiogroup" aria-labelledby="stThemeLabel">
+      <button role="radio" id="stThemeAuto" aria-checked="true">Som enheten</button>
+      <button role="radio" id="stThemeLight" aria-checked="false">Lyst</button>
+      <button role="radio" id="stThemeDark" aria-checked="false">Mørkt</button>
+    </div>
+    <div class="setrow" id="stInstallRow" hidden>
+      <h2>Hjemskjermen</h2>
+      <button type="button" class="switch" role="switch" id="stInstall" aria-checked="true">Vis «Legg til på hjemskjermen» på forsida</button>
+    </div>
+  </section>
+  </div>
+
 </div>
 
 <dialog class="sheet" id="installSheet" aria-labelledby="installTitle">
@@ -436,6 +477,7 @@ Nyhetsvinduet er komplett. Navnedagene 8. og 9. oktober ligger fram i tid, men e
 <script src="js/ads.js"></script>
 <script src="js/countdown.js"></script>
 <script src="js/install.js"></script>
+<script src="js/settings.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

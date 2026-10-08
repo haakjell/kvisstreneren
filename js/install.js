@@ -7,10 +7,11 @@
 let installEvt=null;
 const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 const installHidden=()=>store.get('installHidden')==='1';
-{
-  const standalone=matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
-  $('installBtn').hidden = installHidden() || standalone || !matchMedia('(hover:none) and (pointer:coarse)').matches;
-}
+// A touch device, not already running as the installed app: the button is offered (and its switch in Innstillinger)
+const installable=!(matchMedia('(display-mode: standalone)').matches || navigator.standalone===true)
+  && matchMedia('(hover:none) and (pointer:coarse)').matches;
+const installShow=()=>{ $('installBtn').hidden=installHidden()||!installable; };
+installShow();
 addEventListener('beforeinstallprompt',e=>{ if(installHidden()) e.preventDefault(); installEvt=e; });
 addEventListener('appinstalled',()=>{ installEvt=null; $('installBtn').hidden=true; });
 $('installBtn').addEventListener('click',async()=>{

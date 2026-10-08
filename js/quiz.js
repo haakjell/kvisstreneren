@@ -34,6 +34,8 @@
 //   onFinish(quiz)           after the result card is filled in, e.g. to change its buttons
 //   donePrefix()             text before «Disse bommet du på:» (Dagens kviss: the streak)
 const QUIZ_AUTO=1000;   // ms on a right answer before the next question
+// On unless turned off in Innstillinger: then a right answer waits for «Neste», like a wrong one
+const quizAuto=()=>store.get('autoNext')!=='0';
 const quizzes=[];       // every engine: goMode() stops their timers, and one keydown listener serves them
 
 function makeQuiz(mount, o={}){
@@ -131,7 +133,7 @@ function makeQuiz(mount, o={}){
     score.textContent=`${right()} riktige`;
     next.textContent=pos===deck.length-1?'Se resultat':'Neste';
     next.hidden=false;
-    if(ok){ next.blur(); timer=setTimeout(advance,QUIZ_AUTO); } else next.focus({preventScroll:true});
+    if(ok&&quizAuto()){ next.blur(); timer=setTimeout(advance,QUIZ_AUTO); } else next.focus({preventScroll:true});
   }
   function advance(){ stop(); if(!answered) return; pos++; pos<deck.length?show():finish(); }
   function renderMissed(){
