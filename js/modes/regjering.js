@@ -55,5 +55,5 @@ function rgUse(m){
   rgQuiz.start(rgNewDeck());
 }
 function rgOpen(){ if(!rgQuiz.started()){ rgRenderStudy(); rgUse('person'); } }
-addMode('regjering',rgOpen);
+addMode('regjering',rgOpen,{newUntil:'2026-10-14 19:00'});
 $('rgNote').textContent=`Statsrådene per ${RG_ASOF}: regjeringen.no og Wikipedia. Bilder: Wikimedia Commons.`;

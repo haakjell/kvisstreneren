@@ -82,6 +82,15 @@ kvisskortet, en knapp på forsida med `data-mode="<navn>"`, og en fil i `js/mode
 selv er `makeQuiz()` — se «Spillmotoren». Skal den være med i Dagens kviss, trenger den også en
 kilde i `MIX` — se «Dagens kviss».
 
+### «Ny»-merket
+
+En ny modus kan få et lite «Ny»-merke øverst til høyre på knappen sin på forsida, fram til et
+fast tidspunkt: `addMode('<navn>', open, {newUntil:'2026-10-14 19:00'})` — norsk tid, på formen
+`ÅÅÅÅ-MM-DD TT:MM`. `renderNewTags()` i `app.js` setter inn eller fjerner merket (`.newtag` i
+`modes.css`) hver gang forsida vises og når klokka er spurt på nytt, etter serverens klokke (se
+«Tid»). Merket forsvinner av seg selv; `newUntil` kan bli stående, men rydd den gjerne bort
+neste gang du er i fila. Nå: Regjeringen, til onsdag 14. oktober 2026 kl. 19.
+
 ### Spillmotoren
 
 Alle kvissene, også Dagens kviss, kjøres av `makeQuiz()` i `js/quiz.js`. Den skriver

@@ -82,7 +82,8 @@ function quizLive(t){ const d=new Date(osloWall(t)), h=d.getUTCHours(); return d
 // Every view but the home page registers itself with addMode(name, open, opts): its section in the
 // markup is #<name>App, its address #<name>, and its button on the home page has
 // data-mode="<name>". open() runs each time it is shown; opts.wide gives it the wide layout on
-// desktop (Ukas prepp). app.js switches between them (goMode()).
+// desktop (Ukas prepp), and opts.newUntil ('YYYY-MM-DD HH:MM', Oslo time) puts «Ny» in the corner
+// of its button until then (renderNewTags()). app.js switches between them (goMode()).
 const MODES={};
 const addMode=(name, open=()=>{}, opts={})=>{ MODES[name]={open, ...opts}; };
 

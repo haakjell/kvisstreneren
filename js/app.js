@@ -12,10 +12,24 @@ function goMode(m){
   if(m==='home'){
     $('home').querySelector('.hometitle').before($('countdown'));   // back from the prep, if it was there
     renderPrep();   // the button's text; the page may have been open since before the quiz
+    renderNewTags();
   } else MODES[m].open();
   $('countdown').after($('adTop'));
   if(adsOn()) fillAds();   // new ads on every page
   window.scrollTo(0,0);
+}
+// «Ny» in the corner of a mode's button on the home page, until the time in its opts.newUntil
+// (Oslo time, by the server's clock). Checked each time the home page is shown.
+function renderNewTags(){
+  const now=serverNow();
+  for(const k in MODES){
+    const btn=document.querySelector(`.mode[data-mode="${k}"]`), until=MODES[k].newUntil;
+    if(!btn) continue;
+    const on=!!until && now<osloInstant(Date.parse(until.replace(' ','T')+'Z'),now);
+    const tag=btn.querySelector('.newtag');
+    if(on&&!tag) btn.insertAdjacentHTML('beforeend','<span class="newtag">Ny</span>');
+    else if(!on&&tag) tag.remove();
+  }
 }
 function hashMode(){ const h=location.hash.slice(1); return h in MODES ? h : 'home'; }
 function openMode(m){   // from a button on the home page: a new history entry
@@ -48,6 +62,7 @@ async function refreshClock(){
   if(!await syncClock()) return;
   renderCountdown();
   if(curMode==='home'||curMode==='prep') renderPrep();
+  if(curMode==='home') renderNewTags();
 }
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') refreshClock(); });
 
