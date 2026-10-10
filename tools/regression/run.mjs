@@ -447,6 +447,12 @@ tests.ads = async () => {
   const page3 = await newPage('ads', { deviceNow: Date.parse('2026-10-14T09:00:00Z'), url: BASE + '#prep' });
   await rec.snap(page3, 'wednesday-morning-prep', true);
   await page3.context().close();
+  // Loading the prep with a server that answers with the time: the prep is redrawn when it has
+  // answered, and what was filled into it must still be there
+  const page4 = await newPage('ads', { url: BASE + '?ristetid#prep', headDate: DEVICE_NOW, storage: { shakeOff: '1' } });
+  await page4.waitForTimeout(700);
+  await rec.snap(page4, 'prep-load-server-clock', true); await rec.shoot(page4, 'prep-load-server-clock');
+  await page4.context().close();
   rec.save();
 };
 

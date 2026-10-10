@@ -45,13 +45,19 @@ function prepStale(md, uke){
   const fmt = d => (d.getUTCDay()===QUIZ_DAY ? 'onsdag ' : '') + d.getUTCDate() + '. ' + MONTHS[d.getUTCMonth()];
   return { was: fmt(new Date(quiz)), next: fmt(next), isToday: +next === t };
 }
+// The report doesn't change while the page is open, so it is rendered once, here. Rendering it again
+// would throw away what has been filled into it since.
+{
+  const md = ($('prepSource').textContent||'').trim();
+  let h2 = 0;   // an ad slot between each ## section (only shown with ads on; see fillAds())
+  $('prepBody').innerHTML = md ? prepMarkdown(md).replace(/<h2>/g, m => h2++ ? '<div class="adslot ad-all" data-fmt="box"></div>' + m : m)
+    : '<div class="prepsoon"><strong>Ukas prepp kommer snart</strong><p>Her dukker ferske nyhetssaker, navnedagene for uka og «på denne dagen» opp så snart ukas quizprep er kjørt.</p></div>';
+}
+// What goes by the date: the notice that the prep is out of date, and the text on its button
 function renderPrep(){
   const src = $('prepSource');
   const md = (src.textContent||'').trim(), uke = src.dataset.uke;
   const stale = md ? prepStale(md, uke) : null;
-  let h2 = 0;   // an ad slot between each ## section (only shown with ads on; see fillAds())
-  $('prepBody').innerHTML = md ? prepMarkdown(md).replace(/<h2>/g, m => h2++ ? '<div class="adslot ad-all" data-fmt="box"></div>' + m : m)
-    : '<div class="prepsoon"><strong>Ukas prepp kommer snart</strong><p>Her dukker ferske nyhetssaker, navnedagene for uka og «på denne dagen» opp så snart ukas quizprep er kjørt.</p></div>';
   $('prepStale').hidden = !stale;
   if(stale) $('prepStale').innerHTML = '<strong>Denne preppen er utdatert</strong><p>Den var til kvissen ' + stale.was + '. '
     + (stale.isToday ? 'Ny prepp til i kveld kommer snart.' : 'Ny prepp kommer ' + stale.next + '.') + '</p>';
