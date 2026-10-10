@@ -43,6 +43,10 @@ CSS-en i dens bolk i `modes.css`), og bare det flere filer bruker, i `core.js` (
 `ui.js` (grensesnitt). Ingen inline `<script>` eller `<style>` i `index.html`, bortsett fra
 preppens markdown-blokk.
 
+Sida skal ikke dukke opp i søkemotorer: `<meta name="robots" content="noindex, nofollow">` i `<head>`.
+Ikke legg til en `robots.txt` som stenger søkemotorene ute; da får de aldri lest den linja (og en
+`robots.txt` her ville uansett ikke virket, siden den må ligge på roten av `haakjell.github.io`).
+
 GitHub Pages lar nettleseren mellomlagre filene i ti minutter, så rett etter en publisering kan
 noen få ny `index.html` med gamle skript; en oppdatering av sida retter det.
 
