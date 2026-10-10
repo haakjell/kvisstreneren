@@ -30,15 +30,17 @@ function setShakeOff(off){
 calmMotion.addEventListener('change',()=>renderCountdown());
 
 const adPart=(tag,cls,t)=>t?`<${tag} class="${cls}">${t}</${tag}>`:'';
-const adArt=ad=>'<div class="adart"'+(ad.bg?` style="--adbg:${ad.bg}"`:'')+'>'+(ad.img?`<img src="${ad.img}" alt="" onerror="this.remove()">`:'')+(ad.svg||'')+'</div>';
+const adArt=ad=>'<div class="adart'+(ad.fit==='contain'?' contain':'')+'"'+(ad.bg?` style="--adbg:${ad.bg}"`:'')+'>'+(ad.img?`<img src="${ad.img}" alt="" onerror="this.remove()">`:'')+(ad.svg||'')+'</div>';
+// The advertiser's name; `logo` gives it a little logo of its own (.logo-<name> in ads.css)
+const adSrc=ad=>adPart('span','adsrc'+(ad.logo?' logo logo-'+ad.logo:''),ad.src||ad.brand);
 const adPrice=ad=>ad.price?`<span class="adprice"><b>${ad.price}</b>${ad.was?' <s>'+ad.was+'</s>':''}</span>`:'';
 const AD_TYPES={
-  pharma:ad=>adArt(ad)+'<div class="adtxt">'+adPart('b','adhead',ad.head)+adPart('span','adtext',ad.text)+adPart('span','adcta',ad.cta)+adPart('small','adsmall',ad.small)+'</div>',
-  clickbait:ad=>adArt(ad)+'<div class="adtxt">'+adPart('b','adhead',ad.head)+adPart('span','adsrc',ad.src)+'</div>',
+  pharma:ad=>adArt(ad)+'<div class="adtxt">'+adSrc(ad)+adPart('b','adhead',ad.head)+adPart('span','adtext',ad.text)+adPart('span','adcta',ad.cta)+adPart('small','adsmall',ad.small)+'</div>',
+  clickbait:ad=>adArt(ad)+'<div class="adtxt">'+adPart('b','adhead',ad.head)+adSrc(ad)+'</div>',
   paywall:ad=>adArt(ad)+'<div class="adtxt">'+adPart('span','admast',ad.mast)+adPart('span','adkick',ad.kick)+adPart('b','adhead','<i class="adplus">+</i> '+ad.head)+adPart('span','adcta',ad.cta)+'</div>',
-  product:ad=>adArt(ad)+'<div class="adtxt">'+adPart('span','adsrc',ad.brand)+adPart('b','adhead',ad.head)+adPart('span','adtext',ad.text)+'<div class="adbuy">'+adPrice(ad)+adPart('span','adcta',ad.cta)+'</div>'+adPart('small','adsmall',ad.small)+'</div>',
+  product:ad=>adArt(ad)+'<div class="adtxt">'+adSrc(ad)+adPart('b','adhead',ad.head)+adPart('span','adtext',ad.text)+'<div class="adbuy">'+adPrice(ad)+adPart('span','adcta',ad.cta)+'</div>'+adPart('small','adsmall',ad.small)+'</div>',
   restaurant:ad=>adArt(ad)+'<div class="adtxt">'+adPart('b','adhead',ad.head)+adPart('span','adtext',ad.text)+adPart('span','adcta',ad.cta)+adPart('small','adsmall',ad.small)+'</div>',
-  dating:ad=>adArt(ad)+'<div class="adtxt">'+adPart('span','adsrc',ad.brand)+adPart('b','adhead',ad.head)+adPart('span','adcta',ad.cta)+'</div>',
+  dating:ad=>adArt(ad)+'<div class="adtxt">'+adSrc(ad)+adPart('b','adhead',ad.head)+adPart('span','adcta',ad.cta)+'</div>',
 };
 // Fills every slot that shows on this page at this width, at random and never the same ad twice
 // at once; slots left over are hidden. Each slot is an empty grey box at its final size first (the
@@ -87,7 +89,7 @@ function adFull(ad){
   adFullAd=ad;
   const more=(ad.more||'').split(/\n\n/).map(p=>adPart('p','',p)).join('');
   $('adFullBody').innerHTML=`<div class="adfullin ad-${ad.type}"><span class="adlabel">Annonse</span>${adArt(ad)}`
-    +adPart('span','admast',ad.mast)+adPart('span','adkick',ad.kick)+adPart('span','adsrc',ad.src||ad.brand)
+    +adPart('span','admast',ad.mast)+adPart('span','adkick',ad.kick)+adSrc(ad)
     +`<h2>${ad.type==='paywall'?'<i class="adplus">+</i> ':''}${ad.head}</h2>${adPart('p','adlead',ad.text)}${more}${adPrice(ad)}<button class="adbig">${ad.big||'BESTILL NÅ'}</button>${adPart('p','adsmall',ad.small)}</div>`;
   d.showModal(); d.scrollTop=0;
   history.pushState({adFull:true},'',location.href);

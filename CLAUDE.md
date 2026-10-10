@@ -494,9 +494,14 @@ Feltene står beskrevet over lista. `type` (`pharma`, `clickbait`, `paywall`, `p
 `restaurant`, `dating`) velger malen i `AD_TYPES` (`js/ads.js`); formatet på plassen (`data-fmt`: `side`, `banner`, `card`, `box`, `tile`) avgjør i CSS
 hvordan den legges ut. En ny type trenger en mal i `AD_TYPES` og eventuelt CSS (`.ad-<type>`).
 
-- **Bilder:** `svg:'…'` (tegnet) og/eller `img:'ads/…'` (et foto i `ads/`). Fem av annonsene har
-  foto (KvissMax, Kvissblyanten, Navnedaxin, «Leger hater ham» og Neiu), resten er tegnet. Med begge
-  ligger tegningen som et merke oppå fotoet (kalenderen på Navnedaxin, våpenet på «Leger hater ham»). Hold fotoene under rundt 100 kB. Får et foto ikke lastet, fjernes det.
+- **Bilder:** `svg:'…'` (tegnet) og/eller `img:'ads/…'` (et foto i `ads/`). Ni av annonsene har
+  foto (KvissMax, Kvissblyanten, Navnedaxin, «Leger hater ham», «kokkekult», Neiu, AutoKlapp, Nofagem
+  og «Hvem i regjeringen er du?»), resten er tegnet. Med begge ligger tegningen som et merke oppå
+  fotoet (kalenderen på Navnedaxin, våpenet på «Leger hater ham», prislappen på AutoKlapp). Et foto fyller plassen og beskjæres; med `fit:'contain'` vises hele
+  fotoet, med `bg` rundt (Nofagem). Hold fotoene under rundt 100 kB. Får et foto ikke lastet, fjernes det.
+- **Logoer:** `logo:'<navn>'` gir annonsørens navn en liten logo i stedet for grå tekst, med stil og
+  ikon i `.logo-<navn>` i `ads.css` (Kvissgiganten, Sengetøysentralen, Hukommelsesguiden, Helsenytt i dag,
+  KvissKontakt og legemiddelfirmaet Kvisscomed).
 - **Utseende:** de skal se ut som ekte reklame, med egne skrifter og liten grå «Annonse»-merking
   (eller «Sponset»), og står bevisst som skarpe hvite bokser også i mørk modus — de bruker ikke
   temafargene.
