@@ -1,18 +1,20 @@
 // ---------- Shaking or ads ----------
-// The last day before the quiz (Tuesday 19:00 until it starts) the countdown shakes. The shaking
-// can be turned off, but then the page shows (fake) ads instead. The choice is kept for good
+// From SHAKE_FROM on, the countdown shakes all week, except while the quiz is on. The shaking can
+// be turned off, but then the page shows (fake) ads instead. The choice is kept for good
 // (localStorage 'shakeOff'), but only matters in that window: outside it there is no button,
 // no shaking and no ads. Those who ask for less motion get none of it.
 // ?ristetid in the address pretends it is the shaking time, so it can be tested any day.
+const SHAKE_FROM='2026-10-14 10:00';   // Oslo time, by the server's clock
 const SHAKE_TEST=new URLSearchParams(location.search).has('ristetid');
 const calmMotion=matchMedia('(prefers-reduced-motion: reduce)');
 let shakeOff=store.get('shakeOff')==='1';
 let shakeMode='';   // as last applied: 'off', 'shake' or 'ads'
 const adsOn=()=>shakeMode==='ads';
 // Decides both whether the countdown shakes and whether the ads show. renderCountdown() calls it
-// on every tick, so the ads come and go by themselves. Returns whether to shake.
-function shakeState(lastDay){
-  const m=calmMotion.matches||!(lastDay||SHAKE_TEST)?'off':shakeOff?'ads':'shake';
+// on every tick (with false while the quiz is on), so the ads come and go by themselves.
+// Returns whether to shake.
+function shakeState(on,now){
+  const m=calmMotion.matches||!on||!(SHAKE_TEST||now>=osloAt(SHAKE_FROM,now))?'off':shakeOff?'ads':'shake';
   if(m!==shakeMode){
     shakeMode=m;
     document.body.classList.toggle('ads',m==='ads');

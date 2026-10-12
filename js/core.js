@@ -73,6 +73,8 @@ function osloWall(t){
 // Takes the same `now` as the caller: a second serverNow() a millisecond later would put the
 // target a millisecond off, and the countdown would jump back and forth by a second.
 function osloInstant(w,now){ const g=w-(osloWall(now)-now); return w-(osloWall(g)-g); }
+// The instant of a time written 'YYYY-MM-DD HH:MM', Oslo time
+const osloAt=(s,now)=>osloInstant(Date.parse(s.replace(' ','T')+'Z'),now);
 // The date in Oslo at instant t, as 'YYYY-MM-DD'
 const osloDay=t=>new Date(osloWall(t)).toISOString().slice(0,10);
 // Wednesday 19–22 in Oslo: the quiz is on

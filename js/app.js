@@ -25,7 +25,7 @@ function renderNewTags(){
   for(const k in MODES){
     const btn=document.querySelector(`.mode[data-mode="${k}"]`), until=MODES[k].newUntil;
     if(!btn) continue;
-    const on=!!until && now<osloInstant(Date.parse(until.replace(' ','T')+'Z'),now);
+    const on=!!until && now<osloAt(until,now);
     const tag=btn.querySelector('.newtag');
     if(on&&!tag) btn.insertAdjacentHTML('beforeend','<span class="newtag">Ny</span>');
     else if(!on&&tag) tag.remove();

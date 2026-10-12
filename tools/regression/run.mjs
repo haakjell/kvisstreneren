@@ -437,7 +437,7 @@ tests.ads = async () => {
     }
     await page.context().close();
   }
-  // Tuesday 20:00 Oslo: the real shaking window, no test switch
+  // Tuesday 20:00 Oslo, before the shaking starts; Wednesday during the quiz and in the morning
   const page = await newPage('ads', { deviceNow: Date.parse('2026-10-13T18:00:00Z') });
   await rec.snap(page, 'tuesday', true);
   await page.context().close();
@@ -447,6 +447,13 @@ tests.ads = async () => {
   const page3 = await newPage('ads', { deviceNow: Date.parse('2026-10-14T09:00:00Z'), url: BASE + '#prep' });
   await rec.snap(page3, 'wednesday-morning-prep', true);
   await page3.context().close();
+  // The shaking starts Wednesday 14 October 10:00 Oslo, then lasts all week but for the quiz itself
+  for (const [label, at] of [['before-start', '2026-10-14T07:59:00Z'], ['after-start', '2026-10-14T08:01:00Z'],
+    ['thursday-after', '2026-10-15T10:00:00Z'], ['tuesday-after', '2026-10-20T18:00:00Z'], ['quiz-after', '2026-10-21T18:00:00Z']]) {
+    const p = await newPage('ads', { deviceNow: Date.parse(at) });
+    await rec.snap(p, 'window:' + label, true);
+    await p.context().close();
+  }
   // Loading the prep with a server that answers with the time: the prep is redrawn when it has
   // answered, and what was filled into it must still be there
   const page4 = await newPage('ads', { url: BASE + '?ristetid#prep', headDate: DEVICE_NOW, storage: { shakeOff: '1' } });

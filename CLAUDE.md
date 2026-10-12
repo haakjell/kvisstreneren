@@ -468,18 +468,19 @@ hver frame (`requestAnimationFrame`) — men bare mens nedtellingen vises; eller
 igjen. Markupen bygges bare på nytt når oppsettet endres; ellers skrives bare tallene
 (`cdShow()`), så det koster nesten ingenting.
 
-Det siste døgnet dirrer boksen kort (0,3 s, klassen `tick`) hver gang sekundet teller ned; den
-siste timen rister den kraftigere hele tiden (klassen `rumble`). Begge slås av med
+I ristetida (se «Reklame») dirrer boksen kort (0,3 s, klassen `tick`) hver gang sekundet teller
+ned; den siste timen før kvissen rister den kraftigere hele tiden (klassen `rumble`). Begge slås av med
 `prefers-reduced-motion`. Ristingen kan skrus av, men da blir det reklame i stedet — se «Reklame».
 Derfor skriver `cdShow()` i `#cdBody`, mens klassene står på `#countdown` rundt den: knappen
 «Skru av risting» ligger i `#countdown`, utenfor det som bygges på nytt, og rister med boksen.
 
 ## Reklame
 
-Det siste døgnet før kvissen (tirsdag kl. 19 til onsdag kl. 19 — det samme som `tick` over) kan
-man skru av ristingen i nedtellingen, men da får man falsk reklame på sida i stedet. Under
-kvissen og resten av uka er det ingen knapp, ingen risting og ingen reklame. Den som har slått på
-`prefers-reduced-motion`, får heller ingenting av det.
+Fra onsdag 14. oktober 2026 kl. 10 (`SHAKE_FROM` i `ads.js`, norsk tid etter serverens klokke) er
+det ristetid hele uka, bortsett fra mens kvissen pågår (onsdag 19–22). Før det, og under kvissen,
+er det ingen knapp, ingen risting og ingen reklame. I ristetida kan man skru av ristingen i
+nedtellingen, men da får man falsk reklame på sida i stedet. Den som har slått på
+`prefers-reduced-motion`, får ingenting av det.
 
 - Valget lagres for godt i `localStorage` under `shakeOff`, men brukes bare i ristetida.
 - `shakeState()` avgjør både om det rister og om det vises reklame (klassen `ads` på `<body>`).

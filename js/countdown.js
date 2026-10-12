@@ -14,7 +14,7 @@ function cdShow(cls,html,nums){
 function renderCountdown(){
   const now=serverNow(), d=new Date(osloWall(now)), day=d.getUTCDay(), h=d.getUTCHours();
   if(quizLive(now)){
-    shakeState(false);
+    shakeState(false,now);
     cdShow('countdown live','<strong>Kvissen pågår!</strong><p>Du har ikke lov til å være her nå. Juks er strengt forbudt.</p>');
     return false;
   }
@@ -24,7 +24,7 @@ function renderCountdown(){
   const ms=Math.max(0,osloInstant(tw,now)-now), fine=ms<3600000;
   // Rounded up to whole seconds, except in the last hour, where milliseconds are shown too
   const left=fine?Math.floor(ms/1000):Math.ceil(ms/1000);
-  const shake=shakeState(ms<86400000);   // from Tuesday 19:00, unless ads were chosen instead
+  const shake=shakeState(true,now);   // unless ads were chosen instead, or before SHAKE_FROM
   const units=[[Math.floor(left/86400),'dag','dager'],[Math.floor(left/3600)%24,'time','timer'],[Math.floor(left/60)%60,'minutt','minutter'],[left%60,'sekund','sekunder']];
   if(fine) units.push([ms%1000,'millisekund','millisekunder']);
   while(units.length>1 && units[0][0]===0) units.shift();   // drop leading zero units: no "0 dager"
@@ -33,7 +33,7 @@ function renderCountdown(){
   // Milliseconds always keep plural and three digits, so the layout stays put while they spin
   cdShow(fine&&shake?'countdown rumble':'countdown','<p>Neste kviss begynner om</p><div class="cdunits">'+units.map(([n,one,many],i)=>'<div'+(fine&&i===units.length-1?' class="cdms"':'')+'><b></b><span>'+(fine&&i===units.length-1?many:cdPlural(n,one,many))+'</span></div>').join('')+'</div><p>'+when+' kl. '+QUIZ_START+'</p>',
     units.map(([n],i)=>fine&&i===units.length-1?String(n).padStart(3,'0'):String(n)));
-  // Inside the last day, a short jolt each time the seconds tick down (the last hour shakes nonstop)
+  // A short jolt each time the seconds tick down (the last hour shakes nonstop)
   if(!fine && shake && left!==cdLeft){ const el=$('countdown'); el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); }
   cdLeft=left;
   return fine;
