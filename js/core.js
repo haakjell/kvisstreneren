@@ -1,5 +1,5 @@
 // Shared helpers, loaded first: $, storage, Commons links, text matching, randomness (rnd), the
-// time (Oslo, by the server's clock), and the mixed quiz sources (MIX).
+// time (Oslo, by the server's clock), the launch, the language (L), and the mixed quiz sources (MIX).
 const $=id=>document.getElementById(id);
 
 // localStorage can be missing or refuse (private mode, blocked site data): reads then give null
@@ -41,7 +41,6 @@ const otherIx=(n,cur,k=5)=>shuffle([...Array(n).keys()].filter(i=>i!==cur)).slic
 // The quiz runs Wednesdays 19:00–22:00, Oslo time, whatever the visitor's own time zone.
 const QUIZ_DAY=3, QUIZ_START=19, QUIZ_END=22;
 const MONTHS=['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'];
-const WEEKDAYS=['søndag','mandag','tirsdag','onsdag','torsdag','fredag','lørdag'];
 
 // The time comes from the server's clock, not the device's, which anyone can set: the Date header
 // (plus Age, if a cache answered) of a request for this page. performance.now() carries it on from
@@ -79,6 +78,34 @@ const osloAt=(s,now)=>osloInstant(Date.parse(s.replace(' ','T')+'Z'),now);
 const osloDay=t=>new Date(osloWall(t)).toISOString().slice(0,10);
 // Wednesday 19–22 in Oslo: the quiz is on
 function quizLive(t){ const d=new Date(osloWall(t)), h=d.getUTCHours(); return d.getUTCDay()===QUIZ_DAY&&h>=QUIZ_START&&h<QUIZ_END; }
+
+// ---------- Launch ----------
+// The shaking, the ads (ads.js) and nynorsk (below) come out together at LAUNCH_AT, Oslo time, by
+// the server's clock; before that there is none of them. ?ristetid in the address pretends the
+// time has come, so they can be tested any day.
+const LAUNCH_AT='2026-10-14 10:00';
+const LAUNCH_TEST=new URLSearchParams(location.search).has('ristetid');
+const launched=now=>LAUNCH_TEST||now>=osloAt(LAUNCH_AT,now);
+
+// ---------- Language ----------
+// Bokmål or nynorsk, as picked in Innstillinger (localStorage 'lang'; none = bokmål). It is fixed
+// for the life of the page: picking the other one reloads it. Text in the code and the data is
+// written as L(bokmål, nynorsk). The markup is written in bokmål, with the nynorsk next to it:
+// data-nn holds an element's inner HTML, and data-nn-<attribute> an attribute (data-nn-aria-label).
+// The ads are not translated. Nynorsk comes with the launch: before launched(), the picker is
+// hidden and the page is in bokmål even with 'nn' stored (from testing with ?ristetid). This is
+// decided at start-up, before the server has answered, so by the device's clock.
+const LANG=store.get('lang')==='nn'&&launched(serverNow())?'nn':'nb';
+const L=(nb,nn)=>LANG==='nn'?nn:nb;
+if(LANG==='nn'){
+  document.documentElement.lang='nn';
+  document.querySelectorAll('title, body *').forEach(el=>{
+    for(const a of [...el.attributes]) if(a.name.startsWith('data-nn-')) el.setAttribute(a.name.slice(8),a.value);
+    if(el.hasAttribute('data-nn')) el.innerHTML=el.dataset.nn;
+  });
+}
+// The weekdays differ (the months don't)
+const WEEKDAYS=L(['søndag','mandag','tirsdag','onsdag','torsdag','fredag','lørdag'],['søndag','måndag','tysdag','onsdag','torsdag','fredag','laurdag']);
 
 // ---------- Modes ----------
 // Every view but the home page registers itself with addMode(name, open, opts): its section in the

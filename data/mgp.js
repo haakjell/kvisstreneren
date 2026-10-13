@@ -5,12 +5,12 @@
 // e = placing in the Eurovision final: 'semi' = out in the semi-final, 'x' = contest cancelled;
 // last:1 = last place, zero:1 = no points. n = a note shown after answering.
 const MGP=[
- {y:1971,a:'Hanne Krogh',s:'Lykken er',e:17,n:'Hun var 15 år.'},
- {y:1972,a:'Grethe Kausland og Benny Borg',s:'Småting',e:14,also:['Hanne Krogh'],n:'I MGP-finalen ble låta også sunget av Hanne Krogh.'},
- {y:1973,a:'Bendik Singers',s:'It\'s Just a Game',e:7,m:['Anne-Karine Strøm','Ellen Nikolaysen'],n:'I MGP het låta «Å, for et spill».'},
- {y:1974,a:'Anne-Karine Strøm og Bendik Singers',s:'The First Day of Love',e:14,last:1,m:['Ellen Nikolaysen'],also:['Jahn Teigen'],n:'I MGP het låta «Hvor er du?» og ble også sunget av Jahn Teigen.'},
- {y:1975,a:'Ellen Nikolaysen',s:'Touch My Life (With Summer)',e:18,also:['Stein Ingebrigtsen'],n:'I MGP het låta «Det skulle ha vært sommer nå» og ble også sunget av Stein Ingebrigtsen.'},
- {y:1976,a:'Anne-Karine Strøm',s:'Mata Hari',e:18,last:1,also:['Gudny Aspaas'],n:'I MGP-finalen ble låta også sunget av Gudny Aspaas.'},
+ {y:1971,a:'Hanne Krogh',s:'Lykken er',e:17,n:L('Hun var 15 år.','Ho var 15 år.')},
+ {y:1972,a:'Grethe Kausland og Benny Borg',s:'Småting',e:14,also:['Hanne Krogh'],n:L('I MGP-finalen ble låta også sunget av Hanne Krogh.','I MGP-finalen vart låta òg sungen av Hanne Krogh.')},
+ {y:1973,a:'Bendik Singers',s:'It\'s Just a Game',e:7,m:['Anne-Karine Strøm','Ellen Nikolaysen'],n:L('I MGP het låta «Å, for et spill».','I MGP heitte låta «Å, for et spill».')},
+ {y:1974,a:'Anne-Karine Strøm og Bendik Singers',s:'The First Day of Love',e:14,last:1,m:['Ellen Nikolaysen'],also:['Jahn Teigen'],n:L('I MGP het låta «Hvor er du?» og ble også sunget av Jahn Teigen.','I MGP heitte låta «Hvor er du?» og vart òg sungen av Jahn Teigen.')},
+ {y:1975,a:'Ellen Nikolaysen',s:'Touch My Life (With Summer)',e:18,also:['Stein Ingebrigtsen'],n:L('I MGP het låta «Det skulle ha vært sommer nå» og ble også sunget av Stein Ingebrigtsen.','I MGP heitte låta «Det skulle ha vært sommer nå» og vart òg sungen av Stein Ingebrigtsen.')},
+ {y:1976,a:'Anne-Karine Strøm',s:'Mata Hari',e:18,last:1,also:['Gudny Aspaas'],n:L('I MGP-finalen ble låta også sunget av Gudny Aspaas.','I MGP-finalen vart låta òg sungen av Gudny Aspaas.')},
  {y:1977,a:'Anita Skorgan',s:'Casanova',e:14},
  {y:1978,a:'Jahn Teigen',s:'Mil etter mil',e:20,last:1,zero:1},
  {y:1979,a:'Anita Skorgan',s:'Oliver',e:11},
@@ -31,7 +31,7 @@ const MGP=[
  {y:1995,a:'Secret Garden',s:'Nocturne',e:1},
  {y:1996,a:'Elisabeth Andreassen',s:'I evighet',e:2},
  {y:1997,a:'Tor Endresen',s:'San Francisco',e:24,last:1,zero:1},
- {y:1998,a:'Lars A. Fredriksen',s:'Alltid sommer',e:8,n:'I MGP ble låta sunget på engelsk, som «All I Ever Wanted (Was You)».'},
+ {y:1998,a:'Lars A. Fredriksen',s:'Alltid sommer',e:8,n:L('I MGP ble låta sunget på engelsk, som «All I Ever Wanted (Was You)».','I MGP vart låta sungen på engelsk, som «All I Ever Wanted (Was You)».')},
  {y:1999,a:'Stig van Eijk',s:'Living My Life Without You',e:14},
  {y:2000,a:'Charmed',s:'My Heart Goes Boom',e:11},
  {y:2001,a:'Haldor Lægreid',s:'On My Own',e:22,last:1},
@@ -49,7 +49,7 @@ const MGP=[
  {y:2014,a:'Carl Espen',s:'Silent Storm',e:8},
  {y:2015,a:'Mørland og Debrah Scarlett',s:'A Monster Like Me',e:8},
  {y:2016,a:'Agnete',s:'Icebreaker',e:'semi'},
- {y:2017,a:'JOWST',s:'Grab the Moment',e:10,m:['Aleksander Walmann'],n:'Aleksander Walmann sang.'},
+ {y:2017,a:'JOWST',s:'Grab the Moment',e:10,m:['Aleksander Walmann'],n:L('Aleksander Walmann sang.','Aleksander Walmann song.')},
  {y:2018,a:'Alexander Rybak',s:'That\'s How You Write a Song',e:15},
  {y:2019,a:'KEiiNO',s:'Spirit in the Sky',e:6},
  {y:2020,a:'Ulrikke',s:'Attention',e:'x'},
@@ -62,7 +62,7 @@ const MGP=[
 ];
 // Years with no MGP final. They are listed under «Pugg» but never asked about.
 const MGP_GAPS=[
- {y:1970,n:'NRK boikottet Eurovision dette året.'},
- {y:1991,n:'NRK avlyste finalen og valgte selv «Mrs. Thompson» med Just 4 Fun, som ble nummer 17 i Eurovision.'},
- {y:2002,n:'Norge var rykket ned etter sisteplassen i 2001.'}
+ {y:1970,n:L('NRK boikottet Eurovision dette året.','NRK boikotta Eurovision dette året.')},
+ {y:1991,n:L('NRK avlyste finalen og valgte selv «Mrs. Thompson» med Just 4 Fun, som ble nummer 17 i Eurovision.','NRK avlyste finalen og valde sjølv «Mrs. Thompson» med Just 4 Fun, som vart nummer 17 i Eurovision.')},
+ {y:2002,n:L('Norge var rykket ned etter sisteplassen i 2001.','Noreg var rykka ned etter sisteplassen i 2001.')}
 ];

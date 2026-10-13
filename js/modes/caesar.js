@@ -24,22 +24,22 @@ function cOptions(q){
     const inside=shuffle(CAESAR.filter(x=>x!==e&&!mine.has(x.a)))
       .filter(x=>!seen.has(x.a)&&seen.add(x.a))
       .sort((x,y)=>same(y)-same(x)).slice(0,3)
-      .map(x=>({label:x.a,info:`${x.a} spilte ${x.r}.`}));
+      .map(x=>({label:x.a,info:L(`${x.a} spilte ${x.r}.`,`${x.a} spelte ${x.r}.`)}));
     const outside=shuffle(CAESAR_OUT).sort((x,y)=>same(y)-same(x)).slice(0,5-inside.length)
       .map(x=>({label:x.a,info:`${x.a} var aldri med i Hotel Cæsar.`}));
     return shuffle([{label:e.a,ok:true},...inside,...outside]);
   }
   const others=shuffle(CAESAR.filter(x=>x!==e&&!cActors(x).some(a=>a===e.a)))
     .sort((x,y)=>same(y)-same(x)).slice(0,5)
-    .map(x=>({label:x.r,info:`${x.r} ble spilt av ${x.a}.`}));
+    .map(x=>({label:x.r,info:L(`${x.r} ble spilt av ${x.a}.`,`${x.r} vart spelt av ${x.a}.`)}));
   return shuffle([{label:e.r,ok:true},...others]);
 }
-const cQText=q=>q.dir==='role'?'Hvem spilte rollen?':'Hvilken rolle spilte skuespilleren?';
+const cQText=q=>q.dir==='role'?L('Hvem spilte rollen?','Kven spelte rolla?'):L('Hvilken rolle spilte skuespilleren?','Kva rolle spelte skodespelaren?');
 function cPromptHTML(q){
   const e=CAESAR[q.i];
-  return cPic(e,'cpic','Bilde av rollefiguren')+`<small>${q.dir==='role'?'Rollefigur':'Skuespiller'}</small><strong>${q.dir==='role'?e.r:e.a}</strong>`;
+  return cPic(e,'cpic','Bilde av rollefiguren')+`<small>${q.dir==='role'?'Rollefigur':L('Skuespiller','Skodespelar')}</small><strong>${q.dir==='role'?e.r:e.a}</strong>`;
 }
-function cFact(e){ return `${e.a} spilte ${e.r}${e.y?` (${e.y})`:''}. ${e.n}`; }
+function cFact(e){ const y=e.y?` (${e.y})`:''; return L(`${e.a} spilte ${e.r}${y}. ${e.n}`,`${e.a} spelte ${e.r}${y}. ${e.n}`); }
 const cMissLi=q=>{const e=CAESAR[q.i]; return `${cPic(e,'thumb')}<div><strong>${e.r}</strong><small>${e.a}</small></div>`;};
 // A question about role q = {i, dir}, for the quiz here and the mixed one
 function cQuestion(q){
@@ -58,10 +58,10 @@ MIX.caesar={label:'Hotel Cæsar', deal(n){
 // Study list
 function cRenderStudy(){
   const li=e=>{ const pic=cPic(e,'thumb'); return `<li tabindex="0"${pic?' class="pic"':''}>${pic}<strong>${e.r}</strong><span class="act ans">${cActors(e).join(' / ')}</span><small>${e.y?e.y+'. ':''}${e.n}</small></li>`; };
-  $('cStudyList').innerHTML=`<h2 class="chead">De ${cTop.length} største rollene</h2><ul class="clist">${cTop.map(i=>li(CAESAR[i])).join('')}</ul>`+
-    `<h2 class="chead">Flere rollefigurer</h2><ul class="clist">${CAESAR.filter(e=>!e.top).map(li).join('')}</ul>`;
+  $('cStudyList').innerHTML=`<h2 class="chead">${L(`De ${cTop.length} største rollene`,`Dei ${cTop.length} største rollene`)}</h2><ul class="clist">${cTop.map(i=>li(CAESAR[i])).join('')}</ul>`+
+    `<h2 class="chead">${L('Flere rollefigurer','Fleire rollefigurar')}</h2><ul class="clist">${CAESAR.filter(e=>!e.top).map(li).join('')}</ul>`;
 }
-hideAnswers('cToggle','cStudyList',['Skjul skuespillere','Vis skuespillere']);
+hideAnswers('cToggle','cStudyList',L(['Skjul skuespillere','Vis skuespillere'],['Skjul skodespelarar','Vis skodespelarar']));
 // «Vis bilder», here and in Innstillinger
 function cSetPics(on){
   cPics=on; $('cPics').setAttribute('aria-checked',on);
@@ -75,7 +75,7 @@ $('cPics').addEventListener('click',()=>cSetPics(!cPics));
 dropBrokenPics('caesarApp');
 dropBrokenPics('dagensApp');
 tabs('cTabQuiz','cTabStudy','cQuiz','cStudy',()=>cQuiz.stop());
-const C_SUBS={role:'Finn skuespilleren',actor:'Finn rollen'};
+const C_SUBS={role:L('Finn skuespilleren','Finn skodespelaren'),actor:L('Finn rollen','Finn rolla')};
 const cMarkMode=radios({role:'cSetRole',actor:'cSetActor'},m=>cUse(m));
 function cUse(m){
   cMode=m;
@@ -85,7 +85,8 @@ function cUse(m){
 }
 function cOpen(){ if(!cQuiz.started()){ cRenderStudy(); cUse('role'); } }
 addMode('caesar',cOpen);
-$('cNote').textContent='Roller og skuespillere: IMDb, Wikipedia og Hotel Cæsar-wikien. Bilder: Hotel Cæsar-wikien på Fandom. Spørsmålene gjelder de '+cTop.length+' rollene med flest episoder; de andre rollefigurene dukker opp som feil alternativer.';
+$('cNote').textContent=L('Roller og skuespillere: IMDb, Wikipedia og Hotel Cæsar-wikien. Bilder: Hotel Cæsar-wikien på Fandom. Spørsmålene gjelder de '+cTop.length+' rollene med flest episoder; de andre rollefigurene dukker opp som feil alternativer.',
+  'Roller og skodespelarar: IMDb, Wikipedia og Hotel Cæsar-wikien. Bilde: Hotel Cæsar-wikien på Fandom. Spørsmåla gjeld dei '+cTop.length+' rollene med flest episodar; dei andre rollefigurane dukkar opp som feil alternativ.');
 // The original Hotel Cæsar logo (1998): an Ionic capital whose red volutes curl round an orange,
 // battlemented column. Each volute is a stem up the side of the column that turns into a spiral;
 // R is the spiral's radius every quarter turn, and m mirrors it for the right-hand side.

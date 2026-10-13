@@ -15,7 +15,7 @@ const mxSave=st=>store.setJSON(MX_KEY,st);
 const mxToday=()=>osloDay(serverNow());
 function mxDate(day){ const d=new Date(day+'T12:00:00Z'); return `${WEEKDAYS[d.getUTCDay()]} ${d.getUTCDate()}. ${MONTHS[d.getUTCMonth()]}`; }
 const mxNumber=day=>Math.round((Date.parse(day)-Date.parse(MX_FIRST))/864e5);
-const mxSubText=()=>mxDay?mxDate(mxDay).replace(/^./,c=>c.toUpperCase())+` · #${mxNumber(mxDay)}`:'Blandet runde';
+const mxSubText=()=>mxDay?mxDate(mxDay).replace(/^./,c=>c.toUpperCase())+` · #${mxNumber(mxDay)}`:L('Blandet runde','Blanda runde');
 const mxScoreOf=marks=>marks.split('').filter(m=>m==='1').length;
 // Days in a row with a finished round, counting back from today (or yesterday, before today's is done)
 function mxStreak(log,today){
@@ -32,7 +32,7 @@ function mxDeal(){
   return deck;
 }
 const mxQuiz=makeQuiz('mxMain',{marks:true, hint:true,
-  buttons:[{act:'share',cls:'primary',label:'Del resultatet'},{act:'more',cls:'ghost',label:'Ti blandede spørsmål til'},{act:'today',cls:'ghost',label:'Dagens resultat'}],
+  buttons:[{act:'share',cls:'primary',label:'Del resultatet'},{act:'more',cls:'ghost',label:L('Ti blandede spørsmål til','Ti blanda spørsmål til')},{act:'today',cls:'ghost',label:'Dagens resultat'}],
   actions:{share:()=>mxShare(), more:()=>mxStart(''), today:()=>mxStart(mxToday())},
   // Saved after every answer, and the day's score in the log once the round is done
   onAnswer(marks){
@@ -41,10 +41,10 @@ const mxQuiz=makeQuiz('mxMain',{marks:true, hint:true,
     if(marks.length===mxQuiz.size()) (st.log??={})[mxDay]=mxScoreOf(marks);
     mxSave(st);
   },
-  donePrefix(){ const n=mxDay?mxStreak(mxLoad().log||{},mxDay):0; return n>1?`${n} dager på rad. `:''; },
+  donePrefix(){ const n=mxDay?mxStreak(mxLoad().log||{},mxDay):0; return n>1?L(`${n} dager på rad. `,`${n} dagar på rad. `):''; },
   onFinish(z){
     z.button('share').hidden=!mxDay; z.button('today').hidden=!!mxDay; z.hint().textContent='';
-    z.button('more').textContent=mxDay?'Ti blandede spørsmål til':'Ti nye blandede spørsmål';
+    z.button('more').textContent=mxDay?L('Ti blandede spørsmål til','Ti blanda spørsmål til'):L('Ti nye blandede spørsmål','Ti nye blanda spørsmål');
     (mxDay?z.button('share'):z.button('more')).focus({preventScroll:true});
   }
 });
@@ -60,7 +60,7 @@ function mxStart(day){
 // share sheet when there is one, and the clipboard otherwise
 async function mxShare(){
   const marks=mxQuiz.marks();
-  const text=[`Kvisstreneren #${mxNumber(mxDay)}`,`${mxScoreOf(marks)} av ${mxQuiz.size()}`,
+  const text=[L('Kvisstreneren','Kvisstrenaren')+` #${mxNumber(mxDay)}`,`${mxScoreOf(marks)} av ${mxQuiz.size()}`,
     marks.split('').map(m=>m==='1'?'🟩':'🟥').join(''),MX_URL].join('\n');
   if(navigator.share){ try{ await navigator.share({text}); return; }catch(e){ if(e.name==='AbortError') return; } }
   try{ await navigator.clipboard.writeText(text); mxQuiz.hint().textContent='Kopiert. Lim det inn der du vil dele det.'; }
@@ -69,14 +69,14 @@ async function mxShare(){
 // Opening the mode: ask the server what time it is, then carry on with the round on screen,
 // unless it's yesterday's; then today's
 async function mxOpen(){
-  if(!serverClock){ $('mxMain').hidden=true; $('mxClosed').hidden=true; $('mxOffline').hidden=true; $('mxSub').textContent='Henter dagens dato …'; }
+  if(!serverClock){ $('mxMain').hidden=true; $('mxClosed').hidden=true; $('mxOffline').hidden=true; $('mxSub').textContent=L('Henter dagens dato …','Hentar dagens dato …'); }
   const ok=await syncClock();
   if(curMode!=='dagens') return;
   $('mxOffline').hidden=ok;
-  if(!ok){ $('mxMain').hidden=true; $('mxClosed').hidden=true; $('mxSub').textContent='Fikk ikke hentet datoen'; return; }
+  if(!ok){ $('mxMain').hidden=true; $('mxClosed').hidden=true; $('mxSub').textContent=L('Fikk ikke hentet datoen','Fekk ikkje henta datoen'); return; }
   const locked=quizLive(serverNow());
   $('mxClosed').hidden=!locked; $('mxMain').hidden=locked;
-  if(locked){ $('mxSub').textContent='Stengt mens kvissen pågår'; return; }
+  if(locked){ $('mxSub').textContent=L('Stengt mens kvissen pågår','Stengd mens kvissen er i gang'); return; }
   if(!mxQuiz.started()||(mxDay&&mxDay!==mxToday())) mxStart(mxToday());
   else $('mxSub').textContent=mxSubText();
 }

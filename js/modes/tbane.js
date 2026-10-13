@@ -207,7 +207,7 @@ function tRuterQMap(q,reveal){
   const bw=Math.max(...xs)-Math.min(...xs), bh=Math.max(...ys)-Math.min(...ys);
   const w=Math.min(Math.max(bw*1.5,bh*1.5/.75,700),R.w), h=w*.75;
   const x=Math.min(Math.max((Math.max(...xs)+Math.min(...xs)-w)/2,0),R.w-w), y=Math.min(Math.max((Math.max(...ys)+Math.min(...ys)-h)/2,0),R.h-h);
-  let s=`<svg viewBox="${tF(x)} ${tF(y)} ${tF(w)} ${tF(h)}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ruters linjekart for T-banen"><image href="${R.src}" width="${R.w}" height="${R.h}"/>`;
+  let s=`<svg viewBox="${tF(x)} ${tF(y)} ${tF(w)} ${tF(h)}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${L('Ruters linjekart for T-banen','Linjekartet til Ruter for T-banen')}"><image href="${R.src}" width="${R.w}" height="${R.h}"/>`;
   if(!reveal){
     tSt.forEach(st=>{ if(!q.ctx.includes(st.i)) st.rr.forEach(r=>s+=tRRect(r,'class="rc"')); });
     Object.values(R.heads).flat().forEach(r=>s+=tRRect(r,'class="rc"'));
@@ -231,7 +231,7 @@ function tQMap(q,reveal,pxW){
   return tGeoQMap(q,reveal,pxW);
 }
 const tDirHTML=q=>`<div class="dir"><span class="sr">Linje</span>${tBadge(q.c)}${q.last?'':`<span>${tSt[q.to].name}</span>`}</div>`;
-const tQText=q=>`${q.last?'Hva heter endestasjonen etter':'Hva er neste stopp etter'} ${tSt[q.ctx[q.ctx.length-1]].name}?`;
+const tQText=q=>`${q.last?L('Hva heter endestasjonen etter','Kva heiter endestasjonen etter'):L('Hva er neste stopp etter','Kva er neste stopp etter')} ${tSt[q.ctx[q.ctx.length-1]].name}?`;
 // Distractors: nearby stops on the same line first, then nearby stations, never one that is labelled
 // on the map. Sets q.opts (Ruter's map sizes the answer's pill by them) and returns all six, shuffled.
 function tPickOpts(q,labeled){
@@ -246,12 +246,13 @@ function tPickOpts(q,labeled){
   return shuffle([q.st,...picks]);
 }
 // The trip, and what's worth knowing about the answer
+const tAnd=cs=>cs.join(', ').replace(/, (\d)$/,' og $1');
 function tFact(q){
   const also=[...tSt[q.st].lines].filter(c=>c!==q.c).sort();
   // Stops made only in the other direction, like Gulleråsen, which has a platform on one side
   const back=TBANE.lines[q.c][1-q.d].slice().reverse(), bi=back.indexOf(q.ctx[q.ctx.length-1]), bj=back.indexOf(q.st);
-  const skip=bi>=0&&bj>bi+1?`Linje ${q.c} stopper ikke på ${back.slice(bi+1,bj).map(i=>tSt[i].name).join(' og ')} i denne retningen. `:'';
-  const extra=skip+(q.last?`${tSt[q.st].name} er endestasjon for linje ${q.c}.`:also.length?`Her går også linje ${also.join(', ').replace(/, (\d)$/,' og $1')}.`:'');
+  const skip=bi>=0&&bj>bi+1?L(`Linje ${q.c} stopper ikke på ${back.slice(bi+1,bj).map(i=>tSt[i].name).join(' og ')} i denne retningen. `,`Linje ${q.c} stoppar ikkje på ${back.slice(bi+1,bj).map(i=>tSt[i].name).join(' og ')} i denne retninga. `):'';
+  const extra=skip+(q.last?`${tSt[q.st].name} er endestasjon for linje ${q.c}.`:also.length?L(`Her går også linje ${tAnd(also)}.`,`Her går òg linje ${tAnd(also)}.`):'');
   return tTrip(q)+(extra?'. '+extra:'');
 }
 const tMissLi=q=>`${tBadge(q.c)}<div>${tTrip(q).replace(/[^→]+$/,m=>` <strong>${m.trim()}</strong>`)}<small>${q.last?'Endestasjon':`Mot ${tSt[q.to].name}`}</small></div>`;
@@ -300,6 +301,7 @@ function tFit(){
   const r=tBox.getBoundingClientRect(), a=r.width/r.height, W=tDim().w, H=tDim().h;
   tv= a>W/H ? {w:H*a,h:H,x:(W-H*a)/2,y:0} : {w:W,h:W/a,x:0,y:(H-W/a)/2};
 }
+const tRuterLink=`<a href="${T_RUTER.page}" target="_blank" rel="noopener">ruter.no</a>`;
 function tStudyRender(){
   if($('tbaneApp').hidden||$('tStudy').hidden) return;
   const r=tBox.getBoundingClientRect(); if(!r.width) return;
@@ -311,7 +313,7 @@ function tStudyRender(){
     // Keep the image element between frames so it isn't decoded again on every zoom step
     if(!old||old.dataset.kind!=='ruter'){
       if(old) old.remove();
-      tBox.insertAdjacentHTML('afterbegin',`<svg data-kind="ruter" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ruters linjekart for T-banen"><image href="${T_RUTER.src}" width="${T_RUTER.w}" height="${T_RUTER.h}"/><g></g></svg>`);
+      tBox.insertAdjacentHTML('afterbegin',`<svg data-kind="ruter" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${L('Ruters linjekart for T-banen','Linjekartet til Ruter for T-banen')}"><image href="${T_RUTER.src}" width="${T_RUTER.w}" height="${T_RUTER.h}"/><g></g></svg>`);
       old=tBox.querySelector('svg');
     }
     old.setAttribute('viewBox',`${tF(tv.x)} ${tF(tv.y)} ${tF(tv.w)} ${tF(tv.h)}`);
@@ -321,8 +323,9 @@ function tStudyRender(){
     tBox.insertAdjacentHTML('afterbegin',tRender(tv,r.width,{focus:tSel,sel:tStudySel}).svg);
   }
   $('tInfo').innerHTML=st?`<strong>${st.name}</strong><div class="badges">${[...st.lines].sort().map(tBadge).join('')}</div>`
-    :ruter?`<span>Ruters linjekart: avstandene stemmer ikke, men linjene er lette å følge. Trykk på et navn for å se hvilke linjer som stopper der. Kilde: <a href="${T_RUTER.page}" target="_blank" rel="noopener">ruter.no</a>.</span>`
-    :'<span>Trykk på en stasjon for å se hvilke linjer som stopper der. Dra for å flytte, knip eller rull for å zoome.</span>';
+    :ruter?`<span>${L(`Ruters linjekart: avstandene stemmer ikke, men linjene er lette å følge. Trykk på et navn for å se hvilke linjer som stopper der. Kilde: ${tRuterLink}.`,
+      `Linjekartet til Ruter: avstandane stemmer ikkje, men linjene er lette å følgje. Trykk på eit namn for å sjå kva linjer som stoppar der. Kjelde: ${tRuterLink}.`)}</span>`
+    :'<span>'+L('Trykk på en stasjon for å se hvilke linjer som stopper der. Dra for å flytte, knip eller rull for å zoome.','Trykk på ein stasjon for å sjå kva linjer som stoppar der. Dra for å flytte, knip eller rull for å zoome.')+'</span>';
 }
 const tLater=()=>{ cancelAnimationFrame(tRaf); tRaf=requestAnimationFrame(tStudyRender); };
 function tZoom(f,cx,cy){
@@ -389,7 +392,8 @@ function tSetKind(k){
 function tMapChanged(){
   tv=null; tLinesShown(); tStudyRender();
   const note=$('tMapNote'); note.hidden=!(tKind==='ruter'&&tRuterFailed);
-  if(!note.hidden) note.innerHTML=`Fikk ikke hentet linjekartet fra Ruter, så sida viser det geografiske kartet. Kartet kan ha fått ny adresse – se <a href="${T_RUTER.page}" target="_blank" rel="noopener">ruter.no</a>.`;
+  if(!note.hidden) note.innerHTML=L(`Fikk ikke hentet linjekartet fra Ruter, så sida viser det geografiske kartet. Kartet kan ha fått ny adresse – se ${tRuterLink}.`,
+    `Fekk ikkje henta linjekartet frå Ruter, så sida viser det geografiske kartet. Kartet kan ha fått ny adresse – sjå ${tRuterLink}.`);
   tQuiz.reshow();   // the options depend on which names the map shows
 }
 tMarkKind(tKind);

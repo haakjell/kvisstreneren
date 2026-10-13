@@ -18,21 +18,21 @@ const OLD=[
  ['Søndre Nordstrand','Holmlia, Mortensrud, Bjørndal, Prinsdal og Hauketo.']
 ].map(([name,note],i)=>({name,num:i+1,note,d:GEO.old[name].d,l:GEO.old[name].l}));
 const NEW=[
- ['Vestre Aker','Dagens Vestre Aker og Ullern, men uten Skøyen.'],
+ ['Vestre Aker',L('Dagens Vestre Aker og Ullern, men uten Skøyen.','Dagens Vestre Aker og Ullern, men utan Skøyen.')],
  ['Gamle Aker','Dagens Frogner og St. Hanshaugen, pluss Skøyen og det meste av Sentrum.'],
- ['Gamle Oslo','Dagens Gamle Oslo og Grünerløkka (unntatt Hovinbyen-strøkene), pluss Oslo S og Vaterland.'],
+ ['Gamle Oslo',L('Dagens Gamle Oslo og Grünerløkka (unntatt Hovinbyen-strøkene), pluss Oslo S og Vaterland.','Dagens Gamle Oslo og Grünerløkka (unntatt Hovinbyen-strøka), pluss Oslo S og Vaterland.')],
  ['Frysja','Dagens Sagene og Nordre Aker.'],
  ['Hovin','Dagens Bjerke, pluss Hasle, Løren, Valle, Helsfyr og Teisen.'],
  ['Øvre Groruddalen','Dagens Alna, Grorud og Stovner (unntatt Teisen).'],
- ['Østensjø','Dagens Østensjø, pluss Mortensrud og Bjørndal fra Søndre Nordstrand.'],
- ['Nordstrand','Dagens Nordstrand, pluss Holmlia, Prinsdal og Bjørnerud fra Søndre Nordstrand.']
+ ['Østensjø',L('Dagens Østensjø, pluss Mortensrud og Bjørndal fra Søndre Nordstrand.','Dagens Østensjø, pluss Mortensrud og Bjørndal frå Søndre Nordstrand.')],
+ ['Nordstrand',L('Dagens Nordstrand, pluss Holmlia, Prinsdal og Bjørnerud fra Søndre Nordstrand.','Dagens Nordstrand, pluss Holmlia, Prinsdal og Bjørnerud frå Søndre Nordstrand.')]
 ].map(([name,note],i)=>({name,num:i+1,note,d:GEO.new[i+1].d,l:GEO.new[i+1].l}));
 const BSETS={
-  old:{key:'old', list:OLD, q:'Hvilken bydel er markert?', kind:'Bydelene i dag', extra:[{name:'Sentrum',d:GEO.old['Sentrum'].d,l:GEO.old['Sentrum'].l,off:true}], fs:15,
-       sub:'De 15 bydelene i dag', note:'Sentrum (grå) er ikke en egen bydel.'},
-  new:{key:'new', list:NEW, q:'Hvilken av de nye bydelene er markert?', kind:'De nye bydelene fra 2028', tag:'de nye fra 2028', extra:[], fs:19,
-       sub:'De 8 bydelene fra 1. januar 2028',
-       note:'Navnene er byrådets endelige forslag (september 2026); bystyret vedtar dem innen 1. november. Grensene er tegnet etter grunnkretsene i vedtaket og er omtrentlige der vedtaket deler en grunnkrets.'}
+  old:{key:'old', list:OLD, q:L('Hvilken bydel er markert?','Kva bydel er markert?'), kind:L('Bydelene i dag','Bydelane i dag'), extra:[{name:'Sentrum',d:GEO.old['Sentrum'].d,l:GEO.old['Sentrum'].l,off:true}], fs:15,
+       sub:L('De 15 bydelene i dag','Dei 15 bydelane i dag'), note:L('Sentrum (grå) er ikke en egen bydel.','Sentrum (grått) er ikkje ein eigen bydel.')},
+  new:{key:'new', list:NEW, q:L('Hvilken av de nye bydelene er markert?','Kva for ein av dei nye bydelane er markert?'), kind:L('De nye bydelene fra 2028','Dei nye bydelane frå 2028'), tag:L('de nye fra 2028','dei nye frå 2028'), extra:[], fs:19,
+       sub:L('De 8 bydelene fra 1. januar 2028','Dei 8 bydelane frå 1. januar 2028'),
+       note:L('Navnene er byrådets endelige forslag (september 2026); bystyret vedtar dem innen 1. november. Grensene er tegnet etter grunnkretsene i vedtaket og er omtrentlige der vedtaket deler en grunnkrets.','Namna er det endelege forslaget frå byrådet (september 2026); bystyret vedtek dei innan 1. november. Grensene er teikna etter grunnkretsane i vedtaket og er omtrentlege der vedtaket deler ein grunnkrets.')}
 };
 // Hand-placed labels where the automatic spot is crowded
 const LBL={

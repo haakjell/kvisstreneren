@@ -35,7 +35,7 @@ const quizzes=[];       // every engine: goMode() stops their timers, and one ke
 
 function makeQuiz(mount, o={}){
   const root=$(mount), qid=mount+'Q', list=o.missed||'tmissed', listTag=list==='tmissed'?'ul':'div';
-  const buttons=o.buttons||[{act:'retry',cls:'primary',label:'Øv på dem du bommet på'},{act:'restart',cls:'ghost',label:o.restartLabel||'Ti nye spørsmål'}];
+  const buttons=o.buttons||[{act:'retry',cls:'primary',label:L('Øv på dem du bommet på','Øv på dei du bomma på')},{act:'restart',cls:'ghost',label:o.restartLabel||'Ti nye spørsmål'}];
   root.insertAdjacentHTML('beforeend',`<section class="card qplay">
       <div class="meta"><span class="qcount"></span><span class="qscore"></span></div>
       <div class="bar"><i></i></div>
@@ -81,7 +81,7 @@ function makeQuiz(mount, o={}){
     box.innerHTML=q.prompt(box); box.classList.add('pop');
     qEl.textContent=q.q||'';
     count.textContent=`${pos+1} / ${deck.length}${q.src?' · '+q.src:''}`;
-    score.textContent=`${right()} riktige`;
+    score.textContent=L(`${right()} riktige`,`${right()} rette`);
     bar.style.width=`${pos/deck.length*100}%`;
     feedback.innerHTML=''; next.hidden=true;
     opts.innerHTML=q.opts.map((x,k)=>`<button data-k="${k}">${x.label}</button>`).join('');
@@ -91,7 +91,7 @@ function makeQuiz(mount, o={}){
     const q=cur, x=q.opts[k], ok=!!x.ok;
     opts.querySelectorAll('button').forEach(b=>{ const bk=+b.dataset.k; b.disabled=true;
       b.classList.add(q.opts[bk].ok?'right':bk===k?'wrong':'dim'); });
-    resolve(ok, ok?'Riktig!':`Det var ${q.answer??q.opts.find(y=>y.ok).label}`, ok?'':x.info, {ok,pick:x});
+    resolve(ok, ok?L('Riktig!','Rett!'):`Det var ${q.answer??q.opts.find(y=>y.ok).label}`, ok?'':x.info, {ok,pick:x});
   }
   function resolve(ok, verdict, extra, r){
     answered=true; last=r;
@@ -99,8 +99,8 @@ function makeQuiz(mount, o={}){
     marks+=ok?'1':'0';
     if(o.onAnswer) o.onAnswer(marks);
     feedback.innerHTML=`<div class="verdict ${ok?'ok':'bad'}">${verdict}</div><div class="motif">${extra?extra+' ':''}${cur.fact}</div>`;
-    score.textContent=`${right()} riktige`;
-    next.textContent=pos===deck.length-1?'Se resultat':'Neste';
+    score.textContent=L(`${right()} riktige`,`${right()} rette`);
+    next.textContent=pos===deck.length-1?L('Se resultat','Sjå resultatet'):'Neste';
     next.hidden=false;
     if(ok&&quizAuto()){ next.blur(); timer=setTimeout(advance,QUIZ_AUTO); } else next.focus({preventScroll:true});
   }
@@ -112,13 +112,13 @@ function makeQuiz(mount, o={}){
     stop(); cur=null;
     bar.style.width='100%'; play.hidden=true; done.hidden=false;
     const n=deck.length, k=right(), miss=missedAt().length;
-    done.querySelector('h2').textContent=k===n?'Alle riktige!':`${k} av ${n}`;
-    done.querySelector('.qdonetext').textContent=(o.donePrefix?o.donePrefix():'')+(miss?'Disse bommet du på:':'Klar til onsdag.');
+    done.querySelector('h2').textContent=k===n?L('Alle riktige!','Alle rette!'):`${k} av ${n}`;
+    done.querySelector('.qdonetext').textContent=(o.donePrefix?o.donePrefix():'')+(miss?L('Disse bommet du på:','Desse bomma du på:'):'Klar til onsdag.');
     renderMissed();
     if(o.marks){
       const m=done.querySelector('.mxmarks');
       m.innerHTML=[...marks].map(x=>`<span${x==='1'?'':' class="no"'}></span>`).join('');
-      m.setAttribute('aria-label',`${k} riktige og ${n-k} feil`);
+      m.setAttribute('aria-label',L(`${k} riktige og ${n-k} feil`,`${k} rette og ${n-k} feil`));
     }
     if(o.onFinish) o.onFinish(api);
     else{ button('retry').hidden=!miss; (miss?button('retry'):button('restart')).focus({preventScroll:true}); }

@@ -4,7 +4,7 @@ let BS=BSETS.old;
 // Build a map SVG. hl: index to highlight, cls: extra class map {index:class}, labels: bool
 function bMap(hl=-1, cls={}, labels=false, fs=14, set=BS){
   const all=set.list.concat(set.extra);
-  let s=`<svg viewBox="8 8 584 636" role="img" aria-label="Kart over Oslos bydeler"><path class="mk" d="${GEO.marka}"/>`;
+  let s=`<svg viewBox="8 8 584 636" role="img" aria-label="${L('Kart over Oslos bydeler','Kart over bydelane i Oslo')}"><path class="mk" d="${GEO.marka}"/>`;
   all.forEach((b,i)=>{ const c=['bd']; if(b.off) c.push('off'); if(i===hl) c.push('hi'); if(cls[i]) c.push(cls[i]);
     s+=`<path class="${c.join(' ')}" data-i="${b.off?'':i}" d="${b.d}"/>`; });
   if(labels) all.forEach((b,i)=>{ const o=LBL[b.name+'|'+set.key]||{}, [x,y]=o.at||b.l, lines=(o.t||b.name).split('\n'), f=b.off?fs*.75:fs;
@@ -25,7 +25,7 @@ const bAll=()=>shuffle(BS.list.map((_,i)=>i));
 const bQuiz=makeQuiz('bQuiz',{ask:i=>bQuestion(BS,i), newDeck:bAll, missed:'minimaps'});
 
 // Mixed quiz: any of the districts, today's or the 2028 ones
-MIX.bydel={label:'Bydelene', deal(n){
+MIX.bydel={label:L('Bydelene','Bydelane'), deal(n){
   return shuffle([BSETS.old,BSETS.new].flatMap(set=>set.list.map((_,cur)=>({set,cur})))).slice(0,n).map(({set,cur})=>{
     const b=set.list[cur];
     return {...bQuestion(set,cur), tag:set.tag,
@@ -38,7 +38,7 @@ let bSel=-1;
 function bRenderStudy(){
   $('bStudyMap').innerHTML=bMap(bSel,{},true,BS.fs);
   const b=BS.list[bSel];
-  $('bInfo').innerHTML= b ? `<strong>${b.name}</strong><span>Bydel ${b.num}. ${b.note}</span>` : `<span>Trykk på en bydel i kartet eller et navn under.</span>`;
+  $('bInfo').innerHTML= b ? `<strong>${b.name}</strong><span>Bydel ${b.num}. ${b.note}</span>` : `<span>${L('Trykk på en bydel i kartet eller et navn under.','Trykk på ein bydel i kartet eller eit namn under.')}</span>`;
   $('bChips').innerHTML=BS.list.map((x,i)=>`<button data-i="${i}" aria-pressed="${i===bSel}">${x.name}</button>`).join('');
 }
 function bSelect(i){ bSel = bSel===i ? -1 : i; bRenderStudy(); }

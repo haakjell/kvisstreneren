@@ -76,9 +76,9 @@ const INIT = () => {
       const box = T.card().querySelector('.cprompt'); if (!box) return null;
       const s = box.querySelector('strong')?.textContent, small = box.querySelector('small')?.textContent, song = box.querySelector('.song')?.textContent.slice(1, -1);
       if (small === 'Melodi Grand Prix') return MGP.find(x => String(x.y) === s).a;
-      if (small === 'Vinneren') return String(MGP.find(x => x.a === s && x.s === song).y);
+      if (small === 'Vinneren' || small === 'Vinnaren') return String(MGP.find(x => x.a === s && x.s === song).y);
       if (small === 'Rollefigur') return CAESAR.find(x => x.r === s).a;
-      if (small === 'Skuespiller') return CAESAR.find(x => x.a === s).r;
+      if (small === 'Skuespiller' || small === 'Skodespelar') return CAESAR.find(x => x.a === s).r;
       return null;
     },
     // Answer the current question (button step%n), snapshot right after, then press the visible primary action button.
@@ -381,11 +381,11 @@ tests.settings = async () => {
     const rec = new Rec('settings-' + cfg), page = await newPage(rec.name, opt);
     const click = async (sel, label) => { await page.click(sel); await page.waitForTimeout(80); await rec.snap(page, label); };
     await page.evaluate(() => document.querySelector('#home .gear').click()); await page.waitForTimeout(150);
-    await rec.snap(page, 'open'); await rec.shoot(page, 'open');
+    await rec.snap(page, 'open');
     await click('#stAuto', 'auto-off');
     await click('#stPics', 'pics-off');
     await click('#stMapGeo', 'map-geo');
-    await click('#stThemeDark', 'theme-dark'); await rec.shoot(page, 'dark');
+    await click('#stThemeDark', 'theme-dark');
     if (cfg === 'mobile') { await click('#stInstall', 'install-off'); await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'home-no-install', true); }
     // The modes follow, also after a reload
     await page.reload(); await page.waitForTimeout(150);
@@ -402,8 +402,70 @@ tests.settings = async () => {
     for (const id of ['#stAuto', '#stPics', '#stMapRuter', '#stThemeAuto']) await page.click(id);
     if (cfg === 'mobile') await page.click('#stInstall');
     await page.waitForTimeout(80); await rec.snap(page, 'defaults');
+    // Screenshots last: a full-page one of a page taller than the screen loses the touch emulation,
+    // and the switch for the home screen (touch only) would be gone after the reload above
+    await rec.shoot(page, 'open');
+    await page.click('#stThemeDark'); await rec.shoot(page, 'dark'); await page.click('#stThemeAuto');
     rec.save(); await page.context().close();
   }
+};
+
+// Nynorsk comes with the launch (Wednesday 14 October 10:00 Oslo). Before it: no picker, and bokmål
+// even with nynorsk stored; with ?ristetid, the picker. After it: picked in Innstillinger (the page
+// reloads), then every page, a round of each quiz, the countdown and the sheets in nynorsk; and back
+const LAUNCHED = Date.parse('2026-10-15T10:00:00Z');   // the Thursday after
+tests.nynorsk = async () => {
+  {
+    const rec = new Rec('nynorsk-before');
+    for (const [label, url] of [['before', BASE + '#settings'], ['before-test', BASE + '?ristetid#settings']]) {
+      const page = await newPage(rec.name, { url, deviceNow: Date.parse('2026-10-14T07:59:00Z'), storage: { lang: 'nn' } });
+      await rec.snap(page, label + ':settings', true);
+      await page.goto(url.replace('#settings', '')); await page.waitForTimeout(150); await rec.snap(page, label + ':home', true);
+      await page.context().close();
+    }
+    rec.save();
+  }
+  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
+    const rec = new Rec('nynorsk-' + cfg), page = await newPage(rec.name, { ...opt, deviceNow: LAUNCHED, url: BASE + '#settings' });
+    await Promise.all([page.waitForEvent('load'), page.click('#stLangNn')]); await page.waitForTimeout(200);
+    await rec.snap(page, 'settings', true); await rec.shoot(page, 'settings');
+    await page.goto(BASE); await page.waitForTimeout(150); await rec.snap(page, 'home', true); await rec.shoot(page, 'home');
+    for (const m of ['prep', 'dagens', ...MODES]) {
+      await page.goto(BASE + '#' + m); await page.waitForTimeout(150);
+      await rec.snap(page, m);
+      if (m !== 'prep') await playRound(page, rec, m, 2);
+      if (await page.evaluate(() => __T.click('[role=tab]', 1))) { await page.waitForTimeout(150); await rec.snap(page, m + ':study'); }
+    }
+    await page.goto(BASE + '#mgp'); await page.evaluate(() => __T.click('[role=tab]', 0)); await waitReady(page);
+    await page.evaluate(() => __T.click('.setswitch [role=radio]', 1)); await page.waitForTimeout(80);
+    await page.evaluate(() => { const a = __T.expected(); [...__T.app().querySelectorAll('.options button')].find(b => b.textContent === a).click(); });
+    await rec.snap(page, 'mgp-artist-right');
+    if (cfg === 'mobile') {
+      await page.goto(BASE); await page.waitForTimeout(100);
+      await page.evaluate(() => __T.click('.install')); await page.waitForTimeout(100);
+      await rec.snap(page, 'install-sheet', true);
+    }
+    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(150);
+    await page.evaluate(() => document.getElementById('shakeBtn').click()); await page.waitForTimeout(50);
+    await rec.snap(page, 'shake-sheet', true);
+    await page.click('#shakeAds'); await page.waitForTimeout(700);
+    await page.evaluate(() => { const a = [...document.querySelectorAll('.adwhy')].find(x => x.getClientRects().length); a.click(); });
+    await page.waitForTimeout(50); await rec.snap(page, 'why', true);
+    await page.click('#adWhyShake'); await page.waitForTimeout(100);
+    await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
+    await Promise.all([page.waitForEvent('load'), page.click('#stLangNb')]); await page.waitForTimeout(200);
+    await rec.snap(page, 'back-to-bokmal', true);
+    rec.save(); await page.context().close();
+  }
+  // The countdown in nynorsk: plural forms, «I morgon», and during the quiz
+  const rec = new Rec('nynorsk-clock');
+  for (const [label, at] of [['thursday', '2026-10-15T10:00:00Z'], ['tuesday', '2026-10-20T08:00:00Z'], ['last-hour', '2026-10-21T16:30:00Z'], ['quiz-live', '2026-10-21T18:30:00Z'], ['stale-prep', '2026-10-22T10:00:00Z']]) {
+    const page = await newPage('nynorsk-clock', { deviceNow: Date.parse(at), storage: { lang: 'nn' } });
+    rec.rows.push({ label: 'countdown:' + label, text: await page.evaluate(() => document.getElementById('cdBody').innerText.replace(/\s+/g, ' ').replace(/\d+ (sekund|millisekund)\b.*$/, '')) });
+    await rec.snap(page, label, true);
+    await page.context().close();
+  }
+  rec.save();
 };
 
 // Ads (?ristetid), and the real shaking window

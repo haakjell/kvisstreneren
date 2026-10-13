@@ -10,9 +10,9 @@ const mgPeople=e=>new Set([...mgHalves(e),...(e.m||[]),...(e.also||[])].map(norm
 const mgWins=a=>MGP.filter(e=>e.a===a).map(e=>e.y);
 const mgList=xs=>xs.length<2?xs.join(''):xs.slice(0,-1).join(', ')+' og '+xs[xs.length-1];
 function mgPlace(e,short){
-  if(e.e==='x') return short?'Eurovision avlyst':'Eurovision ble avlyst det året.';
-  if(e.e==='semi') return short?'ut i semifinalen':'Røk ut i semifinalen i Eurovision.';
-  if(e.e===1) return short?'vant Eurovision':'Vant Eurovision!';
+  if(e.e==='x') return short?'Eurovision avlyst':L('Eurovision ble avlyst det året.','Eurovision vart avlyst det året.');
+  if(e.e==='semi') return short?'ut i semifinalen':L('Røk ut i semifinalen i Eurovision.','Rauk ut i semifinalen i Eurovision.');
+  if(e.e===1) return short?L('vant Eurovision','vann Eurovision'):L('Vant Eurovision!','Vann Eurovision!');
   const tail=e.last?(e.zero?', sist med null poeng':', sist'):'';
   return short?`${e.e}. plass${tail}`:`${e.e}. plass i Eurovision${tail}.`;
 }
@@ -35,19 +35,19 @@ function mgOptions(q,pool=mgPool(),names=MGP){
     const mine=mgPeople(e), seen=new Set([e.a]);
     const others=mgNear(names.filter(x=>![...mgPeople(x)].some(p=>mine.has(p))),e.y,10)
       .filter(x=>!seen.has(x.a)&&seen.add(x.a)).slice(0,5)
-      .map(x=>({label:x.a,info:`${x.a} vant i ${mgList(mgWins(x.a))}.`}));
+      .map(x=>({label:x.a,info:L(`${x.a} vant i ${mgList(mgWins(x.a))}.`,`${x.a} vann i ${mgList(mgWins(x.a))}.`)}));
     return shuffle([{label:e.a,ok:true},...others]);
   }
   const years=mgNear(pool.filter(x=>x!==e),e.y,12).slice(0,5)
-    .map(x=>({label:x.y,y:x.y,info:`I ${x.y} vant ${x.a} med «${x.s}».`}));
+    .map(x=>({label:x.y,y:x.y,info:L(`I ${x.y} vant ${x.a} med «${x.s}».`,`I ${x.y} vann ${x.a} med «${x.s}».`)}));
   return [{label:e.y,y:e.y,ok:true},...years].sort((p,q)=>p.y-q.y);
 }
 function mgPromptHTML(q){
   const e=mgByYear(q.y);
   return q.dir==='year'?`<small>Melodi Grand Prix</small><strong>${e.y}</strong>`
-    :`<small>Vinneren</small><strong>${e.a}</strong><span class="song">«${e.s}»</span>`;
+    :`<small>${L('Vinneren','Vinnaren')}</small><strong>${e.a}</strong><span class="song">«${e.s}»</span>`;
 }
-const mgQText=q=>q.dir==='year'?'Hvem vant MGP det året?':'Hvilket år vant låta MGP?';
+const mgQText=q=>q.dir==='year'?L('Hvem vant MGP det året?','Kven vann MGP det året?'):L('Hvilket år vant låta MGP?','Kva år vann låta MGP?');
 const mgMissLi=q=>{const e=mgByYear(q.y); return `<div><strong>${e.y}: ${e.a}</strong><small>«${e.s}»</small></div>`;};
 // A question about year q = {y, dir}, for the quiz here and the mixed one. pool and names as in
 // mgOptions().
@@ -61,7 +61,7 @@ const mgQuiz=makeQuiz('mgQuiz',{ask:q=>mgQuestion(q), newDeck:mgNewDeck});
 // Mixed quiz: only from 2000 on (wrong options too), whatever "Fra og med" is set to, either way
 // round
 const MG_MIX_FROM=2000;
-MIX.mgp={label:`MGP fra og med ${MG_MIX_FROM}`, deal(n){
+MIX.mgp={label:L(`MGP fra og med ${MG_MIX_FROM}`,`MGP frå og med ${MG_MIX_FROM}`), deal(n){
   const pool=MGP.filter(e=>e.y>=MG_MIX_FROM);
   return shuffle(pool).slice(0,n).map(e=>mgQuestion({y:e.y,dir:rnd()<.5?'year':'artist'},pool,pool));
 }};
@@ -73,13 +73,13 @@ function mgRenderStudy(){
   let html='';
   for(let d=Math.floor(mgFrom/10)*10; d<=MG_LAST; d+=10){
     const xs=rows.filter(e=>e.y>=d&&e.y<d+10); if(!xs.length) continue;
-    html+=`<h2 class="chead">${d}-tallet</h2><ul class="mglist">${xs.map(li).join('')}</ul>`;
+    html+=`<h2 class="chead">${L(`${d}-tallet`,`${d}-talet`)}</h2><ul class="mglist">${xs.map(li).join('')}</ul>`;
   }
   $('mgStudyList').innerHTML=html;
 }
-hideAnswers('mgToggle','mgStudyList',['Skjul artistene','Vis artistene']);
+hideAnswers('mgToggle','mgStudyList',L(['Skjul artistene','Vis artistene'],['Skjul artistane','Vis artistane']));
 tabs('mgTabQuiz','mgTabStudy','mgQuiz','mgStudy',()=>mgQuiz.stop());
-const MG_SUBS={year:'Finn vinneren',artist:'Finn året'};
+const MG_SUBS={year:L('Finn vinneren','Finn vinnaren'),artist:'Finn året'};
 function mgSub(){ $('mgSub').textContent=`${MG_SUBS[mgMode]} · ${mgPool()[0].y}–${MG_LAST}`; }
 const mgMarkMode=radios({year:'mgSetYear',artist:'mgSetArtist'},m=>mgUse(m));
 function mgUse(m){
@@ -98,4 +98,5 @@ $('mgFrom').addEventListener('click',e=>{
 });
 function mgOpen(){ if(!mgQuiz.started()){ mgRenderFrom(); mgRenderStudy(); mgUse('year'); } }
 addMode('mgp',mgOpen);
-$('mgNote').textContent='Vinnerne fra 1971, da Norge var tilbake etter boikotten i 1970, til '+MG_LAST+'. Det var ingen MGP i 1991 og 2002. Kilde: Wikipedia.';
+$('mgNote').textContent=L('Vinnerne fra 1971, da Norge var tilbake etter boikotten i 1970, til '+MG_LAST+'. Det var ingen MGP i 1991 og 2002. Kilde: Wikipedia.',
+  'Vinnarane frå 1971, då Noreg var tilbake etter boikotten i 1970, til '+MG_LAST+'. Det var ingen MGP i 1991 og 2002. Kjelde: Wikipedia.');

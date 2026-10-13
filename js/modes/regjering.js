@@ -19,14 +19,14 @@ function rgOptions(q){
     ? shuffle([{label:e.p,ok:true},...others.map(x=>({label:x.p,info:`${x.p} er ${x.n}.`}))])
     : shuffle([{label:e.n,ok:true},...others.map(x=>({label:x.n,info:`${x.n} er ${rgLow(x.p)}.`}))]);
 }
-const rgQText=q=>q.dir==='person'?'Hvilken post har statsråden?':'Hvem har posten?';
+const rgQText=q=>q.dir==='person'?L('Hvilken post har statsråden?','Kva post har statsråden?'):L('Hvem har posten?','Kven har posten?');
 // The picture is part of the question for 'person', and shows up after answering for 'post'
 function rgPromptHTML(q,answered){
   const e=STATSRAD[q.i];
   if(q.dir==='person') return rgPic(e,'cpic','Bilde av statsråden')+`<small>Statsråd</small><strong>${e.n}</strong>`;
   return (answered?rgPic(e,'cpic',e.n):'')+`<small>Post</small><strong class="rgpost">${e.p}</strong>`;
 }
-const rgFact=e=>`${e.n} har vært ${rgLow(e.p)} siden ${e.s} (${e.d}).`;
+const rgFact=e=>L(`${e.n} har vært ${rgLow(e.p)} siden ${e.s} (${e.d}).`,`${e.n} har vore ${rgLow(e.p)} sidan ${e.s} (${e.d}).`);
 // A question about member q = {i, dir}. The answer to 'person' is a post, which reads in lower case
 // after «Det var».
 function rgQuestion(q){
@@ -40,10 +40,10 @@ const rgQuiz=makeQuiz('rgQuiz',{ask:rgQuestion, newDeck:rgNewDeck, onStart:rgPre
 
 // Study list: post, name and since when. The names can be hidden and revealed one by one.
 function rgRenderStudy(){
-  const li=e=>{ const pic=rgPic(e,'thumb'); return `<li tabindex="0"${pic?' class="pic"':''}>${pic}<strong>${e.p}</strong><span class="act ans">${e.n}</span><small>Siden ${e.s}</small></li>`; };
-  $('rgStudyList').innerHTML=`<h2 class="chead">Støres regjering</h2><ul class="clist">${STATSRAD.map(li).join('')}</ul>`;
+  const li=e=>{ const pic=rgPic(e,'thumb'); return `<li tabindex="0"${pic?' class="pic"':''}>${pic}<strong>${e.p}</strong><span class="act ans">${e.n}</span><small>${L(`Siden ${e.s}`,`Sidan ${e.s}`)}</small></li>`; };
+  $('rgStudyList').innerHTML=`<h2 class="chead">${L('Støres regjering','Støre-regjeringa')}</h2><ul class="clist">${STATSRAD.map(li).join('')}</ul>`;
 }
-hideAnswers('rgToggle','rgStudyList',['Skjul navn','Vis navn']);
+hideAnswers('rgToggle','rgStudyList',L(['Skjul navn','Vis navn'],['Skjul namn','Vis namn']));
 dropBrokenPics('regjeringApp');
 tabs('rgTabQuiz','rgTabStudy','rgQuiz','rgStudy',()=>rgQuiz.stop());
 const RG_SUBS={person:'Finn posten',post:'Finn statsråden'};
@@ -56,4 +56,4 @@ function rgUse(m){
 }
 function rgOpen(){ if(!rgQuiz.started()){ rgRenderStudy(); rgUse('person'); } }
 addMode('regjering',rgOpen,{newUntil:'2026-10-14 19:00'});
-$('rgNote').textContent=`Statsrådene per ${RG_ASOF}: regjeringen.no og Wikipedia. Bilder: Wikimedia Commons.`;
+$('rgNote').textContent=L(`Statsrådene per ${RG_ASOF}: regjeringen.no og Wikipedia. Bilder: Wikimedia Commons.`,`Statsrådane per ${RG_ASOF}: regjeringen.no og Wikipedia. Bilde: Wikimedia Commons.`);

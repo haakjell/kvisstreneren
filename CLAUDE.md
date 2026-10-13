@@ -6,16 +6,18 @@ pakkefil. Åpne `index.html` i nettleseren for å teste — det virker også som
 fordi skriptene er vanlige `<script src>`, ikke ES-moduler. Hold det sånn: moduler
 (`import`/`export`) lastes ikke fra `file://`.
 
-Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til brukeren, engelsk i koden.
+Se «Konvensjoner» nederst for språkreglene — kort sagt: norsk ut til brukeren (bokmål og nynorsk,
+se «Språk»), engelsk i koden.
 
 ## Filene
 
 ```
-index.html            markupen: forsida, alle modusene, innstillingene, arkene — og ukas prepp (#prepSource)
+index.html            markupen: forsida, alle modusene, innstillingene, arkene — og ukas prepp (#prepSource,
+                      #prepSourceNn)
 css/base.css          tema (lys/mørk), layout, kort, knapper, faner, alternativer, brytere, «Skjul navn»
 css/modes.css         forsida, hver modus og innstillingene, i hver sin bolk
 css/countdown.css · install.css · ads.css
-js/core.js            felles hjelpere: $(), store, navn (normName()), tilfeldighet (rnd()),
+js/core.js            felles hjelpere: $(), store, språket (L()), navn (normName()), tilfeldighet (rnd()),
                       tid (serverNow(), osloWall(), quizLive() …), modusregisteret (addMode()) og MIX
 js/ui.js              felles grensesnitt: tabs(), radios(), hideAnswers(), dropBrokenPics()
 js/quiz.js            spillmotoren, makeQuiz(): spørsmåls- og resultatkortet for alle kvissene
@@ -26,7 +28,7 @@ js/settings.js        Innstillinger — se under
 js/app.js             modusbytte og ruting (goMode()) og oppstart
 data/<navn>.js        dataene, én fil per tema — se tabellen under
 tools/                skript som oppdaterer data og prepp, og regresjonstesten — se «Verktøy»
-prep/                 arkivet over ukas prepp, én markdown-fil per kviss
+prep/                 arkivet over ukas prepp, én markdown-fil per kviss og språk
 manifest.webmanifest, icons/   for hjemskjermen — se «Hjemskjermen»
 ads/                  fotoer til annonsene — se «Reklame»
 ```
@@ -160,6 +162,7 @@ tabellen over og ikke i Dagens kviss. Alt lagres i `localStorage` på enheten.
 | Innstilling | Nøkkel | Bor i |
 |---|---|---|
 | Gå videre av seg selv ved riktig svar (standard på) | `autoNext` (`'0'` = av) | `quizAuto()` i `quiz.js` |
+| Språk: Bokmål / Nynorsk | `lang` (`'nn'`; ingen = bokmål) | `LANG` i `core.js` — se «Språk» |
 | Bilder i Hotel Cæsar (standard på) | `cPics` | `cSetPics()` i `caesar.js` |
 | T-banekartet: Geografisk / Linjekart | `tMapKind` | `tSetKind()` i `tbane.js` |
 | Utseende: Som enheten / Lyst / Mørkt | `theme` (ingen = som enheten) | `applyTheme()` i `theme.js` |
@@ -178,26 +181,72 @@ på igjen her.
 
 Reklamevalget (`shakeOff`) står bevisst ikke i innstillingene ennå — det kommer senere.
 
+## Språk
+
+Sida finnes på bokmål og nynorsk. Valget står øverst i innstillingene, med flagg: bokmål har det
+danske, nynorsk det norske (det er en vits, og meningen). Det lagres i `localStorage` under `lang`
+(`'nn'`; ingen nøkkel = bokmål). **Alt brukeren ser skal finnes på begge**, bortsett fra annonsene
+(`ADS`, malene i `AD_TYPES` og «Annonse»/«Sponset»-merkingen på dem), som bare er på bokmål. Arkene rundt reklamen (`#shakeSheet`, `#adWhySheet`, knappen «Skru av risting»)
+er en del av sida og oversettes; lista over hvem annonsøren vil nå (`why`/`AD_WHY`), hører til
+annonsen og gjør det ikke.
+
+Språkvalget kommer med lanseringen, samme tid som ristingen og reklamen (`launched()` i `core.js`,
+se «Reklame»): før det er raden skjult (`#stLangRow`, `stOpen()`), og sida er på bokmål selv om
+`'nn'` er lagret (fra testing med `?ristetid`). Det avgjøres ved oppstart, før serveren har svart,
+altså etter enhetens klokke; selve raden følger serverens klokke.
+
+Språket leses én gang, i `core.js` (`LANG`), og står fast så lenge sida er åpen: bytter man,
+lastes sida på nytt (`location.reload()` i `settings.js`), og man havner på innstillingene igjen.
+Derfor trenger ingen kode å tegne noe på nytt når språket endres. Tre steder bærer nynorsken:
+
+- **Koden og dataene** skriver tekst som `L('bokmål','nynorsk')`. `L()` er definert i `core.js`, så
+  den kan brukes overalt, også i `data/` (`motif:L(…)` i `vapen.js`, `n:L(…)` i `caesar.js` og
+  `mgp.js`, bydelene, `STATSRAD` der postene skrives ulikt). Er teksten lik på begge, skriv den
+  bare én gang, uten `L()`. Lister kan også velges hele: `L(['Skjul navn','Vis navn'],[…])`.
+  Skriv hele setninger i hvert språk, med det som varierer flettet inn (``L(`Siden ${dato}`,`Sidan ${dato}`)``), aldri biter som limes sammen: ordstillinga er ikke alltid den samme.
+- **Markupen** er skrevet på bokmål, med nynorsken i `data-nn` (det indre, som HTML) og
+  `data-nn-<attributt>` (f.eks. `data-nn-aria-label`, `data-nn-title`). `core.js` bytter dem inn
+  før noe vises. Tekst som står sammen med annet innhold (et ikon), pakkes i en `<span data-nn>`.
+  Står en tekst likt på begge, eller blir den uansett skrevet over av skriptene, trengs ingenting.
+- **Preppen** har sin egen nynorske rapport i `#prepSourceNn` — se «Ukas prepp». Mangler den,
+  vises bokmålsrapporten.
+
+`<html lang>` er `nb`, og blir `nn` på nynorsk. Egennavn (personer, steder, bydeler, stasjoner, kommuner,
+låter, roller) oversettes ikke. Nynorsken følger rettskrivinga fra 2012 og skal være lik over hele
+sida: *ikkje, berre, kva, kven, òg, frå, vart, eg, ho, dei, bilde, namn, skodespelar, veke,
+heimeskjermen*; ukedagene *måndag, tysdag, onsdag, torsdag, fredag, laurdag, søndag* (`WEEKDAYS`);
+s-genitiv unngås der det går lett («mora til Georg»). Den skal være vanlig, moderne nynorsk, ikke
+mer nynorsk enn den må: når en form som ligger nær bokmål også er godkjent (*bilde, søndag, nøkkel,
+kors, unntatt, utdatert*), brukes den. Unntak som er valgt bevisst: *Stadfest* og *Tilrådd*.
+På nynorsk heter sida *Kvisstrenaren* (tittelen, overskriften, arkene og delingsteksten); navnet
+på hjemskjermen (`manifest.webmanifest`) er fast og står på bokmål. Har du lagt til eller endret tekst: skriv
+nynorsken samtidig, og se over sida på begge språk.
+
 ## Ukas prepp
 
 Forsidas øverste knapp åpner `#prepApp`, som rendrer markdown-rapporten fra **quizprep**-skillen.
 To steder er involvert:
 
 - `#prepSource` i markupen (inne i `#prepApp`) — en `<script type="text/markdown">`-blokk som
-  holder selve rapporten, ordrett. Attributtet `data-uke` holder quizdatoen.
+  holder selve rapporten, ordrett. Attributtet `data-uke` holder quizdatoen. Rett under står
+  `#prepSourceNn` med den samme rapporten på nynorsk.
 - `js/prep.js`: `prepMarkdown()` / `prepInline()` (en liten markdown-renderer) og
   `renderPrep()`, som fyller `#prepBody` og teksten på forsideknappen ved oppstart.
 
 ### Slik legger du inn ny prep
 
 Kjør quizprep-skillen. Lagre rapporten som `prep/<quizdato>.md` (f.eks.
-`prep/2026-10-07.md`) — den mappa er arkivet over gamle preper. Kjør så, fra reporoten:
+`prep/2026-10-07.md`) — den mappa er arkivet over gamle preper. Oversett den så til nynorsk, linje
+for linje, til `prep/<quizdato>-nn.md`: samme overskrifter, lister, skillelinjer og lenker på de
+samme linjene, bare teksten på nynorsk (navn, titler og URL-er står som de er; se «Språk»). Kjør så,
+fra reporoten:
 
 ```bash
-node tools/set-prep.mjs <rapport.md> "onsdag 7. oktober 2026"
+node tools/set-prep.mjs prep/2026-10-07.md "onsdag 7. oktober 2026" --nn prep/2026-10-07-nn.md
 ```
 
-Skriptet legger rapporten inn i `#prepSource` og setter `data-uke`. Åpne `index.html` i
+Skriptet legger rapportene inn i `#prepSource` og `#prepSourceNn` og setter `data-uke`. Uten
+`--nn` tømmes den nynorske blokken, og nynorsk viser bokmålsrapporten. Åpne `index.html` i
 nettleseren etterpå og se over at det ser riktig ut. Datoargumentet er valgfritt, men det er
 det som gir teksten «Klar til onsdag 7. oktober 2026» på forsideknappen.
 
@@ -207,11 +256,12 @@ Mellom to preper:
 node tools/set-prep.mjs --clear
 ```
 
-Da viser sida placeholderen «Ukas prepp kommer snart» igjen, og forsideknappen sier «Kommer
-snart». Ingen andre endringer trengs.
+Da viser sida placeholderen «Ukas prepp kommer snart» igjen (på nynorsk «Vekas prepp kjem snart»),
+og forsideknappen sier «Kommer snart». Begge blokkene tømmes. Ingen andre endringer trengs.
 
-**Kjøres quizprep herfra, hører dette med til jobben.** Skriv rapporten til `prep/<dato>.md`,
-kjør `set-prep.mjs`, sjekk sida i nettleseren, og commit både rapporten og `index.html`. Ikke
+**Kjøres quizprep herfra, hører dette med til jobben.** Skriv rapporten til `prep/<dato>.md` og
+nynorsken til `prep/<dato>-nn.md`, kjør `set-prep.mjs` med `--nn`, sjekk sida i nettleseren på
+begge språk, og commit begge rapportene og `index.html`. Ikke
 lim rapporten inn for hånd, og ikke forhåndsformater markdownen — skriptet og rendreren tar den
 som den er.
 
@@ -476,8 +526,8 @@ Derfor skriver `cdShow()` i `#cdBody`, mens klassene står på `#countdown` rund
 
 ## Reklame
 
-Fra onsdag 14. oktober 2026 kl. 10 (`SHAKE_FROM` i `ads.js`, norsk tid etter serverens klokke) er
-det ristetid hele uka, bortsett fra mens kvissen pågår (onsdag 19–22). Før det, og under kvissen,
+Fra lanseringen onsdag 14. oktober 2026 kl. 10 (`LAUNCH_AT` og `launched()` i `core.js`, norsk tid
+etter serverens klokke — den samme bryteren som slår på nynorsk, se «Språk») er det ristetid hele uka, bortsett fra mens kvissen pågår (onsdag 19–22). Før det, og under kvissen,
 er det ingen knapp, ingen risting og ingen reklame. I ristetida kan man skru av ristingen i
 nedtellingen, men da får man falsk reklame på sida i stedet. Den som har slått på
 `prefers-reduced-motion`, får ingenting av det.
@@ -490,7 +540,7 @@ nedtellingen, men da får man falsk reklame på sida i stedet. Den som har slåt
 - **Angre:** ▷-merket på hver annonse åpner «Hvorfor ser jeg denne annonsen?» (`#adWhySheet`), med
   «Gi meg ristingen tilbake».
 - **Testbryter:** `?ristetid` i adressen (f.eks. `index.html?ristetid#prep`) later som det er
-  ristetid, så alt kan testes alle dager. Uten den: still klokka, f.eks. med `page.clock` i Playwright.
+  ristetid (`LAUNCH_TEST`), så alt kan testes alle dager — også språkvalget. Uten den: still klokka, f.eks. med `page.clock` i Playwright.
 
 ### Annonsene
 
@@ -573,8 +623,8 @@ Etter en endring, fra reporoten:
 for f in js/*.js js/modes/*.js data/*.js tools/*.mjs tools/regression/*.mjs; do node --check "$f" || echo "FEIL i $f"; done
 ```
 
-Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle åtte modusene, innstillingene, og både
-lys og mørk modus (temaet følger `prefers-color-scheme`, eller valget i innstillingene). Knappen for hjemskjermen vises bare
+Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle åtte modusene, innstillingene, både
+bokmål og nynorsk, og både lys og mørk modus (temaet følger `prefers-color-scheme`, eller valget i innstillingene). Knappen for hjemskjermen vises bare
 med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes med
 `?ristetid`, både smalt (under 1100 px) og bredt.
 
@@ -585,7 +635,8 @@ med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for ri
 fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene med alle
 spørsmålstypene, «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
 og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også en runde uten automatisk videre),
-stengt onsdag kveld, uten nett og som lokal fil, reklamen, og at nedtellingen og preppen følger
+stengt onsdag kveld, uten nett og som lokal fil, reklamen, hele sida på nynorsk (valgt i innstillingene),
+og at nedtellingen og preppen følger
 serverens klokke når enheten tar feil. `Math.random`, klokka, serverdatoen og alle eksterne bilder
 og fonter er låst, så to kjøringer av samme kode gir identisk resultat. Trenger Playwright (Chromium), og
 Python med Pillow for å sammenligne skjermbilder.
@@ -624,10 +675,11 @@ De tre `update-`skriptene skriver datafila si helt på nytt; ikke rediger de fil
 
 ## Konvensjoner
 
-- **Alt brukeren ser skal være på norsk** (bokmål): knappetekster, overskrifter, tilbakemeldinger,
+- **Alt brukeren ser skal være på norsk**, både bokmål og nynorsk (se «Språk»): knappetekster, overskrifter, tilbakemeldinger,
   feilmeldinger, `<title>`, `aria-label` og annen skjermlesertekst. Ingen engelske ord i
   grensesnittet — heller ikke i midlertidig tekst eller placeholdere.
   Det heter «prepp» (og «preppen») i teksten brukeren ser; i koden og filnavnene er det `prep`.
+  Ny tekst skrives på begge språk med en gang: `L('bokmål','nynorsk')` i koden, `data-nn` i markupen.
 - **Koden er på engelsk**: variabel- og funksjonsnavn, id-er, CSS-klasser og kommentarer.
   Unntaket er egennavn og faguttrykk som ikke har noen naturlig engelsk form — `FYLKER`,
   `KOMMUNER`, `bydel`, `vapen` — de blir stående som de er.

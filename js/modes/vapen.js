@@ -13,8 +13,8 @@ document.addEventListener('error',e=>{
   if(i<c.length){ el.dataset.i=i; el.src=c[i]; } else { el.outerHTML=f.draw(); }
 },true);
 const SETS={
-  fylker:{list:FYLKER, sub:'De 15 fylkene fra 2024', q:'Hvilket fylke er dette?', kind:'Fylkesvåpen'},
-  kommuner:{list:KOMMUNER, sub:'De 30 største kommunene (folketall 1. januar 2026)', q:'Hvilken kommune er dette?', kind:'Kommunevåpen'}
+  fylker:{list:FYLKER, sub:L('De 15 fylkene fra 2024','Dei 15 fylka frå 2024'), q:L('Hvilket fylke er dette?','Kva fylke er dette?'), kind:'Fylkesvåpen'},
+  kommuner:{list:KOMMUNER, sub:L('De 30 største kommunene (folketall 1. januar 2026)','Dei 30 største kommunane (folketal 1. januar 2026)'), q:L('Hvilken kommune er dette?','Kva kommune er dette?'), kind:'Kommunevåpen'}
 };
 
 // Ask Wikidata which image is the *current* coat of arms (P94, best rank) for each
@@ -63,7 +63,7 @@ MIX.vapen={label:'Våpenskjold', deal(n){
 function vRenderStudy(){
   $('studyGrid').innerHTML = vSet.list.map(f=>`<figure tabindex="0">${f.svg()}<figcaption class="ans"><strong>${f.name}</strong><span>${f.motif}</span></figcaption></figure>`).join('');
 }
-const vHideNames=hideAnswers('toggleNames','studyGrid',['Skjul navn','Vis navn']);
+const vHideNames=hideAnswers('toggleNames','studyGrid',L(['Skjul navn','Vis navn'],['Skjul namn','Vis namn']));
 tabs('tabQuiz','tabStudy','quizView','studyView',()=>vQuiz.stop());
 
 const vMarkSet=radios({fylker:'setF',kommuner:'setK'},key=>vUse(key));

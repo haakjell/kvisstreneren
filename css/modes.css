@@ -153,8 +153,9 @@
 @media (prefers-reduced-motion:reduce){.shield.pop svg,.shield.pop img,.omap.pop svg,.tmap.pop svg,.cprompt.pop strong{animation:none}}
 /* ---------- Innstillinger ---------- */
 .settings h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.2rem;margin:24px 0 10px}
-.settings>h2:first-child{margin-top:0}
+.settings>h2:first-child,.settings>.setrow:first-child>h2,.settings>[hidden]:first-child+h2{margin-top:0}
 .settings .setswitch{margin:0}
+.settings .flag{height:1em;width:auto;vertical-align:-.15em;margin-right:8px;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
 .setrow{margin:0 0 14px}
 .settings .switch{display:block;width:100%;text-align:left;color:var(--ink);font-size:1rem;font-weight:500;padding:6px 52px 6px 0}
 .setrow p,.setnote{color:var(--muted);font-size:.88rem;margin:2px 0 0}

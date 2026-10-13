@@ -1,6 +1,7 @@
 // ---------- Ukas kvissprep ----------
 // The report itself lives in the #prepSource block up in the markup, so it survives
-// pasting verbatim — backticks and all. See CLAUDE.md for the weekly routine.
+// pasting verbatim — backticks and all; its nynorsk version in #prepSourceNn. See CLAUDE.md for
+// the weekly routine.
 function prepInline(t){
   t = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const parked = [];
@@ -36,6 +37,8 @@ function prepDate(t){
   const mon = m ? MONTHS.indexOf(m[2]) : -1;
   return mon < 0 ? null : new Date(Date.UTC(+m[3], mon, +m[1])).toISOString().slice(0,10);
 }
+// The report in the language picked; the bokmål one if there is no nynorsk one
+const prepSource=()=>((LANG==='nn'&&$('prepSourceNn').textContent.trim())||$('prepSource').textContent||'').trim();
 // Once the quiz day is over (in Oslo, by the server's clock), the report is last week's: say so,
 // and when the next one is due.
 function prepStale(md, uke){
@@ -48,22 +51,22 @@ function prepStale(md, uke){
 // The report doesn't change while the page is open, so it is rendered once, here. Rendering it again
 // would throw away what has been filled into it since.
 {
-  const md = ($('prepSource').textContent||'').trim();
+  const md = prepSource();
   let h2 = 0;   // an ad slot between each ## section (only shown with ads on; see fillAds())
   $('prepBody').innerHTML = md ? prepMarkdown(md).replace(/<h2>/g, m => h2++ ? '<div class="adslot ad-all" data-fmt="box"></div>' + m : m)
-    : '<div class="prepsoon"><strong>Ukas prepp kommer snart</strong><p>Her dukker ferske nyhetssaker, navnedagene for uka og «på denne dagen» opp så snart ukas quizprep er kjørt.</p></div>';
+    : L('<div class="prepsoon"><strong>Ukas prepp kommer snart</strong><p>Her dukker ferske nyhetssaker, navnedagene for uka og «på denne dagen» opp så snart ukas quizprep er kjørt.</p></div>',
+        '<div class="prepsoon"><strong>Vekas prepp kjem snart</strong><p>Her dukkar ferske nyheitssaker, namnedagane for veka og «på denne dagen» opp så snart vekas quizprep er køyrd.</p></div>');
 }
 // What goes by the date: the notice that the prep is out of date, and the text on its button
 function renderPrep(){
-  const src = $('prepSource');
-  const md = (src.textContent||'').trim(), uke = src.dataset.uke;
+  const md = prepSource(), uke = $('prepSource').dataset.uke;
   const stale = md ? prepStale(md, uke) : null;
   $('prepStale').hidden = !stale;
   if(stale) $('prepStale').innerHTML = '<strong>Denne preppen er utdatert</strong><p>Den var til kvissen ' + stale.was + '. '
-    + (stale.isToday ? 'Ny prepp til i kveld kommer snart.' : 'Ny prepp kommer ' + stale.next + '.') + '</p>';
-  $('prepTeaser').textContent = !md ? 'Kommer snart'
-    : stale ? (stale.isToday ? 'Ny prepp til i kveld kommer snart' : 'Ny prepp kommer ' + stale.next)
-    : uke ? 'Klar til ' + uke : 'Nyheter, navnedager og datoen';
+    + (stale.isToday ? L('Ny prepp til i kveld kommer snart.','Ny prepp til i kveld kjem snart.') : L(`Ny prepp kommer ${stale.next}.`,`Ny prepp kjem ${stale.next}.`)) + '</p>';
+  $('prepTeaser').textContent = !md ? L('Kommer snart','Kjem snart')
+    : stale ? (stale.isToday ? L('Ny prepp til i kveld kommer snart','Ny prepp til i kveld kjem snart') : L(`Ny prepp kommer ${stale.next}`,`Ny prepp kjem ${stale.next}`))
+    : uke ? 'Klar til ' + uke : L('Nyheter, navnedager og datoen','Nyheiter, namnedagar og datoen');
 }
 // The countdown sits at the top of the prep too: it is one element, moved here from the home page
 addMode('prep',()=>{ $('prepStale').before($('countdown')); renderPrep(); },{wide:true});

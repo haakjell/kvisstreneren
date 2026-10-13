@@ -1,11 +1,8 @@
 // ---------- Shaking or ads ----------
-// From SHAKE_FROM on, the countdown shakes all week, except while the quiz is on. The shaking can
+// Once launched() (core.js), the countdown shakes all week, except while the quiz is on. The shaking can
 // be turned off, but then the page shows (fake) ads instead. The choice is kept for good
 // (localStorage 'shakeOff'), but only matters in that window: outside it there is no button,
 // no shaking and no ads. Those who ask for less motion get none of it.
-// ?ristetid in the address pretends it is the shaking time, so it can be tested any day.
-const SHAKE_FROM='2026-10-14 10:00';   // Oslo time, by the server's clock
-const SHAKE_TEST=new URLSearchParams(location.search).has('ristetid');
 const calmMotion=matchMedia('(prefers-reduced-motion: reduce)');
 let shakeOff=store.get('shakeOff')==='1';
 let shakeMode='';   // as last applied: 'off', 'shake' or 'ads'
@@ -14,7 +11,7 @@ const adsOn=()=>shakeMode==='ads';
 // on every tick (with false while the quiz is on), so the ads come and go by themselves.
 // Returns whether to shake.
 function shakeState(on,now){
-  const m=calmMotion.matches||!on||!(SHAKE_TEST||now>=osloAt(SHAKE_FROM,now))?'off':shakeOff?'ads':'shake';
+  const m=calmMotion.matches||!on||!launched(now)?'off':shakeOff?'ads':'shake';
   if(m!==shakeMode){
     shakeMode=m;
     document.body.classList.toggle('ads',m==='ads');
@@ -56,7 +53,7 @@ function fillAds(){
     const ad=pool.pop();
     if(!ad){ slot.classList.add('none'); return; }
     const label=`<span class="adlabel">${slot.dataset.label||'Annonse'}</span>`;
-    slot.innerHTML=label+`<div class="ad wait ad-${ad.type} fmt-${slot.dataset.fmt}" role="link" tabindex="0" data-ad="${ad.id}">${label}<button class="adwhy" aria-label="Hvorfor ser jeg denne annonsen?">▷</button>${AD_TYPES[ad.type](ad)}</div>`;
+    slot.innerHTML=label+`<div class="ad wait ad-${ad.type} fmt-${slot.dataset.fmt}" role="link" tabindex="0" data-ad="${ad.id}">${label}<button class="adwhy" aria-label="${L('Hvorfor ser jeg denne annonsen?','Kvifor ser eg denne annonsen?')}">▷</button>${AD_TYPES[ad.type](ad)}</div>`;
     setTimeout(()=>{
       if(gen!==adGen) return;
       slot.firstChild.remove(); slot.firstChild.classList.remove('wait');
