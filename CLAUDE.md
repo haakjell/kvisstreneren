@@ -590,7 +590,7 @@ eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjen
 |---|---|---|
 | Sidekolonner (`side`) | Én høy annonse fast på hver side av innholdet, på alle sidene | Fra 1100 px |
 | Toppbanner (`#adTop`, `banner`) | Rett under nedtellingen; `goMode()` flytter den med | Under 1100 px |
-| «Sponset» i lista (`card`) | Mellom Dagens kviss og Bydelene på forsida | Alle |
+| «Sponset» i lista (`card`) | Mellom Dagens kviss og Bydelene, og mellom Regjeringen og Våpenskjold, på forsida | Alle |
 | I preppen (`box`) | Mellom hver `##`-del, lagt inn av `renderPrep()` | Alle |
 | «Anbefalt for deg» (`tile`) | Fire småsaker nederst i preppen | Alle |
 
