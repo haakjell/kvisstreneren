@@ -499,6 +499,17 @@ tests.ads = async () => {
     }
     await page.context().close();
   }
+  // The same choice in Innstillinger: two switches, one setting, so they are always opposite
+  {
+    const page = await newPage('ads', { url: BASE + '?ristetid#settings' });
+    await rec.snap(page, 'settings:shaking', true);
+    await page.click('#stShake'); await page.waitForTimeout(80); await rec.snap(page, 'settings:shake-off', true);
+    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(700); await rec.snap(page, 'settings:ads-home', true);
+    await page.goto(BASE + '?ristetid#settings'); await page.waitForTimeout(100);
+    await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'settings:ads-off', true);
+    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(150); await rec.snap(page, 'settings:shaking-home', true);
+    await page.context().close();
+  }
   // Tuesday 20:00 Oslo, before the shaking starts; Wednesday during the quiz and in the morning
   const page = await newPage('ads', { deviceNow: Date.parse('2026-10-13T18:00:00Z') });
   await rec.snap(page, 'tuesday', true);

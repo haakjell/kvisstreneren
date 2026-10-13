@@ -166,6 +166,7 @@ tabellen over og ikke i Dagens kviss. Alt lagres i `localStorage` på enheten.
 | Bilder i Hotel Cæsar (standard på) | `cPics` | `cSetPics()` i `caesar.js` |
 | T-banekartet: Geografisk / Linjekart | `tMapKind` | `tSetKind()` i `tbane.js` |
 | Utseende: Som enheten / Lyst / Mørkt | `theme` (ingen = som enheten) | `applyTheme()` i `theme.js` |
+| Reklame: «Risting» og «Reklame» (fra lanseringen, ikke med `prefers-reduced-motion`) | `shakeOff` (`'1'` = reklame) | `setShakeOff()` i `ads.js` — se «Reklame» |
 | Vis «Legg til på hjemskjermen» (bare på berøringsskjerm, ikke installert) | `installHidden` | `installShow()` i `install.js` |
 
 Hver innstilling bor hos koden som bruker den; `js/settings.js` viser dem bare og endrer dem med
@@ -179,7 +180,9 @@ Temaet setter `data-theme="light|dark"` på `<html>`; CSS-en har fargene for beg
 (`theme-color`). Skjuler man «Legg til på hjemskjermen» med «Ikke vis knappen igjen», kan den slås
 på igjen her.
 
-Reklamevalget (`shakeOff`) står bevisst ikke i innstillingene ennå — det kommer senere.
+Ristingen og reklamen er to brytere, men én innstilling (`shakeOff`), så de står alltid motsatt:
+skrur man av ristingen, skrus reklamen på, og omvendt. Raden (`#stShakeRow`) er skjult før lanseringen, som språkvalget, og for
+dem med `prefers-reduced-motion`, som verken får risting eller reklame.
 
 ## Språk
 
@@ -532,7 +535,8 @@ er det ingen knapp, ingen risting og ingen reklame. I ristetida kan man skru av 
 nedtellingen, men da får man falsk reklame på sida i stedet. Den som har slått på
 `prefers-reduced-motion`, får ingenting av det.
 
-- Valget lagres for godt i `localStorage` under `shakeOff`, men brukes bare i ristetida.
+- Valget lagres for godt i `localStorage` under `shakeOff`, men brukes bare i ristetida. Det kan også
+  endres i innstillingene (to brytere for samme valg — se «Innstillinger»).
 - `shakeState()` avgjør både om det rister og om det vises reklame (klassen `ads` på `<body>`).
   `renderCountdown()` kaller den hvert sekund, så reklamen kommer og går av seg selv.
 - **Knappen** «Skru av risting» (`#shakeBtn`) åpner arket `#shakeSheet`: «Ja takk, vis meg
