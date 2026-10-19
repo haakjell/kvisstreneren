@@ -2,6 +2,8 @@
 /* The button sits in the countdown, after what cdShow() rebuilds, and shakes with it */
 .shakebtn{position:relative;font:inherit;font-size:.8rem;font-weight:800;line-height:1.4;color:var(--accent2-ink);background:var(--accent2);border:0;border-radius:999px;padding:4px 12px;box-shadow:0 2px 0 var(--edge-strong);cursor:pointer}
 .shakebtn:hover{filter:brightness(1.05)}
+/* In a wide countdown (desktop) it fits in the bottom right corner, level with the day and time */
+@container (min-width:400px){.shakebtn{position:absolute;right:20px;bottom:18px}}
 /* Slots: ad-in sits in the content on phones only, ad-side in fixed side columns (desktop, from 1100 px),
    and ad-all (and the tiles under «Anbefalt for deg») everywhere. A slot with no ad left for it is .none */
 :root{--wrapw:560px}

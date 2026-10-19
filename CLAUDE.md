@@ -560,8 +560,8 @@ Derfor skriver `cdShow()` i `#cdBody`, mens klassene står på `#countdown` rund
 Boksen er en flate i `--accent` med to sirkler i `--accent2` øverst til høyre. Tallene skalerer med
 boksens bredde (`container-type` og `cqi` i `countdown.css`), så alle fire enhetene får plass også på
 den smaleste telefonen. Hver enhet har samme minstebredde, med tallet og ordet midtstilt, så tallene
-står med jevn avstand uansett hvor lange ordene under er. Knappen for risting står ved siden av dagen og klokkeslettet når det er plass,
-og ellers under. Under kvissen er boksen rød (`--bad`).
+står med jevn avstand uansett hvor lange ordene under er. Knappen for risting står nederst til høyre, på linje med dagen og klokkeslettet, når boksen er
+bred nok (`@container` i `ads.css`), og ellers under dem. Under kvissen er boksen rød (`--bad`).
 
 ## Reklame
 
