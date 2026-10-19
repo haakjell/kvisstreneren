@@ -17,14 +17,14 @@ index.html            markupen: forsida, alle modusene, innstillingene, arkene �
 css/themes.css        fargetemaene, hvert med en lys og en mørk utgave — se «Utseende»
 css/base.css          lys/mørk modus, layout, kort, knapper, faner, alternativer, brytere, «Skjul navn»
 css/modes.css         forsida, hver modus og innstillingene, i hver sin bolk
-css/countdown.css · install.css · ads.css
+css/countdown.css · install.css · captcha.css · ads.css
 js/core.js            felles hjelpere: $(), store, språket (L()), navn (normName()), tilfeldighet (rnd()),
                       tid (serverNow(), osloWall(), quizLive() …), modusregisteret (addMode()) og MIX
 js/ui.js              felles grensesnitt: tabs(), radios(), hideAnswers(), dropBrokenPics()
 js/quiz.js            spillmotoren, makeQuiz(): spørsmåls- og resultatkortet for alle kvissene
 js/modes/<modus>.js   hver kvissmodus: spørsmålene, valgene øverst, «Pugg» og kilden i MIX
 js/theme.js           lys/mørk modus og fargetema fra innstillingene — lastes i <head>, se «Utseende»
-js/prep.js · dagens.js · ads.js · countdown.js · install.js
+js/prep.js · captcha.js · dagens.js · ads.js · countdown.js · install.js
 js/settings.js        Innstillinger — se under
 js/app.js             modusbytte og ruting (goMode()) og oppstart
 data/<navn>.js        dataene, én fil per tema — se tabellen under
@@ -302,6 +302,27 @@ lim rapporten inn for hånd, og ikke forhåndsformater markdownen — skriptet o
 som den er.
 
 Sida viser bare den nyeste prepen; `prep/`-mappa er arkivet.
+
+### Captchaen
+
+I to uker må man løse en falsk captcha før preppen åpnes, én gang per uke (`js/captcha.js`,
+`css/captcha.css`, `#captchaSheet` i markupen). Fra onsdag 21. oktober 2026 kl. 10 er det en
+kopi av Googles reCAPTCHA-boks, «Jeg er ikke en kvissmaster», med logoen og «kvissCAPTCHA» (begge
+captchaene har dem); den spinner litt, får en grønn hake
+og slipper deg inn. Fra onsdag 28. oktober kl. 10 er det forvrengt tekst («kokkekult», tegnet som
+SVG i `capDraw()` med nye skjevheter for hvert forsøk), der svaret må være riktig (uansett store
+bokstaver og mellomrom). Fra 4. november kl. 10 er det ingenting. Tidene står i `CAPTCHAS` og
+`CAPTCHA_END`, i norsk tid etter serverens klokke (se «Tid»).
+
+Den som er løst sist, lagres i `localStorage` under `captcha` (`'robot'`/`'text'`), så hver blir
+spurt én gang, og den som ikke var innom første uke, får bare den andre. Captchaen legger seg over
+sida man står på: `openMode('prep')` og `syncMode()` i `app.js` spør `captchaAsk()` først
+(`prepGated()`), så en lenke rett til `#prep` gir forsida med captchaen over, og Esc eller et trykk utenfor boksen
+lar en bli på forsida. Viser serveren at enhetens klokke gikk for sakte, sendes man tilbake til forsida
+fra preppen (`refreshClock()`). Captchaboksene har reCAPTCHAs faste farger og skrift, også i mørk
+modus, som annonsene. **Testbryter:** `?captcha=robot` eller `?captcha=text` later som det er den
+uka (svaret lagres likevel; fjern `captcha` i `localStorage` for å prøve igjen). Når perioden er over,
+kan `captcha.js`, `captcha.css`, `#captchaSheet`, `prepGated()` og testen i regresjonstesten fjernes.
 
 På desktop (fra 900 px) er preppen bredere enn resten av sida, siden den bare er tekst:
 `goMode()` setter klassen `wide` på `.wrap` når preppen vises (`addMode('prep', …, {wide:true})`),
@@ -688,7 +709,7 @@ fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene 
 spørsmålstypene, «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
 og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også fargetemaet og en runde uten automatisk videre),
 stengt onsdag kveld, uten nett og som lokal fil, reklamen, hele sida på nynorsk (valgt i innstillingene),
-og at nedtellingen og preppen følger
+captchaen før preppen, og at nedtellingen og preppen følger
 serverens klokke når enheten tar feil. `Math.random`, klokka, serverdatoen og alle eksterne bilder
 og fonter er låst, så to kjøringer av samme kode gir identisk resultat. Trenger Playwright (Chromium), og
 Python med Pillow for å sammenligne skjermbilder.

@@ -597,6 +597,49 @@ tests.clock = async () => {
   rec.save();
 };
 
+// The captcha before Ukas prepp: the checkbox the week from 21 October 10:00, the distorted text
+// the week from 28 October, and nothing from 4 November; each asked once, also for a link straight
+// to #prep, and only the second for whoever skipped the first week
+tests.captcha = async () => {
+  const rec = new Rec('captcha');
+  const state = p => p.evaluate(() => { const d = document.getElementById('captchaSheet'); return (d.open ? 'captcha:' + d.dataset.kind : 'open') + ' ' + document.body.dataset.mode + ' ' + location.hash; });
+  for (const [label, at, storage] of [['before', '2026-10-21T07:59:00Z', {}], ['week1', '2026-10-21T08:01:00Z', {}],
+    ['week1-solved', '2026-10-27T10:00:00Z', { captcha: 'robot' }], ['week2', '2026-10-28T09:01:00Z', { captcha: 'robot' }],
+    ['week2-skipped-first', '2026-10-28T09:01:00Z', {}], ['week2-solved', '2026-11-03T10:00:00Z', { captcha: 'text' }], ['after', '2026-11-04T09:01:00Z', {}]]) {
+    const p = await newPage('captcha', { deviceNow: Date.parse(at), storage });
+    await p.evaluate(() => document.querySelector('#home .mode').click()); await p.waitForTimeout(100);
+    rec.rows.push({ label: label + ':state', text: await state(p) });
+    await p.context().close();
+  }
+  // The checkbox: tick it, and the prep opens; not asked again, also after a reload
+  {
+    const p = await newPage('captcha', { deviceNow: Date.parse('2026-10-22T10:00:00Z') });
+    await p.evaluate(() => document.querySelector('#home .mode').click()); await p.waitForTimeout(100);
+    await rec.snap(p, 'robot:sheet', true); await rec.shoot(p, 'robot');
+    await p.click('#capCheck'); await p.waitForTimeout(300); await rec.snap(p, 'robot:spinning', true);
+    await p.waitForTimeout(2000); await rec.snap(p, 'robot:passed', true);
+    await p.goto(BASE + '#prep'); await p.waitForTimeout(150);
+    rec.rows.push({ label: 'robot:reloaded', text: await state(p) });
+    await p.context().close();
+  }
+  // The text, from a link straight to #prep, in nynorsk: cancel, a wrong answer, then the right one
+  {
+    const p = await newPage('captcha', { deviceNow: Date.parse('2026-10-29T10:00:00Z'), url: BASE + '#prep', storage: { lang: 'nn' } });
+    await rec.snap(p, 'text:sheet', true); await rec.shoot(p, 'text');
+    await p.mouse.click(5, 5); await p.waitForTimeout(100);
+    rec.rows.push({ label: 'text:cancelled', text: await state(p) });
+    await p.evaluate(() => document.querySelector('#home .mode').click()); await p.waitForTimeout(100);
+    await p.fill('#capInput', 'kokekult'); await p.keyboard.press('Enter'); await p.waitForTimeout(100);
+    await rec.snap(p, 'text:wrong', true);
+    await p.fill('#capInput', ' KokkeKult'); await p.click('#capVerify'); await p.waitForTimeout(200);
+    await rec.snap(p, 'text:passed', true);
+    await p.evaluate(() => __T.click('.back')); await p.waitForTimeout(200);
+    rec.rows.push({ label: 'text:home', text: await state(p) });
+    await p.context().close();
+  }
+  rec.save();
+};
+
 for (const [name, fn] of Object.entries(tests)) {
   if (only && !name.startsWith(only)) continue;
   const t = Date.now();

@@ -1,0 +1,47 @@
+/* The captcha before Ukas prepp (captcha.js): just the box, in the middle of the screen, over the
+   home page. The boxes copy Google's reCAPTCHA, so they keep its fixed colours and font in dark
+   mode too, like the ads. */
+.captcha{margin:auto;border:0;padding:0;background:none;width:calc(100% - 24px);max-width:340px;overflow:visible}
+.captcha:not([open]){display:none}
+.captcha::backdrop{background:rgba(10,16,22,.5)}
+.cap,.cap-chal{font-family:Roboto,Helvetica,Arial,sans-serif;color:#000;color-scheme:light}
+
+/* «Jeg er ikke en kvissmaster»: the checkbox */
+.cap{display:flex;align-items:center;gap:8px;width:100%;min-height:78px;margin:0 auto;box-sizing:border-box;background:#f9f9f9;border:1px solid #d3d3d3;border-radius:3px;box-shadow:0 0 4px 1px rgba(0,0,0,.08);padding:0 8px 0 12px}
+.cap[hidden],.cap-chal[hidden]{display:none}
+.cap-check{display:flex;align-items:center;gap:12px;flex:1;min-width:0;font:inherit;font-size:14px;color:#000;text-align:left;background:none;border:0;padding:12px 0;cursor:pointer}
+.cap-box{position:relative;flex:none;width:28px;height:28px;box-sizing:border-box;background:#fff;border:2px solid #c1c1c1;border-radius:2px;transition:border-color .1s}
+.cap-check:hover .cap-box{border-color:#b2b2b2}
+.cap-check:focus-visible{outline:0}
+.cap-check:focus-visible .cap-box{border-color:#4d90fe}
+.cap.spin .cap-box{border:4px solid #e6effd;border-top-color:#4d90fe;border-radius:50%;background:none;animation:capspin .7s linear infinite}
+.cap.ok .cap-box{border-color:transparent;background:none}
+.cap.ok .cap-box::after{content:"";position:absolute;left:7px;top:-4px;width:9px;height:22px;border:solid #009e55;border-width:0 4px 4px 0;transform:rotate(45deg);animation:capok .25s ease-out}
+.cap.spin .cap-check,.cap.ok .cap-check{cursor:default}
+@keyframes capspin{to{transform:rotate(360deg)}}
+@keyframes capok{from{opacity:0;transform:rotate(45deg) scale(.4)}}
+.cap-logo{flex:none;display:flex;flex-direction:column;align-items:center;width:72px;padding:8px 0;color:#555}
+.cap-logo svg{width:32px;height:32px;margin-bottom:2px}
+.cap-name{font-size:10px;font-weight:400;line-height:1.3}
+.cap-terms{font-size:8px;line-height:1.3;white-space:nowrap}
+
+/* The distorted text, as in reCAPTCHA's challenges */
+.cap-chal{width:100%;margin:0 auto;background:#fff;border:1px solid #ccc;box-shadow:0 0 4px 1px rgba(0,0,0,.08);padding:8px;box-sizing:border-box}
+.cap-head{background:#1a73e8;color:#fff;padding:18px 16px;margin-bottom:8px}
+.cap-head span{display:block;font-size:22px;font-weight:700;line-height:1.2}
+.cap-head small{display:block;font-size:13px;margin-top:6px;opacity:.9}
+.cap-img svg{display:block;width:100%;height:auto;background:#eee}
+.cap-chal input{display:block;width:100%;box-sizing:border-box;margin:8px 0 0;font:inherit;font-size:16px;color:#000;background:#fff;border:1px solid #c1c1c1;border-radius:2px;padding:9px 10px}
+.cap-chal input:focus{outline:0;border-color:#1a73e8}
+.cap-err{color:#d93025;font-size:14px;margin:6px 0 0}
+.cap-err[hidden]{display:none}
+.cap-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #dfdfdf;margin:8px -8px -8px;padding:8px}
+.cap-icon{display:flex;width:40px;height:40px;align-items:center;justify-content:center;background:none;border:0;border-radius:2px;color:#737373;cursor:pointer}
+.cap-icon:hover{background:#f1f1f1}
+.cap-icon svg{width:24px;height:24px}
+.cap-tools{display:flex;align-items:center;gap:6px}
+.cap-brand{display:flex;align-items:center;gap:5px;color:#555}
+.cap-brand svg{width:22px;height:22px}
+.cap-verify{font:inherit;font-size:14px;font-weight:500;text-transform:uppercase;letter-spacing:.02em;color:#fff;background:#1a73e8;border:0;border-radius:2px;padding:12px 18px;min-width:100px;cursor:pointer}
+.cap-verify:hover{background:#1765cc}
+.cap-chal button:focus-visible{outline:2px solid #1a73e8;outline-offset:2px}

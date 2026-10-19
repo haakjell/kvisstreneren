@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="css/modes.css">
 <link rel="stylesheet" href="css/countdown.css">
 <link rel="stylesheet" href="css/install.css">
+<link rel="stylesheet" href="css/captcha.css">
 <link rel="stylesheet" href="css/ads.css">
 </head>
 <body>
@@ -607,6 +608,26 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
   </div>
 </dialog>
 
+<dialog class="captcha" id="captchaSheet" aria-label="Ukas prepp" data-nn-aria-label="Vekas prepp">
+  <div class="cap" id="capRobot" hidden>
+    <button class="cap-check" id="capCheck" role="checkbox" aria-checked="false"><span class="cap-box"></span><span data-nn="Eg er ikkje ein kvissmaster">Jeg er ikke en kvissmaster</span></button>
+    <div class="cap-logo" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><g fill="none" stroke-width="4.5"><path d="M16 4.5A11.5 11.5 0 0 1 27.2 13.5" stroke="#4a90e2"/><path d="M26.6 20.4A11.5 11.5 0 0 1 9.3 25.4" stroke="#1c3aa9"/><path d="M5.2 20A11.5 11.5 0 0 1 10.3 6" stroke="#ababab"/></g><path fill="#4a90e2" d="M23 13.8h9.2l-4.6 5.6z"/><path fill="#1c3aa9" d="M12.4 21.6l-4.9 8.4-2.2-6.7z"/><path fill="#ababab" d="M14.6 3.6l-8.1 7.5-.6-7z"/></svg>
+      <span class="cap-name">kvissCAPTCHA</span><span class="cap-terms">Personvern - Vilkår</span>
+    </div>
+  </div>
+  <form class="cap-chal" id="capText" hidden>
+    <div class="cap-head"><span>Skriv inn teksten du ser</span><small data-nn="Er du usikker, trykk på pila for ein ny tekst">Er du usikker, trykk på pilen for en ny tekst</small></div>
+    <div class="cap-img" id="capImg" role="img" aria-label="Forvrengt tekst" data-nn-aria-label="Forvrengd tekst"></div>
+    <input id="capInput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Teksten du ser">
+    <p class="cap-err" id="capErr" role="alert" hidden>Prøv igjen.</p>
+    <div class="cap-foot">
+      <div class="cap-tools"><button type="button" class="cap-icon" id="capNew" aria-label="Ny tekst"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button><span class="cap-brand" aria-hidden="true"><svg viewBox="0 0 32 32"><g fill="none" stroke-width="4.5"><path d="M16 4.5A11.5 11.5 0 0 1 27.2 13.5" stroke="#4a90e2"/><path d="M26.6 20.4A11.5 11.5 0 0 1 9.3 25.4" stroke="#1c3aa9"/><path d="M5.2 20A11.5 11.5 0 0 1 10.3 6" stroke="#ababab"/></g><path fill="#4a90e2" d="M23 13.8h9.2l-4.6 5.6z"/><path fill="#1c3aa9" d="M12.4 21.6l-4.9 8.4-2.2-6.7z"/><path fill="#ababab" d="M14.6 3.6l-8.1 7.5-.6-7z"/></svg><span class="cap-name">kvissCAPTCHA</span></span></div>
+      <button class="cap-verify" id="capVerify" data-nn="Stadfest">Bekreft</button>
+    </div>
+  </form>
+</dialog>
+
 <dialog class="adfull" id="adFull" aria-label="Annonse">
   <button class="adfullx" id="adFullClose" aria-label="Lukk annonsen">✕</button>
   <div id="adFullBody"></div>
@@ -631,6 +652,7 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
 <script src="js/modes/mgp.js"></script>
 <script src="js/modes/bydel.js"></script>
 <script src="js/prep.js"></script>
+<script src="js/captcha.js"></script>
 <script src="js/dagens.js"></script>
 <script src="js/ads.js"></script>
 <script src="js/countdown.js"></script>
