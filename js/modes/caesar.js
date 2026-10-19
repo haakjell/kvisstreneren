@@ -87,8 +87,8 @@ function cOpen(){ if(!cQuiz.started()){ cRenderStudy(); cUse('role'); } }
 addMode('caesar',cOpen);
 $('cNote').textContent=L('Roller og skuespillere: IMDb, Wikipedia og Hotel Cæsar-wikien. Bilder: Hotel Cæsar-wikien på Fandom. Spørsmålene gjelder de '+cTop.length+' rollene med flest episoder; de andre rollefigurene dukker opp som feil alternativer.',
   'Roller og skodespelarar: IMDb, Wikipedia og Hotel Cæsar-wikien. Bilde: Hotel Cæsar-wikien på Fandom. Spørsmåla gjeld dei '+cTop.length+' rollene med flest episodar; dei andre rollefigurane dukkar opp som feil alternativ.');
-// The original Hotel Cæsar logo (1998): an Ionic capital whose red volutes curl round an orange,
-// battlemented column. Each volute is a stem up the side of the column that turns into a spiral;
+// The original Hotel Cæsar logo (1998): an Ionic capital whose volutes curl round a battlemented
+// column (red and orange in the original; here in the colour theme's ink and accent). Each volute is a stem up the side of the column that turns into a spiral;
 // R is the spiral's radius every quarter turn, and m mirrors it for the right-hand side.
 function cVolute(m){
   const X=x=>m?1206-x:x, R=[160,158,152,142,94,68,62,46,26];
@@ -100,8 +100,8 @@ function cVolute(m){
   return `<path d="${d}"/>`;
 }
 $('modeCaesarIcon').innerHTML=`<svg viewBox="100 50 1006 624" xmlns="http://www.w3.org/2000/svg">
-  <g fill="none" stroke="#C8202E" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">${cVolute(0)+cVolute(1)}</g>
-  <g fill="#E2692A">
+  <g fill="none" stroke="var(--ink)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">${cVolute(0)+cVolute(1)}</g>
+  <g fill="var(--accent)">
     <rect x="470" y="84" width="266" height="44" rx="8"/>
     <path fill-rule="evenodd" d="M498 188L520 176L518 144Q536 124 554 144L556 158Q603 176 650 158L652 144Q670 124 688 144L686 176L708 188L660 292L714 652H492L546 292Z
       M568 300H580L582 652H540Z M626 300H638L666 652H624Z"/>

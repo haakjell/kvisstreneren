@@ -317,7 +317,7 @@ function tStudyRender(){
       old=tBox.querySelector('svg');
     }
     old.setAttribute('viewBox',`${tF(tv.x)} ${tF(tv.y)} ${tF(tv.w)} ${tF(tv.h)}`);
-    old.querySelector('g').innerHTML=st?st.rr.map(r=>tRRect(r,'class="rh" style="stroke:var(--azure)"',5)).join(''):'';
+    old.querySelector('g').innerHTML=st?st.rr.map(r=>tRRect(r,'class="rh" style="stroke:var(--accent)"',5)).join(''):'';
   } else {
     if(old) old.remove();
     tBox.insertAdjacentHTML('afterbegin',tRender(tv,r.width,{focus:tSel,sel:tStudySel}).svg);

@@ -1,8 +1,7 @@
 /* ---------- Ads: what you get instead of the shaking (see CLAUDE.md, «Reklame») ---------- */
-/* The button sits on the countdown's lower edge, outside what cdShow() rebuilds, and shakes with it */
-.countdown{position:relative}
-.shakebtn{position:absolute;right:14px;bottom:-12px;font:inherit;font-size:.78rem;font-weight:700;line-height:1.4;color:var(--muted);background:var(--paper);border:1.5px solid var(--line);border-radius:999px;padding:2px 10px;cursor:pointer}
-.shakebtn:hover{color:var(--ink);border-color:var(--azure)}
+/* The button sits in the countdown, after what cdShow() rebuilds, and shakes with it */
+.shakebtn{position:relative;font:inherit;font-size:.8rem;font-weight:800;line-height:1.4;color:var(--accent2-ink);background:var(--accent2);border:0;border-radius:999px;padding:4px 12px;box-shadow:0 2px 0 var(--edge-strong);cursor:pointer}
+.shakebtn:hover{filter:brightness(1.05)}
 /* Slots: ad-in sits in the content on phones only, ad-side in fixed side columns (desktop, from 1100 px),
    and ad-all (and the tiles under «Anbefalt for deg») everywhere. A slot with no ad left for it is .none */
 :root{--wrapw:560px}
@@ -29,7 +28,7 @@ body.ads .adslot.none{display:none}
 .adwhy{position:absolute;top:2px;right:2px;z-index:2;width:18px;height:18px;padding:0;border:0;border-radius:3px;background:rgba(255,255,255,.9);color:#2F8AD3;font:9px/18px Arial,Helvetica,sans-serif;cursor:pointer}
 .ad{position:relative;display:flex;min-height:inherit;height:100%;background:#fff;color:#111;border:1px solid #D5D9DD;border-radius:4px;overflow:hidden;cursor:pointer;font:13px/1.3 Arial,Helvetica,sans-serif}
 .ad.wait{visibility:hidden}
-.ad:focus-visible{outline:2px solid var(--azure);outline-offset:2px}
+.ad:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .adart{flex:none;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--adbg,#EEF1F4)}
 .adart img{width:100%;height:100%;object-fit:cover}
 .adart.contain img{object-fit:contain}

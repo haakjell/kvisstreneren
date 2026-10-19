@@ -1,7 +1,7 @@
 // ---------- Innstillinger ----------
 // The page behind the cog on the home page. Each setting lives with the code that uses it, and is
-// stored there: lang (core.js), autoNext (quiz.js), cPics (Hotel Cæsar), tMapKind (T-banen), theme
-// (theme.js), shakeOff and ads (ads.js) and installHidden (install.js). This page only shows them and changes
+// stored there: lang (core.js), autoNext (quiz.js), cPics (Hotel Cæsar), tMapKind (T-banen), theme and
+// palette (theme.js), shakeOff and ads (ads.js) and installHidden (install.js). This page only shows them and changes
 // them through the same functions as the modes' own switches, so the two always agree; open() reads them again each time.
 const stSwitch=(id,on)=>$(id).setAttribute('aria-checked',on);
 
@@ -16,6 +16,9 @@ const stMarkMap=radios({geo:'stMapGeo',ruter:'stMapRuter'},k=>{ tSetKind(k); stM
 const stMarkTheme=radios({auto:'stThemeAuto',light:'stThemeLight',dark:'stThemeDark'},k=>{
   const t=k==='auto'?null:k;
   store.set('theme',t); applyTheme(t); stMarkTheme(k);
+});
+const stMarkPalette=radios(Object.fromEntries(PALETTES.map(p=>[p,'stPal'+p[0].toUpperCase()+p.slice(1)])),p=>{
+  store.set('palette',p==='lyng'?null:p); applyTheme(document.documentElement.dataset.theme,p); stMarkPalette(p);
 });
 // The shaking and the ads, each on its own switch. Only there from the launch, and not for those
 // who ask for less motion (they get neither).
@@ -34,6 +37,7 @@ function stOpen(){
   stSwitch('stPics',cPics);
   stMarkMap(tKind);
   stMarkTheme(document.documentElement.dataset.theme||'auto');
+  stMarkPalette(document.documentElement.dataset.palette);
   $('stShakeRow').hidden=!launched(serverNow())||calmMotion.matches;
   stMarkShake();
   $('stInstallRow').hidden=!installable;

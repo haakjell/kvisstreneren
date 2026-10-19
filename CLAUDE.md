@@ -14,7 +14,8 @@ se «Språk»), engelsk i koden.
 ```
 index.html            markupen: forsida, alle modusene, innstillingene, arkene — og ukas prepp (#prepSource,
                       #prepSourceNn)
-css/base.css          tema (lys/mørk), layout, kort, knapper, faner, alternativer, brytere, «Skjul navn»
+css/themes.css        fargetemaene, hvert med en lys og en mørk utgave — se «Utseende»
+css/base.css          lys/mørk modus, layout, kort, knapper, faner, alternativer, brytere, «Skjul navn»
 css/modes.css         forsida, hver modus og innstillingene, i hver sin bolk
 css/countdown.css · install.css · ads.css
 js/core.js            felles hjelpere: $(), store, språket (L()), navn (normName()), tilfeldighet (rnd()),
@@ -22,7 +23,7 @@ js/core.js            felles hjelpere: $(), store, språket (L()), navn (normNam
 js/ui.js              felles grensesnitt: tabs(), radios(), hideAnswers(), dropBrokenPics()
 js/quiz.js            spillmotoren, makeQuiz(): spørsmåls- og resultatkortet for alle kvissene
 js/modes/<modus>.js   hver kvissmodus: spørsmålene, valgene øverst, «Pugg» og kilden i MIX
-js/theme.js           lyst/mørkt tema fra innstillingene — lastes i <head>, se «Innstillinger»
+js/theme.js           lys/mørk modus og fargetema fra innstillingene — lastes i <head>, se «Utseende»
 js/prep.js · dagens.js · ads.js · countdown.js · install.js
 js/settings.js        Innstillinger — se under
 js/app.js             modusbytte og ruting (goMode()) og oppstart
@@ -166,6 +167,7 @@ tabellen over og ikke i Dagens kviss. Alt lagres i `localStorage` på enheten.
 | Bilder i Hotel Cæsar (standard på) | `cPics` | `cSetPics()` i `caesar.js` |
 | T-banekartet: Geografisk / Linjekart | `tMapKind` | `tSetKind()` i `tbane.js` |
 | Utseende: Som enheten / Lyst / Mørkt | `theme` (ingen = som enheten) | `applyTheme()` i `theme.js` |
+| Fargetema: Lyng / Fjord / Rabarbra / Gran / Multe | `palette` (ingen = Lyng) | `applyTheme()` i `theme.js` — se «Utseende» |
 | Risting og reklame: to brytere (fra lanseringen, ikke med `prefers-reduced-motion`) | `shakeOff` (`'1'` = av), `ads` (`'1'`/`'0'`) | `setShakeOff()` og `setAds()` i `ads.js` — se «Reklame» |
 | Vis «Legg til på hjemskjermen» (bare på berøringsskjerm, ikke installert) | `installHidden` | `installShow()` i `install.js` |
 
@@ -175,14 +177,42 @@ gang sida åpnes. Ny innstilling: en rad i `#settingsApp` (`.switch` for av/på,
 valg), og koden i `settings.js`. Når automatisk videre er av, venter et riktig svar på «Neste»
 (eller Enter), akkurat som et feil.
 
-Temaet setter `data-theme="light|dark"` på `<html>`; CSS-en har fargene for begge, både under
-`prefers-color-scheme` og for `[data-theme]`. `applyTheme()` bytter også fargen på nettleserlinja
-(`theme-color`). Skjuler man «Legg til på hjemskjermen» med «Ikke vis knappen igjen», kan den slås
-på igjen her.
+Utseendet og fargetemaet er beskrevet under «Utseende». Skjuler man «Legg til på hjemskjermen»
+med «Ikke vis knappen igjen», kan den slås på igjen her.
 
 Ristingen og reklamen er to uavhengige brytere (`shakeOff` og `ads`): man kan ha begge, én av dem
 eller ingen. Raden (`#stShakeRow`) er skjult før lanseringen, som språkvalget, og for
 dem med `prefers-reduced-motion`, som verken får risting eller reklame.
+
+## Utseende
+
+Sida er tegnet som «bento»: store, runde flater i fargetemaets farger, uten streker. Kort, knapper,
+faner og fliser har ingen ramme, men en mørkere kant under seg (`box-shadow: 0 4px 0 var(--edge)`;
+fargede flater `--edge-strong`), og knappene synker ned på kanten når de trykkes. Forsida er et
+rutenett med to kolonner: Ukas prepp (i `--accent2`) og Dagens kviss (i `--ink`) som store fliser
+øverst, så de andre modusene som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
+tegnet i temaets farger (`--ink`, `--accent`, `--paper`, på `--tint`), også bydelskartet og
+Hotel Cæsar-logoen, som tegnes i skriptene. Ny CSS: bruk fargevariablene, aldri faste farger.
+
+**Fargetema.** Det finnes fem: Lyng (standard), Fjord, Rabarbra, Gran og Multe, valgt i
+innstillingene med en fargeprøve hver (`.swatches`). Hvert tema er én sterk farge (`--accent`) og en
+lys nabofarge i samme familie (`--accent2`), hver med tekstfargen som står på den (`--accent-ink`,
+`--accent2-ink`), pluss bakgrunn (`--bg`), flatene (`--paper`, `--paper2`), tekst (`--ink`,
+`--muted`) og en blek utgave av hovedfargen (`--tint`). Alle temaene finnes i lys og mørk utgave i
+`css/themes.css`, som `--l-…` og `--d-…`; `base.css` velger den ene eller den andre etter
+lys/mørk modus. Kontrasten er sjekket (tekst minst 4,5:1) — sjekk den igjen hvis du endrer en farge.
+Nytt tema: en blokk i `themes.css`, navnet i `PALETTES` og fargen på nettleserlinja i `THEME_BAR`
+(begge i `theme.js`), og en fargeprøve i `#settingsApp`.
+
+**Lys og mørk.** `theme.js` setter `data-theme="light|dark"` (når det er valgt) og alltid
+`data-palette` på `<html>`, før sida tegnes. CSS-en har den mørke utgaven både under
+`prefers-color-scheme` og for `[data-theme="dark"]`. `applyTheme()` bytter også fargen på
+nettleserlinja (`theme-color`) etter tema og modus; standardfargene i `<head>` og i
+`manifest.webmanifest` er Lyngs.
+
+**Faste farger**, som ikke følger temaet: grønt og rødt for riktig og feil (`--ok`, `--bad`, og
+`--ok-text`/`--bad-text` for tekst), Ruters linjefarger (`--l1`…`--l5`) og linjekartet,
+våpenskjoldene og bildene, og annonsene, som skal se ut som ekte reklame (se «Reklame»).
 
 ## Språk
 
@@ -527,6 +557,11 @@ ned; den siste timen før kvissen rister den kraftigere hele tiden (klassen `rum
 Derfor skriver `cdShow()` i `#cdBody`, mens klassene står på `#countdown` rundt den: knappen
 «Skru av risting» ligger i `#countdown`, utenfor det som bygges på nytt, og rister med boksen.
 
+Boksen er en flate i `--accent` med to sirkler i `--accent2` øverst til høyre. Tallene skalerer med
+boksens bredde (`container-type` og `cqi` i `countdown.css`), så alle fire enhetene får plass også på
+den smaleste telefonen. Knappen for risting står ved siden av dagen og klokkeslettet når det er plass,
+og ellers under. Under kvissen er boksen rød (`--bad`).
+
 ## Reklame
 
 Fra lanseringen onsdag 14. oktober 2026 kl. 10 (`LAUNCH_AT` og `launched()` i `core.js`, norsk tid
@@ -595,7 +630,7 @@ eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjen
 |---|---|---|
 | Sidekolonner (`side`) | Én høy annonse fast på hver side av innholdet, på alle sidene | Fra 1100 px |
 | Toppbanner (`#adTop`, `banner`) | Rett under nedtellingen; `goMode()` flytter den med | Under 1100 px |
-| «Sponset» i lista (`card`) | Mellom Dagens kviss og Bydelene, og mellom Regjeringen og Våpenskjold, på forsida | Alle |
+| «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp og Dagens kviss, og under raden med Regjeringen og Våpenskjold | Alle |
 | I preppen (`box`) | Mellom hver `##`-del, lagt inn av `renderPrep()` | Alle |
 | «Anbefalt for deg» (`tile`) | Fire småsaker nederst i preppen | Alle |
 
@@ -633,7 +668,7 @@ for f in js/*.js js/modes/*.js data/*.js tools/*.mjs tools/regression/*.mjs; do 
 ```
 
 Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle åtte modusene, innstillingene, både
-bokmål og nynorsk, og både lys og mørk modus (temaet følger `prefers-color-scheme`, eller valget i innstillingene). Knappen for hjemskjermen vises bare
+bokmål og nynorsk, både lys og mørk modus (følger `prefers-color-scheme`, eller valget i innstillingene), og gjerne et par fargetemaer. Knappen for hjemskjermen vises bare
 med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes med
 `?ristetid`, både smalt (under 1100 px) og bredt.
 
@@ -643,7 +678,7 @@ med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for ri
 (ingen interne funksjonsnavn), og lagrer et øyeblikksbilde etter hvert steg: markup, synlig tekst,
 fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene med alle
 spørsmålstypene, «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
-og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også en runde uten automatisk videre),
+og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også fargetemaet og en runde uten automatisk videre),
 stengt onsdag kveld, uten nett og som lokal fil, reklamen, hele sida på nynorsk (valgt i innstillingene),
 og at nedtellingen og preppen følger
 serverens klokke når enheten tar feil. `Math.random`, klokka, serverdatoen og alle eksterne bilder

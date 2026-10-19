@@ -386,6 +386,7 @@ tests.settings = async () => {
     await click('#stPics', 'pics-off');
     await click('#stMapGeo', 'map-geo');
     await click('#stThemeDark', 'theme-dark');
+    await click('#stPalGran', 'palette-gran');
     if (cfg === 'mobile') { await click('#stInstall', 'install-off'); await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'home-no-install', true); }
     // The modes follow, also after a reload
     await page.reload(); await page.waitForTimeout(150);
@@ -399,13 +400,14 @@ tests.settings = async () => {
     await playRound(page, rec, 'mgp', 1);
     // Back to the defaults
     await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
-    for (const id of ['#stAuto', '#stPics', '#stMapRuter', '#stThemeAuto']) await page.click(id);
+    for (const id of ['#stAuto', '#stPics', '#stMapRuter', '#stThemeAuto', '#stPalLyng']) await page.click(id);
     if (cfg === 'mobile') await page.click('#stInstall');
     await page.waitForTimeout(80); await rec.snap(page, 'defaults');
     // Screenshots last: a full-page one of a page taller than the screen loses the touch emulation,
     // and the switch for the home screen (touch only) would be gone after the reload above
     await rec.shoot(page, 'open');
     await page.click('#stThemeDark'); await rec.shoot(page, 'dark'); await page.click('#stThemeAuto');
+    await page.click('#stPalMulte'); await rec.shoot(page, 'multe'); await page.click('#stPalLyng');
     rec.save(); await page.context().close();
   }
 };

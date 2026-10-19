@@ -1,14 +1,22 @@
-/* Countdown to the next quiz (Wednesday 19:00 Oslo time), or a warning while it runs */
-.countdown{background:var(--paper);border:1.5px solid var(--line);border-radius:20px;padding:14px 18px 16px;margin:0 0 20px;text-align:center}
-.countdown p{margin:0;color:var(--muted);font-size:.95rem}
-.countdown .cdunits{display:flex;justify-content:center;gap:10px;margin:8px 0 6px}
-.countdown .cdunits div{min-width:58px}
-.countdown .cdunits .cdms{min-width:96px}
-.countdown .cdunits b{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:2rem;line-height:1.05;color:var(--ink);font-variant-numeric:tabular-nums}
-.countdown .cdunits span{display:block;color:var(--muted);font-size:.85rem}
-.countdown.live{border-color:var(--gules);box-shadow:inset 0 0 0 1px var(--gules)}
-.countdown.live strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.4rem;line-height:1.15;color:var(--bad);margin-bottom:6px}
-.countdown.live p{color:var(--ink)}
+/* Countdown to the next quiz (Wednesday 19:00 Oslo time), or a warning while it runs.
+   cdShow() replaces the class of #countdown, so it is styled by .countdown and the classes it sets.
+   The shake button (ads.css) follows #cdBody: beside the day and time if there is room, else below. */
+.countdown{position:relative;overflow:hidden;container-type:inline-size;display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 12px;background:var(--accent);color:var(--accent-ink);border-radius:28px;padding:16px 20px 18px;margin:0 0 20px;box-shadow:0 5px 0 var(--edge-strong)}
+/* A big and a small circle of the theme's light colour, top right, clear of the numbers */
+.countdown::before,.countdown::after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.countdown::before{right:-38px;top:-64px;width:118px;height:118px;background:var(--accent2)}
+.countdown::after{right:76px;top:14px;width:16px;height:16px;border:4px solid var(--accent2)}
+#cdBody{position:relative;min-width:0;max-width:100%}
+.countdown p{margin:0;font-weight:700;font-size:.92rem}
+/* The numbers scale with the box, so all four units fit on the narrowest phone */
+.countdown .cdunits{display:flex;gap:clamp(8px,4.5cqi,20px);align-items:flex-end;margin:8px 0 12px}
+.countdown .cdunits b{display:block;min-width:2ch;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:clamp(30px,13.5cqi,54px);line-height:.95;font-variant-numeric:tabular-nums}
+.countdown .cdunits span{display:block;font-size:.8rem;font-weight:700;opacity:.9;white-space:nowrap}
+/* The day and time as a chip */
+.countdown:not(.live) #cdBody>p:last-child{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--on-accent)}
+.countdown.live{background:var(--bad);color:var(--bad-ink)}
+.countdown.live::before,.countdown.live::after{display:none}
+.countdown.live strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.5rem;line-height:1.15;margin-bottom:6px}
 /* Under 24 hours left it jolts briefly on every second; under an hour it shakes all the time.
    Like an old banner ad: no rotation, just jumps a few pixels with no easing in between (step-end) */
 .countdown.tick{animation:cdtick .3s step-end}

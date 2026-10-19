@@ -1,0 +1,37 @@
+/* Colour themes («Fargetema» in Innstillinger). theme.js sets data-palette on <html>; Lyng is the
+   default, also with no attribute. Each theme has a light set (--l-…) and a dark set (--d-…), and
+   base.css picks one of them by light or dark mode. The selectors also match a single element with
+   data-palette, so the swatches in Innstillinger can show every theme at once.
+   One strong colour (accent) and a light neighbour of it (accent2), each with the text colour that
+   goes on it (…-ink); tint is a pale accent for backgrounds. The browser bar's colour is the bg, and
+   is in THEME_BAR in theme.js too: change both. */
+:root,[data-palette="lyng"]{
+  --l-bg:#F0EDF6; --l-paper:#FFFFFF; --l-paper2:#F6F3FA; --l-ink:#1D1330; --l-muted:#5E5370;
+  --l-accent:#6A3BC2; --l-accent-ink:#FFFFFF; --l-accent2:#E8C8F2; --l-accent2-ink:#1D1330; --l-tint:#ECE3F8;
+  --d-bg:#120E1B; --d-paper:#1D172A; --d-paper2:#271F37; --d-ink:#F2EEF8; --d-muted:#AA9FBC;
+  --d-accent:#B597FF; --d-accent-ink:#120E1B; --d-accent2:#DDB6EE; --d-accent2-ink:#120E1B; --d-tint:#2C2242;
+}
+[data-palette="fjord"]{
+  --l-bg:#EBEFF4; --l-paper:#FFFFFF; --l-paper2:#F3F6F9; --l-ink:#0F1B2A; --l-muted:#526070;
+  --l-accent:#2348C9; --l-accent-ink:#FFFFFF; --l-accent2:#B5DCF5; --l-accent2-ink:#0F1B2A; --l-tint:#E1E8FA;
+  --d-bg:#0C131D; --d-paper:#162131; --d-paper2:#1D2B3E; --d-ink:#EDF2F8; --d-muted:#9AA9BA;
+  --d-accent:#86A2FF; --d-accent-ink:#0C131D; --d-accent2:#9CCDEE; --d-accent2-ink:#0C131D; --d-tint:#1F2D48;
+}
+[data-palette="rabarbra"]{
+  --l-bg:#F6EEEF; --l-paper:#FFFFFF; --l-paper2:#FBF5F6; --l-ink:#2B1118; --l-muted:#6C535A;
+  --l-accent:#BE1F55; --l-accent-ink:#FFFFFF; --l-accent2:#FFC6B8; --l-accent2-ink:#2B1118; --l-tint:#F9E1E7;
+  --d-bg:#190F12; --d-paper:#26171C; --d-paper2:#321E25; --d-ink:#F8EEF0; --d-muted:#BDA4AB;
+  --d-accent:#FF7FA6; --d-accent-ink:#190F12; --d-accent2:#FFB8A6; --d-accent2-ink:#190F12; --d-tint:#3A1F28;
+}
+[data-palette="gran"]{
+  --l-bg:#ECF1EE; --l-paper:#FFFFFF; --l-paper2:#F4F8F5; --l-ink:#10211A; --l-muted:#4E6158;
+  --l-accent:#1D6A50; --l-accent-ink:#FFFFFF; --l-accent2:#C8E7AE; --l-accent2-ink:#10211A; --l-tint:#DCEDE4;
+  --d-bg:#0B1511; --d-paper:#14221C; --d-paper2:#1B2D25; --d-ink:#ECF4F0; --d-muted:#9AB1A6;
+  --d-accent:#5FD0A0; --d-accent-ink:#0B1511; --d-accent2:#BDE29E; --d-accent2-ink:#0B1511; --d-tint:#183327;
+}
+[data-palette="multe"]{
+  --l-bg:#F8F0E7; --l-paper:#FFFFFF; --l-paper2:#FCF7F1; --l-ink:#2A1A0E; --l-muted:#6B5747;
+  --l-accent:#B24C0C; --l-accent-ink:#FFFFFF; --l-accent2:#FFD487; --l-accent2-ink:#2A1A0E; --l-tint:#FBE6D3;
+  --d-bg:#17100A; --d-paper:#241912; --d-paper2:#2F2219; --d-ink:#FAF1E8; --d-muted:#C0A895;
+  --d-accent:#FF9852; --d-accent-ink:#17100A; --d-accent2:#FFCB73; --d-accent2-ink:#17100A; --d-tint:#3A2617;
+}

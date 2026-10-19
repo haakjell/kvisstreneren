@@ -11,12 +11,13 @@
 <meta name="apple-mobile-web-app-title" content="Kvisstreneren">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#E4E9EE" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111922" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F0EDF6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#120E1B" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;700;800&display=swap" rel="stylesheet">
 <script src="js/theme.js"></script>
+<link rel="stylesheet" href="css/themes.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/modes.css">
 <link rel="stylesheet" href="css/countdown.css">
@@ -28,7 +29,7 @@
 <div class="adslot ad-side side-r" data-fmt="side"></div>
 <div class="wrap">
   <section class="home" id="home" hidden>
-    <button class="install" id="installBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="var(--azure)" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M12 8.5v6M9 11.5h6"/></svg><span data-nn="Legg til på heimeskjermen">Legg til på hjemskjermen</span></button>
+    <button class="install" id="installBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M12 8.5v6M9 11.5h6"/></svg><span data-nn="Legg til på heimeskjermen">Legg til på hjemskjermen</span></button>
     <div class="countdown" id="countdown"><div id="cdBody" role="timer" aria-live="off"></div><button class="shakebtn" id="shakeBtn" hidden data-nn="Skru av ristinga">Skru av risting</button></div>
     <div class="adslot ad-in" id="adTop" data-fmt="banner"></div>
     <div class="hometitle">
@@ -37,15 +38,15 @@
     </div>
     <p class="sub" data-nn="Vel kva du vil øve på til onsdag.">Velg hva du vil øve på til onsdag.</p>
     <div class="modes">
-      <button class="mode" data-mode="prep"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><rect x="11" y="9" width="54" height="68" rx="9" fill="var(--paper)" stroke="var(--azure)" stroke-width="3.5"/><path d="M23 27h30M23 39h30M23 51h20" stroke="var(--azure)" stroke-width="4.5" stroke-linecap="round"/><circle cx="62" cy="61" r="15" fill="var(--or)"/><path d="M55.5 61.5l4.5 4.5 9-10" stroke="#1B2733" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong data-nn="Vekas prepp">Ukas prepp</strong><span id="prepTeaser">Nyheter, navnedager og datoen</span></div></button>
-      <button class="mode" data-mode="dagens"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="14" width="64" height="62" rx="10" fill="var(--paper)" stroke="var(--azure)" stroke-width="3.5"/><path d="M12 24a10 10 0 0 1 10-10h44a10 10 0 0 1 10 10v8H12z" fill="var(--azure)"/><rect x="26" y="7" width="6" height="14" rx="3" fill="var(--ink)"/><rect x="56" y="7" width="6" height="14" rx="3" fill="var(--ink)"/><g fill="var(--ok)"><rect x="18" y="44" width="8" height="8" rx="2"/><rect x="29" y="44" width="8" height="8" rx="2"/><rect x="51" y="44" width="8" height="8" rx="2"/><rect x="62" y="44" width="8" height="8" rx="2"/><rect x="18" y="55" width="8" height="8" rx="2"/><rect x="29" y="55" width="8" height="8" rx="2"/><rect x="40" y="55" width="8" height="8" rx="2"/><rect x="62" y="55" width="8" height="8" rx="2"/></g><g fill="var(--bad)"><rect x="40" y="44" width="8" height="8" rx="2"/><rect x="51" y="55" width="8" height="8" rx="2"/></g></svg></div><div><strong>Dagens kviss</strong><span data-nn="Ti blanda spørsmål, nye kvar dag">Ti blandede spørsmål, nye hver dag</span></div></button>
+      <button class="mode" data-mode="prep"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="8" width="52" height="68" rx="9" fill="var(--paper)" stroke="var(--ink)" stroke-width="5"/><path d="M24 26h28M24 38h28M24 50h18" stroke="var(--accent)" stroke-width="7" stroke-linecap="round"/><circle cx="63" cy="62" r="17" fill="var(--accent)" stroke="var(--paper)" stroke-width="4"/><path d="M56 62.5l4.5 4.5 9-10" stroke="var(--accent-ink)" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong data-nn="Vekas prepp">Ukas prepp</strong><span id="prepTeaser">Nyheter, navnedager og datoen</span></div></button>
+      <button class="mode" data-mode="dagens"><div aria-hidden="true"><svg viewBox="0 0 116 44" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="24" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="48" y="0" width="20" height="20" rx="5" fill="var(--bad)"/><rect x="72" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="96" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="0" y="24" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="24" y="24" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="48" y="24" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="72" y="24" width="20" height="20" rx="5" fill="var(--bad)"/><rect x="96" y="24" width="20" height="20" rx="5" fill="var(--ok)"/></svg></div><div><strong>Dagens kviss</strong><span data-nn="Ti blanda spørsmål, nye kvar dag">Ti blandede spørsmål, nye hver dag</span></div></button>
       <div class="adslot ad-all" data-fmt="card" data-label="Sponset"></div>
       <button class="mode" data-mode="bydel"><div class="omap" id="modeMapIcon" aria-hidden="true" style="margin:0"></div><div><strong data-nn="Bydelane">Bydelene</strong><span data-nn="Dagens 15 eller dei nye 8">Dagens 15 eller de nye 8</span></div></button>
-      <button class="mode" data-mode="tbane"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12 L38 36 H78" stroke="var(--l1)"/><path d="M8 42 H80" stroke="var(--l2)"/><path d="M8 48 H48 L72 76" stroke="var(--l5)"/></g><path d="M44 30 V52" stroke="#1B2733" stroke-width="12" stroke-linecap="round"/><path d="M44 30 V52" stroke="#fff" stroke-width="7" stroke-linecap="round"/></svg></div><div><strong>T-banen</strong><span>Neste stopp på alle fem linjer</span></div></button>
-      <button class="mode" data-mode="regjering"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><circle cx="38" cy="32" r="14" fill="var(--ink)"/><path d="M10 84C10 63 21 53 38 53S66 63 66 84Z" fill="var(--azure)"/><path d="M30 53L38 68L46 53Z" fill="var(--paper)"/><path d="M36 55H40L42.5 71L38 77L33.5 71Z" fill="var(--gules)"/><rect x="58" y="8" width="24" height="17.5" rx="1.5" fill="#BA0C2F"/><path d="M65.6 8V25.5M58 16.7H82" stroke="#fff" stroke-width="4.4"/><path d="M65.6 8V25.5M58 16.7H82" stroke="#00205B" stroke-width="2.2"/></svg></div><div><strong data-nn="Regjeringa">Regjeringen</strong><span data-nn="Statsrådane og postane deira">Statsrådene og postene deres</span></div></button>
+      <button class="mode" data-mode="tbane"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12 L38 36 H78" stroke="var(--accent)"/><path d="M8 46 H80" stroke="var(--ink)"/><path d="M8 56 H46 L68 78" stroke="var(--accent)"/></g><rect x="36" y="28" width="16" height="36" rx="8" fill="var(--paper)" stroke="var(--ink)" stroke-width="4.5"/></svg></div><div><strong>T-banen</strong><span>Neste stopp på alle fem linjer</span></div></button>
+      <button class="mode" data-mode="regjering"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><circle cx="44" cy="28" r="15" fill="var(--ink)"/><path d="M14 84C14 62 26 51 44 51S74 62 74 84Z" fill="var(--accent)"/><path d="M35 51L44 67L53 51Z" fill="var(--paper)"/><path d="M42 54H46L48.5 70L44 76L39.5 70Z" fill="var(--ink)"/></svg></div><div><strong data-nn="Regjeringa">Regjeringen</strong><span data-nn="Statsrådane og postane deira">Statsrådene og postene deres</span></div></button>
+      <button class="mode" data-mode="vapen"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><path d="M16 10h56v34c0 20-13 31-28 37C29 75 16 64 16 44z" fill="var(--accent)" stroke="var(--ink)" stroke-width="4.5" stroke-linejoin="round"/><path d="M40 22h8v12h12v8H48v24h-8V42H28v-8h12z" fill="var(--paper)"/></svg></div><div><strong>Våpenskjold</strong><span>Fylkesvåpen og kommunevåpen</span></div></button>
       <div class="adslot ad-all" data-fmt="card" data-label="Sponset"></div>
-      <button class="mode" data-mode="vapen"><div id="modeShieldIcon" aria-hidden="true"></div><div><strong>Våpenskjold</strong><span>Fylkesvåpen og kommunevåpen</span></div></button>
-      <button class="mode" data-mode="mgp"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><path d="M22 36a22 22 0 0 0 44 0" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round"/><path d="M44 58v16M31 78h26" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round"/><rect x="31" y="6" width="26" height="44" rx="13" fill="var(--gules)"/><path d="M31 20h26M31 28h26M31 36h26" stroke="#fff" stroke-width="2.5" opacity=".45"/><path d="M72 8l2.8 6.7 6.7 2.8-6.7 2.8L72 27l-2.8-6.7-6.7-2.8 6.7-2.8z" fill="var(--or)"/><path d="M14 44l1.8 4.2 4.2 1.8-4.2 1.8L14 56l-1.8-4.2L8 50l4.2-1.8z" fill="var(--or)"/></svg></div><div><strong>Melodi Grand Prix</strong><span data-nn="Vinnarane frå 1971 til i dag">Vinnerne fra 1971 til i dag</span></div></button>
+      <button class="mode" data-mode="mgp"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><path d="M22 38a22 22 0 0 0 44 0" fill="none" stroke="var(--ink)" stroke-width="5.5" stroke-linecap="round"/><path d="M44 60v14M31 78h26" stroke="var(--ink)" stroke-width="5.5" stroke-linecap="round"/><rect x="31" y="6" width="26" height="46" rx="13" fill="var(--accent)" stroke="var(--ink)" stroke-width="4.5"/><path d="M33 22h22M33 30h22M33 38h22" stroke="var(--paper)" stroke-width="3" opacity=".6"/><path d="M74 8l2.6 6.4 6.4 2.6-6.4 2.6L74 26l-2.6-6.4-6.4-2.6 6.4-2.6z" fill="var(--ink)"/></svg></div><div><strong>Melodi Grand Prix</strong><span data-nn="Vinnarane frå 1971 til i dag">Vinnerne fra 1971 til i dag</span></div></button>
       <button class="mode" data-mode="caesar"><div id="modeCaesarIcon" aria-hidden="true"></div><div><strong>Hotel Cæsar</strong><span data-nn="Kven spelte kven">Hvem spilte hvem</span></div></button>
     </div>
   </section>
@@ -534,6 +535,15 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
       <button role="radio" id="stThemeLight" aria-checked="false">Lyst</button>
       <button role="radio" id="stThemeDark" aria-checked="false">Mørkt</button>
     </div>
+    <h2 id="stPalLabel">Fargetema</h2>
+    <div class="swatches" role="radiogroup" aria-labelledby="stPalLabel" aria-describedby="stPalNote">
+      <button role="radio" id="stPalLyng" data-palette="lyng" aria-checked="true"><i aria-hidden="true"></i>Lyng</button>
+      <button role="radio" id="stPalFjord" data-palette="fjord" aria-checked="false"><i aria-hidden="true"></i>Fjord</button>
+      <button role="radio" id="stPalRabarbra" data-palette="rabarbra" aria-checked="false"><i aria-hidden="true"></i>Rabarbra</button>
+      <button role="radio" id="stPalGran" data-palette="gran" aria-checked="false"><i aria-hidden="true"></i>Gran</button>
+      <button role="radio" id="stPalMulte" data-palette="multe" aria-checked="false"><i aria-hidden="true"></i>Multe</button>
+    </div>
+    <p class="setnote" id="stPalNote" data-nn="Kvart fargetema har ei lys og ei mørk utgåve, og følgjer utsjånaden over.">Hvert fargetema har en lys og en mørk utgave, og følger utseendet over.</p>
     <div class="setrow" id="stShakeRow" hidden>
       <h2>Risting og reklame</h2>
       <button type="button" class="switch" role="switch" id="stShake" aria-checked="true">Risting</button>
@@ -552,7 +562,7 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
   <h2 id="installTitle" data-nn="Legg Kvisstrenaren på heimeskjermen">Legg Kvisstreneren på hjemskjermen</h2>
   <p data-nn="Då ligg Kvisstrenaren saman med appane dine og opnar i fullskjerm, utan adressefelt.">Da ligger den sammen med appene dine og åpner i fullskjerm, uten adressefelt.</p>
   <ol id="installIOS">
-    <li>Trykk på Del-knappen <svg viewBox="0 0 24 24" fill="none" stroke="var(--azure)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 9H6.5A1.5 1.5 0 0 0 5 10.5v9A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 17.5 9H16"/><path d="M12 3v11M8.5 6.5L12 3l3.5 3.5"/></svg> <span data-nn="i Safari. Ser du han ikkje, trykk på «⋯» først.">i Safari. Ser du den ikke, trykk på «⋯» først.</span></li>
+    <li>Trykk på Del-knappen <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 9H6.5A1.5 1.5 0 0 0 5 10.5v9A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 17.5 9H16"/><path d="M12 3v11M8.5 6.5L12 3l3.5 3.5"/></svg> <span data-nn="i Safari. Ser du han ikkje, trykk på «⋯» først.">i Safari. Ser du den ikke, trykk på «⋯» først.</span></li>
     <li data-nn="Bla ned og vel <strong>Legg til på Hjem&#8209;skjerm</strong>.">Bla ned og velg <strong>Legg til på Hjem&#8209;skjerm</strong>.</li>
     <li>Trykk <strong>Legg til</strong>.</li>
   </ol>

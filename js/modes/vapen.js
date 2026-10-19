@@ -77,4 +77,3 @@ function vUse(key){
 }
 vUse('fylker');
 addMode('vapen');
-$('modeShieldIcon').innerHTML=shield(V,'rogaland');   // on the home page
