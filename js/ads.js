@@ -9,6 +9,10 @@ const calmMotion=matchMedia('(prefers-reduced-motion: reduce)');
 let shakeOff=store.get('shakeOff')==='1';
 let adsWanted=store.get('ads')?store.get('ads')==='1':shakeOff;
 let shaking=false, adsShown=false;   // as last applied
+// Those who had the ads on when the two were split are told once that they can now turn off both
+// (#adsNewsSheet); choosing the ads afterwards counts as having heard it ('adsNewsSeen').
+let adsNews=adsWanted&&!store.get('adsNewsSeen');
+function adsNewsSeen(){ adsNews=false; store.set('adsNewsSeen','1'); }
 const adsOn=()=>adsShown;
 // Decides both whether the countdown shakes and whether the ads show. renderCountdown() calls it
 // on every tick (with false while the quiz is on), so the ads come and go by themselves.
@@ -25,6 +29,7 @@ function shakeState(on,now){
     document.body.classList.toggle('ads',ad);
     if(ad) fillAds(); else adGen++;   // drops ads still on their way
   }
+  if(ad&&adsNews&&!document.querySelector('dialog[open]')){ adsNewsSeen(); $('adsNewsSheet').showModal(); }
   return sh;
 }
 function setShakeOff(off){
@@ -36,6 +41,7 @@ function setShakeOff(off){
 function setAds(on){
   adsWanted=on;
   store.set('ads',on?'1':'0');
+  if(on) adsNewsSeen();
   renderCountdown();
 }
 calmMotion.addEventListener('change',()=>renderCountdown());
@@ -94,6 +100,8 @@ function adWhy(ad){
 $('adWhyOff').addEventListener('click',()=>{ $('adWhySheet').close(); setAds(false); });
 $('adWhyShake').addEventListener('click',()=>{ $('adWhySheet').close(); setAds(false); setShakeOff(false); });
 $('adWhyKeep').addEventListener('click',()=>$('adWhySheet').close());
+$('adsNewsOff').addEventListener('click',()=>{ $('adsNewsSheet').close(); setAds(false); setShakeOff(true); });
+$('adsNewsKeep').addEventListener('click',()=>$('adsNewsSheet').close());
 // Full screen, like a landing page. It gets a history entry of its own, so Android's back gesture
 // closes it; ✕ and Esc step back out of that entry.
 let adFullAd=null;

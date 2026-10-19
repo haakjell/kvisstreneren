@@ -584,6 +584,10 @@ alltid `ads` samtidig.
   (`#shakeStop`, uten reklame), «Vis meg reklame i stedet» (`#shakeAds`) og «Nei, jeg vil riste».
 - **Angre:** ▷-merket på hver annonse åpner «Hvorfor ser jeg denne annonsen?» (`#adWhySheet`), med
   «Skru av reklamen» (`#adWhyOff`) og, når ristingen er av, «Gi meg ristingen tilbake».
+- **Nyheten om skillet:** den som har reklamen på (fra før skillet), får én gang arket «Nå kan du skru av
+  både ristingen og reklamen» (`#adsNewsSheet`) i ristetida, med «Skru av begge» (`#adsNewsOff`) og
+  «Behold reklamen». Når det er vist, lagres `adsNewsSeen` (`'1'`), og det vises aldri igjen. Slår man
+  på reklamen selv etterpå, lagres flagget med en gang, så nye får det aldri.
 - **Testbryter:** `?ristetid` i adressen (f.eks. `index.html?ristetid#prep`) later som det er
   ristetid (`LAUNCH_TEST`), så alt kan testes alle dager — også språkvalget. Uten den: still klokka, f.eks. med `page.clock` i Playwright.
 

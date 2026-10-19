@@ -556,6 +556,14 @@ tests.ads = async () => {
   await page4.waitForTimeout(700);
   await rec.snap(page4, 'prep-load-server-clock', true); await rec.shoot(page4, 'prep-load-server-clock');
   await page4.context().close();
+  // Ads on from before the split: told once that both can now be turned off, then never again
+  for (const [label, btn] of [['news-off', '#adsNewsOff'], ['news-keep', '#adsNewsKeep']]) {
+    const p = await newPage('ads', { url: BASE + '?ristetid', storage: { ads: '1', shakeOff: '1' } });
+    await p.waitForTimeout(150); await rec.snap(p, label + ':sheet', true);
+    await p.click(btn); await p.waitForTimeout(700); await rec.snap(p, label + ':after', true);
+    await p.goto(BASE + '?ristetid'); await p.waitForTimeout(150); await rec.snap(p, label + ':reloaded', true);
+    await p.context().close();
+  }
   rec.save();
 };
 
