@@ -18,3 +18,7 @@ function applyTheme(t,p){
   document.querySelectorAll('meta[name="theme-color"]').forEach(m=>{ m.content=bar[t||(m.media.includes('dark')?'dark':'light')]; });
 }
 try{ applyTheme(localStorage.getItem('theme'),localStorage.getItem('palette')); }catch(e){ applyTheme(null,null); }
+// The countdown in gold, from the treasure chest in Anagram (anagram.js): data-gold on <html>,
+// whatever the colour theme (countdown.css)
+function applyGold(on){ if(on) document.documentElement.dataset.gold=''; else delete document.documentElement.dataset.gold; }
+try{ applyGold(localStorage.getItem('goldCountdown')==='1'); }catch(e){}

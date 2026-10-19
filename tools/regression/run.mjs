@@ -553,6 +553,47 @@ tests.ads = async () => {
   rec.save();
 };
 
+// Anagram: the map, a stop's page, a wrong and a right answer, back via the button and the back
+// gesture, all of them in order, the treasure chest and the gold countdown, a solved stop again, the progress after a reload, and the home
+// button; also in nynorsk and dark. Reads ANAGRAMS for the answers.
+tests.anagram = async () => {
+  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
+    const rec = new Rec('anagram-' + cfg), page = await newPage(rec.name, { ...opt, url: BASE + '#anagram' });
+    await page.waitForTimeout(150);
+    await rec.snap(page, 'map'); await rec.shoot(page, 'map');
+    const stop = async label => { await page.click('.agnode.cur'); await page.waitForTimeout(80); await rec.snap(page, label); };
+    const answer = async (v, label) => { await page.fill('#agInput', v); await page.press('#agInput', 'Enter'); await page.waitForTimeout(80); await rec.snap(page, label); };
+    await stop('stop-0'); await rec.shoot(page, 'stop');
+    await page.goBack(); await page.waitForTimeout(100); await rec.snap(page, 'back-gesture');
+    await stop('stop-0-again');
+    await answer('Dan Brøge Akerø', 'wrong'); await rec.shoot(page, 'wrong');
+    await page.click('#agBack'); await page.waitForTimeout(100); await rec.snap(page, 'back-button');
+    const names = await page.evaluate(() => ANAGRAMS.map(x => x.n));
+    for (let i = 0; i < names.length; i++) {
+      await stop('stop-' + i);
+      await answer(i % 2 ? names[i].toUpperCase() : names[i].toLowerCase().replace(/ /g, ''), 'right-' + i);
+      if (i === 0) await rec.shoot(page, 'right');
+      await page.keyboard.press('Enter'); await page.waitForTimeout(100); await rec.snap(page, 'map-' + i);
+    }
+    await rec.shoot(page, 'chest-waits');
+    // The chest: opened, then the cloud shows
+    await stop('chest'); await page.click('#agOpenChest'); await page.waitForTimeout(1800);
+    await rec.snap(page, 'chest-open'); await rec.shoot(page, 'chest-open');
+    // The gold countdown it unlocks: on here, seen on the home page and in Innstillinger, and off there
+    await page.click('#agGold'); await page.waitForTimeout(80); await rec.snap(page, 'gold-on'); await rec.shoot(page, 'gold-on');
+    await page.goto(BASE); await page.waitForTimeout(150); await rec.snap(page, 'gold-home', true); await rec.shoot(page, 'gold-home');
+    await page.goto(BASE + '#settings'); await page.waitForTimeout(100); await rec.snap(page, 'gold-settings');
+    await page.click('#stGold'); await page.waitForTimeout(80); await rec.snap(page, 'gold-off', true);
+    await page.goto(BASE + '#anagram'); await page.waitForTimeout(150); await page.click('.agnode.chest'); await page.waitForTimeout(80);
+    await page.click('#agChestOn'); await page.waitForTimeout(1000); await rec.snap(page, 'map-cloud'); await rec.shoot(page, 'all-done');
+    await page.click('.agnode.chest'); await page.waitForTimeout(80); await rec.snap(page, 'chest-again'); await page.goBack(); await page.waitForTimeout(100);
+    await page.click('.agnode.solved'); await page.waitForTimeout(80); await rec.snap(page, 'solved-stop');
+    await page.reload(); await page.waitForTimeout(150); await rec.snap(page, 'reloaded');
+    await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'home', true);
+    rec.save(); await page.context().close();
+  }
+};
+
 // Server and device disagree about the time: the countdown and the prep's «utdatert» notice
 // should follow the server (the device's clock is only a fallback before it has answered)
 tests.clock = async () => {

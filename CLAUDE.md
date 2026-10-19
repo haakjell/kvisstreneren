@@ -56,7 +56,7 @@ noen få ny `index.html` med gamle skript; en oppdatering av sida retter det.
 
 ## Struktur
 
-Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og åtte
+Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og ni
 moduser. I tillegg er det innstillingene (`#settings`), som åpnes med tannhjulet til høyre for
 tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølge som knappene på forsida.
 
@@ -64,6 +64,7 @@ tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølg
 |---|---|---|---|
 | `prep` | `js/prep.js` | `#prepSource` i `index.html` | Ukas prepp — se under |
 | `dagens` | `js/dagens.js` | — | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`) — se under |
+| `anagram` | `js/modes/anagram.js` | `data/anagram.js` | Anagram: kjendiser med bokstavene stokket om, på et kart med skattekister der alle går samme vei — se under |
 | `bydel` | `js/modes/bydel.js` | `data/bydeler.js` | Bydelene: Oslos bydeler (`BSETS`) |
 | `tbane` | `js/modes/tbane.js` | `data/tbane.js`, `data/ruter-map.js` | T-banen: «neste stopp»-kviss og kart — se under |
 | `regjering` | `js/modes/regjering.js` | `data/statsrad.js` | Regjeringen: statsrådene og postene deres — se under |
@@ -97,7 +98,7 @@ fast tidspunkt: `addMode('<navn>', open, {newUntil:'2026-10-14 19:00'})` — nor
 `ÅÅÅÅ-MM-DD TT:MM`. `renderNewTags()` i `app.js` setter inn eller fjerner merket (`.newtag` i
 `modes.css`) hver gang forsida vises og når klokka er spurt på nytt, etter serverens klokke (se
 «Tid»). Merket forsvinner av seg selv; `newUntil` kan bli stående, men rydd den gjerne bort
-neste gang du er i fila. Nå: Regjeringen, til onsdag 14. oktober 2026 kl. 19.
+neste gang du er i fila. Nå: Anagram, til onsdag 4. november 2026 kl. 19.
 
 ### Spillmotoren
 
@@ -173,6 +174,7 @@ tabellen over og ikke i Dagens kviss. Alt lagres i `localStorage` på enheten.
 | Utseende: Som enheten / Lyst / Mørkt | `theme` (ingen = som enheten) | `applyTheme()` i `theme.js` |
 | Fargetema: Lyng / Fjord / Rabarbra / Gran / Multe | `palette` (ingen = Lyng) | `applyTheme()` i `theme.js` — se «Utseende» |
 | Risting og reklame: to brytere (ikke med `prefers-reduced-motion`) | `shakeOff` (`'1'` = av), `ads` (`'1'`/`'0'`) | `setShakeOff()` og `setAds()` i `ads.js` — se «Reklame» |
+| Nedtelling i gull (bare når skattekista i Anagram er åpnet) | `goldCountdown` (`'1'` = på) | `agSetGold()` i `anagram.js`, `applyGold()` i `theme.js` |
 | Vis «Legg til på hjemskjermen» (bare på berøringsskjerm, ikke installert) | `installHidden` | `installShow()` i `install.js` |
 
 Hver innstilling bor hos koden som bruker den; `js/settings.js` viser dem bare og endrer dem med
@@ -194,7 +196,7 @@ Sida er tegnet som «bento»: store, runde flater i fargetemaets farger, uten st
 faner og fliser har ingen ramme, men en mørkere kant under seg (`box-shadow: 0 4px 0 var(--edge)`;
 fargede flater `--edge-strong`), og knappene synker ned på kanten når de trykkes. Forsida er et
 rutenett med to kolonner: Ukas prepp (i `--accent2`) og Dagens kviss (i `--ink`) som store fliser
-øverst, så de andre modusene som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
+øverst, Anagram som en lav stripe over hele bredden under dem, så de andre modusene som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
 tegnet i temaets farger (`--ink`, `--accent`, `--paper`, på `--tint`), også bydelskartet og
 Hotel Cæsar-logoen, som tegnes i skriptene. Ny CSS: bruk fargevariablene, aldri faste farger.
 
@@ -215,7 +217,7 @@ nettleserlinja (`theme-color`) etter tema og modus; standardfargene i `<head>` o
 `manifest.webmanifest` er Lyngs.
 
 **Faste farger**, som ikke følger temaet: grønt og rødt for riktig og feil (`--ok`, `--bad`, og
-`--ok-text`/`--bad-text` for tekst), Ruters linjefarger (`--l1`…`--l5`) og linjekartet,
+`--ok-text`/`--bad-text` for tekst), gull-nedtellingen (se «Anagram»), Ruters linjefarger (`--l1`…`--l5`) og linjekartet,
 våpenskjoldene og bildene, og annonsene, som skal se ut som ekte reklame (se «Reklame»).
 
 ## Språk
@@ -555,6 +557,59 @@ Kilder: «Melodi Grand Prix» (vinnertabellen) og årsartiklene på no.wikipedia
 Eurovision Song Contest» på en.wikipedia (plasseringene), sjekket september 2026. Etter hvert
 års MGP: legg til en rad nederst i `MGP` (plasseringen kommer i mai). Det finnes ikke noe skript.
 
+## Anagram
+
+I hver av de to rundene på onsdagskvissen er det ett anagram: navnet på en norsk kjendis med
+bokstavene stokket om til andre ord, og et hint i parentes — «Dagbøkene Røra (programleder)» er
+Dan Børge Akerø. Det er nesten alltid programledere, komikere, realitykjendiser eller politikere.
+
+Modusen er et kart, som nivåene i Candy Crush: en vei som går i sikksakk oppover fra «Start», med
+ett stopp per anagram (`agRenderMap()`). **Alle går gjennom de samme anagrammene i samme
+rekkefølge**: de løste har en hake og kjendisens navn, det neste står i en annen farge med hintet ved
+siden av, og resten er låst. Mellom anagrammene kan det stå skattekister (`ANAGRAM_CHESTS`), som
+noe å gå etter: en kiste åpnes når anagrammene før den er løst, og inneholder noe gøy.
+Øverst ender veien i en sky med «Flere kommer» — men står det en kiste som ikke er åpnet øverst, er
+kista målet, og skyen kommer først når den er åpnet. Når alt er gjort, står det i skyen at det neste
+ikke er kommet ennå. Veien tegnes i en strukket SVG (x i prosent, y i
+piksler), og stoppene, navnene og trærne legges oppå. Kartet ruller til stoppet man er på.
+
+Et trykk på et stopp åpner det på en egen side (`#agPlayView`, i stedet for kartet `#agMapView`), med
+egen historikkoppføring, så tilbakegesten og «← Kartet» går tilbake til kartet. Anagrammet står som
+vanlig, stor tekst, med stor forbokstav i hvert ord (`agTitle()`), og navnet skrives inn: alle
+bokstavene må stemme, men store og små bokstaver, mellomrom og bindestreker teller ikke (æ, ø og å er
+egne bokstaver). Svaret er bare «Riktig!» eller «Feil» — ingen hint, ingen fasit, ingen poeng og
+ingenting om hvilke bokstaver som stemmer. Etter riktig svar kommer en faktalinje og «Videre»,
+og det nye stoppet spretter fram på kartet. Løste stopp kan åpnes igjen og viser svaret.
+En kiste åpnes på den samme sida (`#agChest`): «Åpne kista», så rister den, lokket flyr av og premien
+kommer fram.
+
+Den første kista låser opp **nedtellingen i gull** (`unlock:'gold'`): en gullfarget nedtelling med en
+glans som glir over, som bare gjelder nedtellingen — resten av sida følger fargetemaet. Den er av til
+man skrur den på, med en bryter på kistesida (der den ekte nedtellingen flyttes inn over bryteren, så
+man ser hva den gjør, og flyttes tilbake til forsida når man går tilbake til kartet) eller i
+innstillingene, der raden bare vises når kista er åpnet. Valget lagres under `goldCountdown`;
+`theme.js` setter `data-gold` på `<html>` før sida tegnes (`applyGold()`), og fargene står i
+`countdown.css`. De er faste, like i alle temaer og i mørk modus, og gjelder ikke under kvissen
+(da er boksen rød).
+
+Fremgangen lagres i `localStorage` under `anagram` som `{done:[navn], chests:[id]}`. Den er lagret per
+navn og id, ikke per nummer, så nye anagrammer og kister kan legges til uten at noen mister noe. Knappen på forsida og
+linja under overskriften viser hvor mange man har løst.
+
+- `ANAGRAMS` (`data/anagram.js`) — én rad per anagram, i rekkefølgen alle får dem: `a` anagrammet,
+  `n` navnet (svaret), `h` hintet i parentes (`L()`, «programleder» / «programleiar»), og `f` en
+  linje som vises når det er løst. **Nye legges til nederst**; ikke bytt om på dem som ligger inne.
+  Anagrammet er det samme på begge språk, bare hintet og `f` oversettes.
+- `ANAGRAM_CHESTS` (samme fil) — skattekistene: `id` (lagres når den er åpnet, så den må ikke
+  endres), `after` (hvor mange anagrammer som står før den på veien), `title` og `prize` (ren tekst,
+  blank linje gir nytt avsnitt; `L()`), og `unlock` for det kista låser opp (`'gold'`). En ny kiste
+  etter anagram 10 er en ny rad med `after:10`; en ny type premie trenger kode i `agShowChest()`.
+  Legges nye anagrammer til etter en åpnet kiste, fortsetter veien over den.
+- Sjekk at bokstavene stemmer før du legger inn et nytt, f.eks. med
+  `node -e "const f=s=>[...s.toLowerCase().replace(/[^\\p{L}]/gu,'')].sort().join('');console.log(f('Dagbøkene Røra')===f('Dan Børge Akerø'))"`.
+
+Modusen er ikke med i Dagens kviss: den har ingen svaralternativer, og rekkefølgen er fast.
+
 ## Nedtellingen
 
 Øverst på forsida (`#countdown`) står en nedtelling til neste kviss, onsdag kl. 19. Den vises
@@ -655,7 +710,7 @@ eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjen
 |---|---|---|
 | Sidekolonner (`side`) | Én høy annonse fast på hver side av innholdet, på alle sidene | Fra 1100 px |
 | Toppbanner (`#adTop`, `banner`) | Rett under nedtellingen; `goMode()` flytter den med | Under 1100 px |
-| «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp og Dagens kviss, og under raden med Regjeringen og Våpenskjold | Alle |
+| «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp, Dagens kviss og Anagram, og under raden med Regjeringen og Våpenskjold | Alle |
 | I preppen (`box`) | Mellom hver `##`-del, lagt inn av `renderPrep()` | Alle |
 | «Anbefalt for deg» (`tile`) | Fire småsaker nederst i preppen | Alle |
 
@@ -707,7 +762,7 @@ Etter en endring, fra reporoten:
 for f in js/*.js js/modes/*.js data/*.js tools/*.mjs tools/regression/*.mjs; do node --check "$f" || echo "FEIL i $f"; done
 ```
 
-Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle åtte modusene, innstillingene (og gjerne debug-sida), både
+Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle ni modusene, innstillingene (og gjerne debug-sida), både
 bokmål og nynorsk, både lys og mørk modus (følger `prefers-color-scheme`, eller valget i innstillingene), og gjerne et par fargetemaer. Knappen for hjemskjermen vises bare
 med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes både
 smalt (under 1100 px) og bredt (utenom onsdag 19–22).
@@ -717,7 +772,7 @@ smalt (under 1100 px) og bredt (utenom onsdag 19–22).
 `tools/regression/` er et Playwright-oppsett som kjører gjennom hele sida bare via grensesnittet
 (ingen interne funksjonsnavn), og lagrer et øyeblikksbilde etter hvert steg: markup, synlig tekst,
 fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene med alle
-spørsmålstypene, «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
+spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
 og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også fargetemaet og en runde uten automatisk videre),
 stengt onsdag kveld, uten nett og som lokal fil, reklamen, hele sida på nynorsk (valgt i innstillingene),
 captchaen før preppen, og at nedtellingen og preppen følger
@@ -739,7 +794,7 @@ node tools/regression/compare.mjs /tmp/reg-for /tmp/reg-etter --text   # bare sy
 Skjermbilder som bare skiller seg med kantutjevning (maks 8 i fargeforskjell), regnes som like.
 `compare.mjs` viser de første forskjellene per test med litt tekst rundt; `--max N` viser flere.
 Testen klikker seg fram med vanlige klasser (`.options`, `.card.done`, `.qnext`, `[role=tab]`,
-`.setswitch` …) og leser `MGP` og `CAESAR` for å finne riktige svar. Endres de, må
+`.setswitch` …) og leser `MGP`, `CAESAR` og `ANAGRAMS` for å finne riktige svar. Endres de, må
 `tools/regression/run.mjs` følge med. Legg til nye tester der når en ny modus eller funksjon
 kommer.
 

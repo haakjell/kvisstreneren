@@ -41,6 +41,7 @@
     <div class="modes">
       <button class="mode" data-mode="prep"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="8" width="52" height="68" rx="9" fill="var(--paper)" stroke="var(--ink)" stroke-width="5"/><path d="M24 26h28M24 38h28M24 50h18" stroke="var(--accent)" stroke-width="7" stroke-linecap="round"/><circle cx="63" cy="62" r="17" fill="var(--accent)" stroke="var(--paper)" stroke-width="4"/><path d="M56 62.5l4.5 4.5 9-10" stroke="var(--accent-ink)" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong data-nn="Vekas prepp">Ukas prepp</strong><span id="prepTeaser">Nyheter, navnedager og datoen</span></div></button>
       <button class="mode" data-mode="dagens"><div aria-hidden="true"><svg viewBox="0 0 116 44" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="24" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="48" y="0" width="20" height="20" rx="5" fill="var(--bad)"/><rect x="72" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="96" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="0" y="24" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="24" y="24" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="48" y="24" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="72" y="24" width="20" height="20" rx="5" fill="var(--bad)"/><rect x="96" y="24" width="20" height="20" rx="5" fill="var(--ok)"/></svg></div><div><strong>Dagens kviss</strong><span data-nn="Ti blanda spørsmål, nye kvar dag">Ti blandede spørsmål, nye hver dag</span></div></button>
+      <button class="mode" data-mode="anagram"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><g font-family="Bricolage Grotesque,system-ui,sans-serif" font-weight="800" font-size="24" text-anchor="middle"><rect x="6" y="30" width="26" height="28" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="4" transform="rotate(-8 19 44)"/><text x="19" y="53" fill="var(--ink)" transform="rotate(-8 19 44)">N</text><rect x="31" y="22" width="26" height="28" rx="6" fill="var(--accent)" stroke="var(--ink)" stroke-width="4"/><text x="44" y="45" fill="var(--accent-ink)">A</text><rect x="56" y="30" width="26" height="28" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="4" transform="rotate(8 69 44)"/><text x="69" y="53" fill="var(--ink)" transform="rotate(8 69 44)">G</text></g><path d="M22 70q22 12 44 0" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><path d="M60 64l7 5-6 6" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong>Anagram</strong><span id="agTeaser"></span></div></button>
       <div class="adslot ad-all" data-fmt="card" data-label="Sponset"></div>
       <button class="mode" data-mode="bydel"><div class="omap" id="modeMapIcon" aria-hidden="true" style="margin:0"></div><div><strong data-nn="Bydelane">Bydelene</strong><span data-nn="Dagens 15 eller dei nye 8">Dagens 15 eller de nye 8</span></div></button>
       <button class="mode" data-mode="tbane"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12 L38 36 H78" stroke="var(--accent)"/><path d="M8 46 H80" stroke="var(--ink)"/><path d="M8 56 H46 L68 78" stroke="var(--accent)"/></g><rect x="36" y="28" width="16" height="36" rx="8" fill="var(--paper)" stroke="var(--ink)" stroke-width="4.5"/></svg></div><div><strong>T-banen</strong><span>Neste stopp på alle fem linjer</span></div></button>
@@ -468,6 +469,58 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
   <p class="note" id="cNote"></p>
   </div>
 
+  <div id="anagramApp" hidden>
+  <div id="agMapView">
+  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <header>
+    <div>
+      <h1>Anagram</h1>
+      <div class="sub" id="agSub"></div>
+    </div>
+  </header>
+  <main class="agmap" id="agMap"><!-- the road, from agRenderMap() in js/modes/anagram.js --></main>
+  <p class="note" data-nn="Alle får dei same anagramma i same rekkjefølgje. Trykk på neste stopp på vegen for å løyse det.">Alle får de samme anagrammene i samme rekkefølge. Trykk på neste stopp på veien for å løse det.</p>
+  </div>
+  <div id="agPlayView" hidden>
+  <button class="back" id="agBack">← Kartet</button>
+  <header>
+    <div>
+      <h1 id="agNum"></h1>
+      <div class="sub" id="agPlaySub"></div>
+    </div>
+  </header>
+  <main>
+    <section class="card agplay" id="agPlay">
+      <h2 class="agword" id="agWord"></h2>
+      <div class="agclue" id="agClue"></div>
+      <form class="agform" id="agForm" autocomplete="off">
+        <label class="agask" for="agInput" data-nn="Kven er kjendisen?">Hvem er kjendisen?</label>
+        <div class="agrow">
+          <input id="agInput" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done">
+          <button class="primary" id="agCheck" type="submit">Sjekk</button>
+        </div>
+      </form>
+      <div class="feedback" id="agFeedback" aria-live="polite"></div>
+      <div class="btns"><button class="primary" id="agOn" hidden></button></div>
+    </section>
+    <section class="card agchestpage" id="agChest" hidden>
+      <div class="agbigchest" id="agBigChest"></div>
+      <div class="agprize" id="agPrize" hidden>
+        <h2 id="agPrizeTitle"></h2>
+        <div id="agPrizeText"></div>
+      </div>
+      <div class="aggold" id="agGoldRow" hidden>
+        <button type="button" class="switch" role="switch" id="agGold" aria-checked="false" data-nn="Nedteljing i gull">Nedtelling i gull</button>
+      </div>
+      <div class="btns">
+        <button class="primary" id="agOpenChest" data-nn="Opne kista">Åpne kista</button>
+        <button class="primary" id="agChestOn" hidden>Tilbake til kartet</button>
+      </div>
+    </section>
+  </main>
+  </div>
+  </div>
+
   <div id="mgpApp" hidden>
   <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
   <header>
@@ -545,6 +598,10 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
       <button role="radio" id="stPalMulte" data-palette="multe" aria-checked="false"><i aria-hidden="true"></i>Multe</button>
     </div>
     <p class="setnote" id="stPalNote" data-nn="Kvart fargetema har ei lys og ei mørk utgåve, og følgjer utsjånaden over.">Hvert fargetema har en lys og en mørk utgave, og følger utseendet over.</p>
+    <div class="setrow" id="stGoldRow" hidden>
+      <button type="button" class="switch" role="switch" id="stGold" aria-checked="false" aria-describedby="stGoldNote" data-nn="Nedteljing i gull">Nedtelling i gull</button>
+      <p id="stGoldNote" data-nn="Frå skattekista i Anagram. Berre nedteljinga blir gull, resten følgjer fargetemaet.">Fra skattekista i Anagram. Bare nedtellingen blir gull, resten følger fargetemaet.</p>
+    </div>
     <div class="setrow" id="stShakeRow" hidden>
       <h2>Risting og reklame</h2>
       <button type="button" class="switch" role="switch" id="stShake" aria-checked="true">Risting</button>
@@ -666,6 +723,7 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
 <script src="data/statsrad.js"></script>
 <script src="data/mgp.js"></script>
 <script src="data/bydeler.js"></script>
+<script src="data/anagram.js"></script>
 <script src="data/ads.js"></script>
 <script src="js/modes/vapen.js"></script>
 <script src="js/modes/tbane.js"></script>
@@ -673,6 +731,7 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
 <script src="js/modes/regjering.js"></script>
 <script src="js/modes/mgp.js"></script>
 <script src="js/modes/bydel.js"></script>
+<script src="js/modes/anagram.js"></script>
 <script src="js/prep.js"></script>
 <script src="js/captcha.js"></script>
 <script src="js/dagens.js"></script>

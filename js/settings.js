@@ -1,7 +1,7 @@
 // ---------- Innstillinger ----------
 // The page behind the cog on the home page. Each setting lives with the code that uses it, and is
 // stored there: lang (core.js), autoNext (quiz.js), cPics (Hotel Cæsar), tMapKind (T-banen), theme and
-// palette (theme.js), shakeOff and ads (ads.js) and installHidden (install.js). This page only shows them and changes
+// palette (theme.js), goldCountdown (Anagram), shakeOff and ads (ads.js) and installHidden (install.js). This page only shows them and changes
 // them through the same functions as the modes' own switches, so the two always agree; open() reads them again each time.
 const stSwitch=(id,on)=>$(id).setAttribute('aria-checked',on);
 
@@ -25,6 +25,8 @@ const stMarkPalette=radios(Object.fromEntries(PALETTES.map(p=>[p,'stPal'+p[0].to
 const stMarkShake=()=>{ stSwitch('stShake',!shakeOff); stSwitch('stAdsOn',adsWanted); };
 $('stShake').addEventListener('click',()=>{ setShakeOff(!shakeOff); stMarkShake(); });
 $('stAdsOn').addEventListener('click',()=>{ setAds(!adsWanted); stMarkShake(); });
+// The gold countdown, once its chest in Anagram has been opened
+$('stGold').addEventListener('click',()=>{ agSetGold(!agGold()); stSwitch('stGold',agGold()); });
 $('stInstall').addEventListener('click',()=>{
   const on=installHidden();   // hidden now: show it again
   store.set('installHidden',on?null:'1'); installShow(); stSwitch('stInstall',on);
@@ -37,6 +39,7 @@ function stOpen(){
   stMarkMap(tKind);
   stMarkTheme(document.documentElement.dataset.theme||'auto');
   stMarkPalette(document.documentElement.dataset.palette);
+  agLoad(); $('stGoldRow').hidden=!agUnlocked('gold'); stSwitch('stGold',agGold());
   $('stShakeRow').hidden=calmMotion.matches;
   stMarkShake();
   $('stInstallRow').hidden=!installable;

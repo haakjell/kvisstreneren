@@ -21,6 +21,19 @@
 .countdown.live{background:var(--bad);color:var(--bad-ink)}
 .countdown.live::before,.countdown.live::after{display:none}
 .countdown.live strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.5rem;line-height:1.15;margin-bottom:6px}
+/* In gold, from the treasure chest in Anagram (data-gold on <html>, theme.js): fixed colours, the
+   same in every theme and in dark mode, with a sheen that sweeps over now and then. Not during the quiz. */
+:root[data-gold] .countdown:not(.live){color:#3A2600;
+  background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%) no-repeat,linear-gradient(135deg,#FBE59A 0%,#E6B845 35%,#CC9A26 65%,#F5D372 100%);
+  background-size:300% 100%,100% 100%;animation:cdsheen 5s linear infinite}
+:root[data-gold] .countdown:not(.live)::before{background:#FFF4CC;opacity:.55}
+:root[data-gold] .countdown:not(.live)::after{border-color:#FFF4CC}
+:root[data-gold] .countdown:not(.live) #cdBody>p:last-child{background:rgba(255,255,255,.4)}
+:root[data-gold] .countdown .shakebtn{background:#3A2600;color:#FFE9A8}
+@keyframes cdsheen{0%{background-position:150% 0,0 0}40%,100%{background-position:-50% 0,0 0}}
+:root[data-gold] .countdown.tick{animation:cdtick .3s step-end,cdsheen 5s linear infinite}
+:root[data-gold] .countdown.rumble{animation:cdrumble .48s step-end infinite,cdsheen 5s linear infinite}
+@media (prefers-reduced-motion:reduce){:root[data-gold] .countdown:not(.live){animation:none;background-size:0 0,100% 100%}}
 /* Under 24 hours left it jolts briefly on every second; under an hour it shakes all the time.
    Like an old banner ad: no rotation, just jumps a few pixels with no easing in between (step-end) */
 .countdown.tick{animation:cdtick .3s step-end}
