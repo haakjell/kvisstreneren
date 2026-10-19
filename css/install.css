@@ -13,5 +13,3 @@
 .sheet .sheetbtns{display:flex;flex-direction:column;gap:6px}
 .sheet .linkbtn{font:inherit;font-size:.95rem;background:none;border:0;color:var(--muted);cursor:pointer;padding:8px;text-decoration:underline;text-underline-offset:3px}
 .sheet ul{margin:0 0 18px;padding-left:1.3em}
-.sheet .premium{font:inherit;font-weight:700;border-radius:12px;padding:10px 16px;border:1.5px dashed var(--line);background:none;color:var(--muted);cursor:not-allowed}
-.sheet .premium span{display:block;font-weight:500;font-size:.85rem}

@@ -499,12 +499,32 @@ tests.ads = async () => {
     }
     await page.context().close();
   }
-  // The same choice in Innstillinger: two switches, one setting, so they are always opposite
+  // Just the shaking off, from the countdown's sheet; then the ads on and off again, from their own sheet
+  {
+    const page = await newPage('ads', { url: BASE + '?ristetid' });
+    await page.evaluate(() => document.getElementById('shakeBtn').click()); await page.waitForTimeout(50);
+    await page.click('#shakeStop'); await page.waitForTimeout(700);
+    await rec.snap(page, 'calm:home', true);
+    await page.goto(BASE + '?ristetid#settings'); await page.waitForTimeout(100);
+    await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'calm:settings-ads-on', true);
+    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(700);
+    await page.evaluate(() => { const a = [...document.querySelectorAll('.adwhy')].find(x => x.getClientRects().length); a.click(); });
+    await page.waitForTimeout(50); await rec.snap(page, 'calm:why', true);
+    await page.click('#adWhyOff'); await page.waitForTimeout(100);
+    await rec.snap(page, 'calm:ads-off', true);
+    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(150); await rec.snap(page, 'calm:reloaded', true);
+    await page.context().close();
+  }
+  // The same in Innstillinger: two switches, each on its own
   {
     const page = await newPage('ads', { url: BASE + '?ristetid#settings' });
     await rec.snap(page, 'settings:shaking', true);
     await page.click('#stShake'); await page.waitForTimeout(80); await rec.snap(page, 'settings:shake-off', true);
-    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(700); await rec.snap(page, 'settings:ads-home', true);
+    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(700); await rec.snap(page, 'settings:calm-home', true);
+    await page.goto(BASE + '?ristetid#settings'); await page.waitForTimeout(100);
+    await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'settings:ads-on', true);
+    await page.click('#stShake'); await page.waitForTimeout(80); await rec.snap(page, 'settings:both-on', true);
+    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(700); await rec.snap(page, 'settings:both-home', true);
     await page.goto(BASE + '?ristetid#settings'); await page.waitForTimeout(100);
     await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'settings:ads-off', true);
     await page.goto(BASE + '?ristetid'); await page.waitForTimeout(150); await rec.snap(page, 'settings:shaking-home', true);
@@ -528,7 +548,8 @@ tests.ads = async () => {
     await p.context().close();
   }
   // Loading the prep with a server that answers with the time: the prep is redrawn when it has
-  // answered, and what was filled into it must still be there
+  // answered, and what was filled into it must still be there. Saved from before the shaking and
+  // the ads were split: shakeOff alone still means ads
   const page4 = await newPage('ads', { url: BASE + '?ristetid#prep', headDate: DEVICE_NOW, storage: { shakeOff: '1' } });
   await page4.waitForTimeout(700);
   await rec.snap(page4, 'prep-load-server-clock', true); await rec.shoot(page4, 'prep-load-server-clock');

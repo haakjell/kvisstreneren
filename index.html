@@ -535,7 +535,7 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
       <button role="radio" id="stThemeDark" aria-checked="false">Mørkt</button>
     </div>
     <div class="setrow" id="stShakeRow" hidden>
-      <h2>Reklame</h2>
+      <h2>Risting og reklame</h2>
       <button type="button" class="switch" role="switch" id="stShake" aria-checked="true">Risting</button>
       <button type="button" class="switch" role="switch" id="stAdsOn" aria-checked="false">Reklame</button>
     </div>
@@ -569,20 +569,21 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
 
 <dialog class="sheet" id="shakeSheet" aria-labelledby="shakeTitle">
   <h2 id="shakeTitle" data-nn="Lei av ristinga?">Lei av ristingen?</h2>
-  <p data-nn="Om du ønskjer, kan du velje å sjå reklame framfor risting. Du kan når som helst gå tilbake til risting.">Hvis du ønsker kan du velge å se reklame fremfor risting. Du kan når som helst gå tilbake til risting.</p>
+  <p data-nn="Du kan skru av ristinga, eller sjå reklame i staden. Du kan endre det når som helst i innstillingane.">Du kan skru av ristingen, eller se reklame i stedet. Du kan endre det når som helst i innstillingene.</p>
   <div class="sheetbtns">
-    <button class="primary" id="shakeAds">Ja takk, vis meg reklame</button>
-    <button class="premium" disabled data-nn="Kvisstrenaren Premium: inga risting og ingen reklame<span>Ikkje tilgjengeleg i din region</span>">Kvisstreneren Premium: ingen risting og ingen reklame<span>Ikke tilgjengelig i din region</span></button>
+    <button class="primary" id="shakeStop" data-nn="Skru av ristinga">Skru av ristingen</button>
+    <button class="ghost" id="shakeAds" data-nn="Vis meg reklame i staden">Vis meg reklame i stedet</button>
     <button class="linkbtn" id="shakeKeep" data-nn="Nei, eg vil riste">Nei, jeg vil riste</button>
   </div>
 </dialog>
 
 <dialog class="sheet" id="adWhySheet" aria-labelledby="adWhyTitle">
   <h2 id="adWhyTitle" data-nn="Kvifor ser eg denne annonsen?">Hvorfor ser jeg denne annonsen?</h2>
-  <p data-nn="Du valde reklame i staden for risting. Annonsøren vil nå folk som:">Du valgte reklame i stedet for risting. Annonsøren vil nå folk som:</p>
+  <p>Du har slått på reklame. Annonsøren vil nå folk som:</p>
   <ul id="adWhyList"></ul>
   <div class="sheetbtns">
-    <button class="primary" id="adWhyShake" data-nn="Gi meg ristinga tilbake">Gi meg ristingen tilbake</button>
+    <button class="primary" id="adWhyOff">Skru av reklamen</button>
+    <button class="ghost" id="adWhyShake" data-nn="Gi meg ristinga tilbake">Gi meg ristingen tilbake</button>
     <button class="linkbtn" id="adWhyKeep" data-nn="Behald reklamen">Behold reklamen</button>
   </div>
 </dialog>

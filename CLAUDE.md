@@ -166,7 +166,7 @@ tabellen over og ikke i Dagens kviss. Alt lagres i `localStorage` på enheten.
 | Bilder i Hotel Cæsar (standard på) | `cPics` | `cSetPics()` i `caesar.js` |
 | T-banekartet: Geografisk / Linjekart | `tMapKind` | `tSetKind()` i `tbane.js` |
 | Utseende: Som enheten / Lyst / Mørkt | `theme` (ingen = som enheten) | `applyTheme()` i `theme.js` |
-| Reklame: «Risting» og «Reklame» (fra lanseringen, ikke med `prefers-reduced-motion`) | `shakeOff` (`'1'` = reklame) | `setShakeOff()` i `ads.js` — se «Reklame» |
+| Risting og reklame: to brytere (fra lanseringen, ikke med `prefers-reduced-motion`) | `shakeOff` (`'1'` = av), `ads` (`'1'`/`'0'`) | `setShakeOff()` og `setAds()` i `ads.js` — se «Reklame» |
 | Vis «Legg til på hjemskjermen» (bare på berøringsskjerm, ikke installert) | `installHidden` | `installShow()` i `install.js` |
 
 Hver innstilling bor hos koden som bruker den; `js/settings.js` viser dem bare og endrer dem med
@@ -180,8 +180,8 @@ Temaet setter `data-theme="light|dark"` på `<html>`; CSS-en har fargene for beg
 (`theme-color`). Skjuler man «Legg til på hjemskjermen» med «Ikke vis knappen igjen», kan den slås
 på igjen her.
 
-Ristingen og reklamen er to brytere, men én innstilling (`shakeOff`), så de står alltid motsatt:
-skrur man av ristingen, skrus reklamen på, og omvendt. Raden (`#stShakeRow`) er skjult før lanseringen, som språkvalget, og for
+Ristingen og reklamen er to uavhengige brytere (`shakeOff` og `ads`): man kan ha begge, én av dem
+eller ingen. Raden (`#stShakeRow`) er skjult før lanseringen, som språkvalget, og for
 dem med `prefers-reduced-motion`, som verken får risting eller reklame.
 
 ## Språk
@@ -523,7 +523,7 @@ igjen. Markupen bygges bare på nytt når oppsettet endres; ellers skrives bare 
 
 I ristetida (se «Reklame») dirrer boksen kort (0,3 s, klassen `tick`) hver gang sekundet teller
 ned; den siste timen før kvissen rister den kraftigere hele tiden (klassen `rumble`). Begge slås av med
-`prefers-reduced-motion`. Ristingen kan skrus av, men da blir det reklame i stedet — se «Reklame».
+`prefers-reduced-motion`. Ristingen kan skrus av — se «Reklame».
 Derfor skriver `cdShow()` i `#cdBody`, mens klassene står på `#countdown` rundt den: knappen
 «Skru av risting» ligger i `#countdown`, utenfor det som bygges på nytt, og rister med boksen.
 
@@ -532,17 +532,22 @@ Derfor skriver `cdShow()` i `#cdBody`, mens klassene står på `#countdown` rund
 Fra lanseringen onsdag 14. oktober 2026 kl. 10 (`LAUNCH_AT` og `launched()` i `core.js`, norsk tid
 etter serverens klokke — den samme bryteren som slår på nynorsk, se «Språk») er det ristetid hele uka, bortsett fra mens kvissen pågår (onsdag 19–22). Før det, og under kvissen,
 er det ingen knapp, ingen risting og ingen reklame. I ristetida kan man skru av ristingen i
-nedtellingen, men da får man falsk reklame på sida i stedet. Den som har slått på
+nedtellingen, og velge om man vil ha falsk reklame på sida. Den som har slått på
 `prefers-reduced-motion`, får ingenting av det.
 
-- Valget lagres for godt i `localStorage` under `shakeOff`, men brukes bare i ristetida. Det kan også
-  endres i innstillingene (to brytere for samme valg — se «Innstillinger»).
+Først var reklamen prisen for å slippe ristingen (én innstilling). Etter lanseringsuka ble de
+skilt, så begge kan skrus av hver for seg. Står bare `shakeOff` lagret, uten `ads`, valgte man
+reklame den gang, og får den fortsatt (`adsWanted` i `ads.js`); `setShakeOff()` lagrer derfor
+alltid `ads` samtidig.
+
+- Valgene lagres for godt i `localStorage` under `shakeOff` og `ads`, men brukes bare i ristetida. De kan
+  også endres i innstillingene (se «Innstillinger»).
 - `shakeState()` avgjør både om det rister og om det vises reklame (klassen `ads` på `<body>`).
   `renderCountdown()` kaller den hvert sekund, så reklamen kommer og går av seg selv.
-- **Knappen** «Skru av risting» (`#shakeBtn`) åpner arket `#shakeSheet`: «Ja takk, vis meg
-  reklame», en Premium-knapp som ikke går an å trykke på, og «Nei, jeg vil riste».
+- **Knappen** «Skru av risting» (`#shakeBtn`) åpner arket `#shakeSheet`: «Skru av ristingen»
+  (`#shakeStop`, uten reklame), «Vis meg reklame i stedet» (`#shakeAds`) og «Nei, jeg vil riste».
 - **Angre:** ▷-merket på hver annonse åpner «Hvorfor ser jeg denne annonsen?» (`#adWhySheet`), med
-  «Gi meg ristingen tilbake».
+  «Skru av reklamen» (`#adWhyOff`) og, når ristingen er av, «Gi meg ristingen tilbake».
 - **Testbryter:** `?ristetid` i adressen (f.eks. `index.html?ristetid#prep`) later som det er
   ristetid (`LAUNCH_TEST`), så alt kan testes alle dager — også språkvalget. Uten den: still klokka, f.eks. med `page.clock` i Playwright.
 

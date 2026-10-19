@@ -1,29 +1,41 @@
-// ---------- Shaking or ads ----------
-// Once launched() (core.js), the countdown shakes all week, except while the quiz is on. The shaking can
-// be turned off, but then the page shows (fake) ads instead. The choice is kept for good
-// (localStorage 'shakeOff'), but only matters in that window: outside it there is no button,
-// no shaking and no ads. Those who ask for less motion get none of it.
+// ---------- Shaking and ads ----------
+// Once launched() (core.js), the countdown shakes all week, except while the quiz is on, and the
+// page can show (fake) ads. Both can be turned off, each on its own; the choices are kept for good
+// (localStorage 'shakeOff' and 'ads'), but only matter in that window: outside it there is no
+// button, no shaking and no ads. Those who ask for less motion get none of it.
+// Until the two were split, turning the shaking off meant ads instead, so with no 'ads' saved,
+// the ads follow 'shakeOff'.
 const calmMotion=matchMedia('(prefers-reduced-motion: reduce)');
 let shakeOff=store.get('shakeOff')==='1';
-let shakeMode='';   // as last applied: 'off', 'shake' or 'ads'
-const adsOn=()=>shakeMode==='ads';
+let adsWanted=store.get('ads')?store.get('ads')==='1':shakeOff;
+let shaking=false, adsShown=false;   // as last applied
+const adsOn=()=>adsShown;
 // Decides both whether the countdown shakes and whether the ads show. renderCountdown() calls it
 // on every tick (with false while the quiz is on), so the ads come and go by themselves.
 // Returns whether to shake.
 function shakeState(on,now){
-  const m=calmMotion.matches||!on||!launched(now)?'off':shakeOff?'ads':'shake';
-  if(m!==shakeMode){
-    shakeMode=m;
-    document.body.classList.toggle('ads',m==='ads');
-    $('shakeBtn').hidden=m!=='shake';
-    if(m!=='shake') $('countdown').classList.remove('tick');
-    if(m==='ads') fillAds(); else adGen++;   // drops ads still on their way
+  const live=on&&launched(now)&&!calmMotion.matches, sh=live&&!shakeOff, ad=live&&adsWanted;
+  if(sh!==shaking){
+    shaking=sh;
+    $('shakeBtn').hidden=!sh;
+    if(!sh) $('countdown').classList.remove('tick');
   }
-  return m==='shake';
+  if(ad!==adsShown){
+    adsShown=ad;
+    document.body.classList.toggle('ads',ad);
+    if(ad) fillAds(); else adGen++;   // drops ads still on their way
+  }
+  return sh;
 }
 function setShakeOff(off){
   shakeOff=off;
   store.set('shakeOff',off?'1':null);
+  store.set('ads',adsWanted?'1':'0');   // or 'shakeOff' alone would bring the ads after a reload
+  renderCountdown();
+}
+function setAds(on){
+  adsWanted=on;
+  store.set('ads',on?'1':'0');
   renderCountdown();
 }
 calmMotion.addEventListener('change',()=>renderCountdown());
@@ -69,15 +81,18 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
   if((e.key==='Enter'||e.key===' ') && e.target.classList && e.target.classList.contains('ad')){ e.preventDefault(); e.target.click(); }
 });
-// The sheets: the button on the countdown, and «Hvorfor ser jeg denne annonsen?», the way back
+// The sheets: the button on the countdown, and «Hvorfor ser jeg denne annonsen?» on every ad
 $('shakeBtn').addEventListener('click',()=>$('shakeSheet').showModal());
-$('shakeAds').addEventListener('click',()=>{ $('shakeSheet').close(); setShakeOff(true); });
+$('shakeStop').addEventListener('click',()=>{ $('shakeSheet').close(); setShakeOff(true); });
+$('shakeAds').addEventListener('click',()=>{ $('shakeSheet').close(); setShakeOff(true); setAds(true); });
 $('shakeKeep').addEventListener('click',()=>$('shakeSheet').close());
 function adWhy(ad){
   $('adWhyList').innerHTML=(ad.why||AD_WHY).map(t=>'<li>'+t+'</li>').join('');
+  $('adWhyShake').hidden=!shakeOff;
   $('adWhySheet').showModal();
 }
-$('adWhyShake').addEventListener('click',()=>{ $('adWhySheet').close(); setShakeOff(false); });
+$('adWhyOff').addEventListener('click',()=>{ $('adWhySheet').close(); setAds(false); });
+$('adWhyShake').addEventListener('click',()=>{ $('adWhySheet').close(); setAds(false); setShakeOff(false); });
 $('adWhyKeep').addEventListener('click',()=>$('adWhySheet').close());
 // Full screen, like a landing page. It gets a history entry of its own, so Android's back gesture
 // closes it; ✕ and Esc step back out of that entry.
