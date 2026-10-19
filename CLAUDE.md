@@ -583,8 +583,8 @@ alltid `ads` samtidig.
   også endres i innstillingene (se «Innstillinger»).
 - `shakeState()` avgjør både om det rister og om det vises reklame (klassen `ads` på `<body>`).
   `renderCountdown()` kaller den hvert sekund, så reklamen kommer og går av seg selv.
-- **Knappen** «Skru av risting» (`#shakeBtn`) åpner arket `#shakeSheet`: «Skru av ristingen»
-  (`#shakeStop`, uten reklame), «Vis meg reklame i stedet» (`#shakeAds`) og «Nei, jeg vil riste».
+- **Knappen** «Skru av risting» (`#shakeBtn`) åpner arket `#shakeSheet`: «Vis meg reklame i stedet»
+  (`#shakeAds`, øverst), «Skru av ristingen» (`#shakeStop`, uten reklame) og «Nei, jeg vil riste».
 - **Angre:** ▷-merket på hver annonse åpner «Hvorfor ser jeg denne annonsen?» (`#adWhySheet`), med
   «Skru av reklamen» (`#adWhyOff`) og, når ristingen er av, «Gi meg ristingen tilbake».
 - **Nyheten om skillet:** den som har reklamen på (fra før skillet), får én gang arket «Nå kan du skru av
