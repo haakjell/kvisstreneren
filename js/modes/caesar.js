@@ -74,7 +74,8 @@ $('cPics').setAttribute('aria-checked',cPics);
 $('cPics').addEventListener('click',()=>cSetPics(!cPics));
 dropBrokenPics('caesarApp');
 dropBrokenPics('dagensApp');
-tabs('cTabQuiz','cTabStudy','cQuiz','cStudy',()=>cQuiz.stop());
+// The question type only matters to the quiz, so it is hidden in «Pugg»
+tabs('cTabQuiz','cTabStudy','cQuiz','cStudy',q=>{ cQuiz.stop(); $('cSets').hidden=!q; });
 const C_SUBS={role:L('Finn skuespilleren','Finn skodespelaren'),actor:L('Finn rollen','Finn rolla')};
 const cMarkMode=radios({role:'cSetRole',actor:'cSetActor'},m=>cUse(m));
 function cUse(m){

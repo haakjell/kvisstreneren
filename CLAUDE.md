@@ -128,6 +128,8 @@ Bruk det som finnes i stedet for å lage nye varianter:
 - `store.get/set/getJSON/setJSON` for `localStorage` — de tåler at lagringen mangler eller nekter
   (privat modus), så ingen try/catch rundt. `store.set(nøkkel, null)` fjerner nøkkelen.
 - `tabs()` for «Kviss»/«Pugg»-fanene, `radios()` for en rad med valgknapper (`role="radio"`).
+  Valg som bare gjelder kvissen (spørsmålstypen i Regjeringen, MGP og Hotel Cæsar), skjules i
+  «Pugg» fra fanenes `onSwitch`.
 - `hideAnswers()` for «Skjul navn»-knappen i «Pugg»: svaret i hver rad har klassen `ans`, og raden
   har `tabindex`, så den kan trykkes fram. CSS-en ligger én gang i `base.css` (`.hide-answers`).
 - `dropBrokenPics()` fjerner bilder som ikke laster, i stedet for å vise dem ødelagt.
@@ -137,8 +139,9 @@ Bruk det som finnes i stedet for å lage nye varianter:
 ### Tid
 
 **All tid kommer fra serveren, ikke fra enheten**, siden alle kan stille klokka si. `syncClock()`
-(i `core.js`) sender en HEAD-forespørsel etter sida selv og leser `Date`-headeren (pluss `Age`, om
-det var en mellomlagring som svarte). Derfra regner `serverNow()` seg videre med
+(i `core.js`) sender en HEAD-forespørsel etter sida selv og leser `Date`-headeren. Ikke legg til
+`Age`: GitHub Pages' mellomlager (Fastly) setter `Date` når det svarer, så `Age` (hvor lenge sida har
+ligget der, opptil ti minutter) gjorde klokka for fort. Derfra regner `serverNow()` seg videre med
 `performance.now()`, som ikke flytter seg når klokka på enheten endres. Klokka spørres ved
 oppstart, hver gang sida kommer tilbake på skjermen (`visibilitychange` — `performance.now()` kan
 stå stille mens en telefon sover), og hver gang Dagens kviss åpnes. Bruk `serverNow()`, aldri

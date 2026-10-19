@@ -43,10 +43,11 @@ const QUIZ_DAY=3, QUIZ_START=19, QUIZ_END=22;
 const MONTHS=['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'];
 
 // The time comes from the server's clock, not the device's, which anyone can set: the Date header
-// (plus Age, if a cache answered) of a request for this page. performance.now() carries it on from
-// there, since it doesn't move when the device's clock is changed. It is asked at start-up, each
-// time the page comes back on screen (performance.now() may stand still while a phone sleeps) and
-// each time Dagens kviss opens. Until the server has answered, serverNow() is the device's clock;
+// of a request for this page. Not plus Age: GitHub Pages' cache (Fastly) stamps Date when it answers,
+// so adding how long the page had sat in the cache put the clock up to ten minutes ahead.
+// performance.now() carries it on from there, since it doesn't move when the device's clock is
+// changed. It is asked at start-up, each time the page comes back on screen (performance.now() may
+// stand still while a phone sleeps) and each time Dagens kviss opens. Until the server has answered, serverNow() is the device's clock;
 // opened as a local file there is no server, so the device's clock is used for good (for testing).
 let serverClock=null;   // {at: server time in ms, perf: performance.now() at that moment}
 async function syncClock(){
@@ -54,7 +55,7 @@ async function syncClock(){
   try{
     const r=await fetch(location.pathname+'?t='+performance.now(),{method:'HEAD',cache:'no-store'});
     const at=Date.parse(r.headers.get('Date'));
-    if(!isNaN(at)) serverClock={at:at+(+r.headers.get('Age')||0)*1000,perf:performance.now()};
+    if(!isNaN(at)) serverClock={at,perf:performance.now()};
   }catch(e){ /* offline: keep the clock from an earlier sync, if any */ }
   return !!serverClock;
 }

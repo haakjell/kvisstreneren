@@ -78,7 +78,8 @@ function mgRenderStudy(){
   $('mgStudyList').innerHTML=html;
 }
 hideAnswers('mgToggle','mgStudyList',L(['Skjul artistene','Vis artistene'],['Skjul artistane','Vis artistane']));
-tabs('mgTabQuiz','mgTabStudy','mgQuiz','mgStudy',()=>mgQuiz.stop());
+// The question type only matters to the quiz, so it is hidden in «Pugg»
+tabs('mgTabQuiz','mgTabStudy','mgQuiz','mgStudy',q=>{ mgQuiz.stop(); $('mgSets').hidden=!q; });
 const MG_SUBS={year:L('Finn vinneren','Finn vinnaren'),artist:'Finn året'};
 function mgSub(){ $('mgSub').textContent=`${MG_SUBS[mgMode]} · ${mgPool()[0].y}–${MG_LAST}`; }
 const mgMarkMode=radios({year:'mgSetYear',artist:'mgSetArtist'},m=>mgUse(m));

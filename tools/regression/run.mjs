@@ -123,7 +123,8 @@ async function newPage(test, { width = 412, height = 915, mobile = true, headDat
     if (u.hostname === '127.0.0.1') {
       if (req.method() === 'HEAD') {
         if (page.__head.offline) return route.abort();
-        return route.fulfill({ status: 200, headers: page.__head.date ? { date: new Date(page.__head.date).toUTCString() } : {} });
+        // As GitHub Pages' cache answers: Date is now, Age how long the page has sat in the cache
+        return route.fulfill({ status: 200, headers: page.__head.date ? { date: new Date(page.__head.date).toUTCString(), age: '300' } : {} });
       }
       return route.continue();
     }
@@ -289,7 +290,8 @@ for (const m of MODES) for (const [cfg, opt] of [['mobile', {}], ['desktop', { w
       await page.keyboard.press('Enter'); await rec.snap(page, 'study-key');
       await page.evaluate(() => __T.click('.studybar button')); await page.waitForTimeout(30);
       await rec.snap(page, 'study-shown');
-      if (m === 'vapen' || m === 'regjering' || m === 'mgp') {
+      // The other modes hide their question type in «Pugg», where it does nothing
+      if (m === 'vapen') {
         await page.evaluate(() => __T.click('.setswitch [role=radio]', 1)); await page.waitForTimeout(50);
         await rec.snap(page, 'study-radio1');
       }

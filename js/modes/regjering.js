@@ -45,7 +45,8 @@ function rgRenderStudy(){
 }
 hideAnswers('rgToggle','rgStudyList',L(['Skjul navn','Vis navn'],['Skjul namn','Vis namn']));
 dropBrokenPics('regjeringApp');
-tabs('rgTabQuiz','rgTabStudy','rgQuiz','rgStudy',()=>rgQuiz.stop());
+// The question type only matters to the quiz, so it is hidden in «Pugg»
+tabs('rgTabQuiz','rgTabStudy','rgQuiz','rgStudy',q=>{ rgQuiz.stop(); $('rgSets').hidden=!q; });
 const RG_SUBS={person:'Finn posten',post:'Finn statsråden'};
 const rgMarkMode=radios({person:'rgSetPerson',post:'rgSetPost'},m=>rgUse(m));
 function rgUse(m){
