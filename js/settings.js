@@ -20,8 +20,8 @@ const stMarkTheme=radios({auto:'stThemeAuto',light:'stThemeLight',dark:'stThemeD
 const stMarkPalette=radios(Object.fromEntries(PALETTES.map(p=>[p,'stPal'+p[0].toUpperCase()+p.slice(1)])),p=>{
   store.set('palette',p==='lyng'?null:p); applyTheme(document.documentElement.dataset.theme,p); stMarkPalette(p);
 });
-// The shaking and the ads, each on its own switch. Only there from the launch, and not for those
-// who ask for less motion (they get neither).
+// The shaking and the ads, each on its own switch. Not for those who ask for less motion (they
+// get neither).
 const stMarkShake=()=>{ stSwitch('stShake',!shakeOff); stSwitch('stAdsOn',adsWanted); };
 $('stShake').addEventListener('click',()=>{ setShakeOff(!shakeOff); stMarkShake(); });
 $('stAdsOn').addEventListener('click',()=>{ setAds(!adsWanted); stMarkShake(); });
@@ -31,14 +31,13 @@ $('stInstall').addEventListener('click',()=>{
 });
 
 function stOpen(){
-  $('stLangRow').hidden=!launched(serverNow());
   stMarkLang(LANG);
   stSwitch('stAuto',quizAuto());
   stSwitch('stPics',cPics);
   stMarkMap(tKind);
   stMarkTheme(document.documentElement.dataset.theme||'auto');
   stMarkPalette(document.documentElement.dataset.palette);
-  $('stShakeRow').hidden=!launched(serverNow())||calmMotion.matches;
+  $('stShakeRow').hidden=calmMotion.matches;
   stMarkShake();
   $('stInstallRow').hidden=!installable;
   stSwitch('stInstall',!installHidden());

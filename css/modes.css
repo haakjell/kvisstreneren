@@ -190,3 +190,22 @@
 .swatches button[aria-checked="true"] i{box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--ink)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .swatches button{--sw-a:var(--d-accent);--sw-b:var(--d-accent2)}}
 :root[data-theme="dark"] .swatches button{--sw-a:var(--d-accent);--sw-b:var(--d-accent2)}
+/* ---------- Debug ---------- */
+.debug h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.2rem;margin:26px 0 10px}
+.debug>h2:first-child{margin-top:0}
+.dblist{list-style:none;margin:10px 0 14px;padding:0}
+.dblist li{padding:8px 0;overflow-wrap:anywhere}
+.dblist code{font-weight:700}
+.dblist summary{display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer}
+.dblist summary::-webkit-details-marker{display:none}
+.dblist summary::after{content:"";flex:none;margin-left:auto;width:8px;height:8px;border:solid var(--muted);border-width:0 2px 2px 0;transform:rotate(45deg);transition:transform .15s}
+.dblist details[open] summary::after{transform:rotate(-135deg)}
+.dblist details p{color:var(--muted);font-size:.88rem;margin:6px 0 0}
+.dblist summary .dblinks{margin:0}
+.dbval,.dbnone{color:var(--muted);font-size:.88rem}
+.dblist .linkbtn{float:right;margin:-4px 0 0 8px;font:inherit;font-size:.88rem;font-weight:600;background:none;border:0;color:var(--muted);cursor:pointer;padding:4px;text-decoration:underline;text-underline-offset:3px}
+.dblinks{display:flex;flex-wrap:wrap;gap:6px 14px;list-style:none;margin:6px 0 0;padding:0}
+.dblinks a{color:var(--ink);font-weight:600;text-underline-offset:3px}
+.dbstatus{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0}
+.dbstatus dt{color:var(--muted)}
+.dbstatus dd{margin:0;font-variant-numeric:tabular-nums}

@@ -26,6 +26,7 @@ js/modes/<modus>.js   hver kvissmodus: spørsmålene, valgene øverst, «Pugg» 
 js/theme.js           lys/mørk modus og fargetema fra innstillingene — lastes i <head>, se «Utseende»
 js/prep.js · captcha.js · dagens.js · ads.js · countdown.js · install.js
 js/settings.js        Innstillinger — se under
+js/debug.js           den skjulte debug-sida — se «Debug-sida»
 js/app.js             modusbytte og ruting (goMode()) og oppstart
 data/<navn>.js        dataene, én fil per tema — se tabellen under
 tools/                skript som oppdaterer data og prepp, og regresjonstesten — se «Verktøy»
@@ -171,7 +172,7 @@ tabellen over og ikke i Dagens kviss. Alt lagres i `localStorage` på enheten.
 | T-banekartet: Geografisk / Linjekart | `tMapKind` | `tSetKind()` i `tbane.js` |
 | Utseende: Som enheten / Lyst / Mørkt | `theme` (ingen = som enheten) | `applyTheme()` i `theme.js` |
 | Fargetema: Lyng / Fjord / Rabarbra / Gran / Multe | `palette` (ingen = Lyng) | `applyTheme()` i `theme.js` — se «Utseende» |
-| Risting og reklame: to brytere (fra lanseringen, ikke med `prefers-reduced-motion`) | `shakeOff` (`'1'` = av), `ads` (`'1'`/`'0'`) | `setShakeOff()` og `setAds()` i `ads.js` — se «Reklame» |
+| Risting og reklame: to brytere (ikke med `prefers-reduced-motion`) | `shakeOff` (`'1'` = av), `ads` (`'1'`/`'0'`) | `setShakeOff()` og `setAds()` i `ads.js` — se «Reklame» |
 | Vis «Legg til på hjemskjermen» (bare på berøringsskjerm, ikke installert) | `installHidden` | `installShow()` i `install.js` |
 
 Hver innstilling bor hos koden som bruker den; `js/settings.js` viser dem bare og endrer dem med
@@ -184,8 +185,8 @@ Utseendet og fargetemaet er beskrevet under «Utseende». Skjuler man «Legg til
 med «Ikke vis knappen igjen», kan den slås på igjen her.
 
 Ristingen og reklamen er to uavhengige brytere (`shakeOff` og `ads`): man kan ha begge, én av dem
-eller ingen. Raden (`#stShakeRow`) er skjult før lanseringen, som språkvalget, og for
-dem med `prefers-reduced-motion`, som verken får risting eller reklame.
+eller ingen. Raden (`#stShakeRow`) er skjult for dem med `prefers-reduced-motion`, som verken
+får risting eller reklame.
 
 ## Utseende
 
@@ -225,11 +226,6 @@ danske, nynorsk det norske (det er en vits, og meningen). Det lagres i `localSto
 (`ADS`, malene i `AD_TYPES` og «Annonse»/«Sponset»-merkingen på dem), som bare er på bokmål. Arkene rundt reklamen (`#shakeSheet`, `#adWhySheet`, knappen «Skru av risting»)
 er en del av sida og oversettes; lista over hvem annonsøren vil nå (`why`/`AD_WHY`), hører til
 annonsen og gjør det ikke.
-
-Språkvalget kommer med lanseringen, samme tid som ristingen og reklamen (`launched()` i `core.js`,
-se «Reklame»): før det er raden skjult (`#stLangRow`, `stOpen()`), og sida er på bokmål selv om
-`'nn'` er lagret (fra testing med `?ristetid`). Det avgjøres ved oppstart, før serveren har svart,
-altså etter enhetens klokke; selve raden følger serverens klokke.
 
 Språket leses én gang, i `core.js` (`LANG`), og står fast så lenge sida er åpen: bytter man,
 lastes sida på nytt (`location.reload()` i `settings.js`), og man havner på innstillingene igjen.
@@ -322,7 +318,7 @@ lar en bli på forsida. Viser serveren at enhetens klokke gikk for sakte, sendes
 fra preppen (`refreshClock()`). Captchaboksene har reCAPTCHAs faste farger og skrift, også i mørk
 modus, som annonsene. **Testbryter:** `?captcha=robot` eller `?captcha=text` later som det er den
 uka (svaret lagres likevel; fjern `captcha` i `localStorage` for å prøve igjen). Når perioden er over,
-kan `captcha.js`, `captcha.css`, `#captchaSheet`, `prepGated()` og testen i regresjonstesten fjernes.
+kan `captcha.js`, `captcha.css`, `#captchaSheet`, `prepGated()`, testen i regresjonstesten og de to radene i `DB_FLAGS` (`debug.js`) fjernes.
 
 På desktop (fra 900 px) er preppen bredere enn resten av sida, siden den bare er tekst:
 `goMode()` setter klassen `wide` på `.wrap` når preppen vises (`addMode('prep', …, {wide:true})`),
@@ -589,11 +585,13 @@ bred nok (`@container` i `ads.css`), og ellers under dem. Under kvissen er bokse
 
 ## Reklame
 
-Fra lanseringen onsdag 14. oktober 2026 kl. 10 (`LAUNCH_AT` og `launched()` i `core.js`, norsk tid
-etter serverens klokke — den samme bryteren som slår på nynorsk, se «Språk») er det ristetid hele uka, bortsett fra mens kvissen pågår (onsdag 19–22). Før det, og under kvissen,
-er det ingen knapp, ingen risting og ingen reklame. I ristetida kan man skru av ristingen i
-nedtellingen, og velge om man vil ha falsk reklame på sida. Den som har slått på
+Det er ristetid hele uka, bortsett fra mens kvissen pågår (onsdag 19–22, etter serverens klokke).
+Under kvissen er det ingen knapp, ingen risting og ingen reklame. I ristetida kan man skru av
+ristingen i nedtellingen, og velge om man vil ha falsk reklame på sida. Den som har slått på
 `prefers-reduced-motion`, får ingenting av det.
+
+Ristetida, reklamen og nynorsken kom samtidig, onsdag 14. oktober 2026 kl. 10. Før det var de
+skjult bak en lanseringssjekk (`launched()`) og testbryteren `?ristetid`; begge er fjernet.
 
 Først var reklamen prisen for å slippe ristingen (én innstilling). Etter lanseringsuka ble de
 skilt, så begge kan skrus av hver for seg. Står bare `shakeOff` lagret, uten `ads`, valgte man
@@ -612,8 +610,6 @@ alltid `ads` samtidig.
   både ristingen og reklamen» (`#adsNewsSheet`) i ristetida, med «Skru av begge» (`#adsNewsOff`) og
   «Behold reklamen». Når det er vist, lagres `adsNewsSeen` (`'1'`), og det vises aldri igjen. Slår man
   på reklamen selv etterpå, lagres flagget med en gang, så nye får det aldri.
-- **Testbryter:** `?ristetid` i adressen (f.eks. `index.html?ristetid#prep`) later som det er
-  ristetid (`LAUNCH_TEST`), så alt kan testes alle dager — også språkvalget. Uten den: still klokka, f.eks. med `page.clock` i Playwright.
 
 ### Annonsene
 
@@ -668,6 +664,21 @@ vises på mobil, har klassen `ad-in`, de som vises på alle skjermer `ad-all`, o
 `ad-side`. Sidekolonnene er så brede det er plass til (160–300 px), regnet ut fra `--wrapw`, som er
 bredere når preppen vises.
 
+## Debug-sida
+
+En skjult side (`#debugApp`, `js/debug.js`, bolken «Debug» i `modes.css`) med alle testbryterne i
+adressen (nå `?captcha=robot` og `?captcha=text`) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
+modusene, klokkene (serverens og enhetens), om kvissen pågår, hvilken captcha som venter, og alt som er
+lagret i `localStorage`, med en knapp for å slette hver nøkkel eller alt.
+
+Den finnes bare med en hemmelig query-parameter som eieren kjenner. Navnet står ikke i koden, bare
+hashen av det (`DB_KEY`, regnet med `seedOf()` i `core.js`); skriv det aldri inn i repoet, heller
+ikke i regresjonstesten. Med parameteren registreres `addMode('debug', …)`, og uten hash åpner sida
+på `#debug`. Uten den er `#debug` en ukjent hash og gir forsida. Ingen knapp på forsida.
+
+**Ny testbryter:** legg den inn i `DB_FLAGS` øverst i `debug.js` (og fjern den når den fjernes fra
+koden, som `?captcha` når captcha-perioden er over).
+
 ## Hjemskjermen
 
 På mobil (berøringsskjerm) viser forsida knappen «Legg til på hjemskjermen» øverst til høyre
@@ -696,10 +707,10 @@ Etter en endring, fra reporoten:
 for f in js/*.js js/modes/*.js data/*.js tools/*.mjs tools/regression/*.mjs; do node --check "$f" || echo "FEIL i $f"; done
 ```
 
-Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle åtte modusene, innstillingene, både
+Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle åtte modusene, innstillingene (og gjerne debug-sida), både
 bokmål og nynorsk, både lys og mørk modus (følger `prefers-color-scheme`, eller valget i innstillingene), og gjerne et par fargetemaer. Knappen for hjemskjermen vises bare
-med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes med
-`?ristetid`, både smalt (under 1100 px) og bredt.
+med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes både
+smalt (under 1100 px) og bredt (utenom onsdag 19–22).
 
 ### Regresjonstest
 

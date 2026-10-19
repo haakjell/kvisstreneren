@@ -37,7 +37,7 @@ const BASE = `http://127.0.0.1:${server.address().port}/index.html`;
 const FILE = 'file://' + path.resolve(repo, 'index.html');
 
 const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
-const DEVICE_NOW = Date.parse('2026-10-08T10:00:00Z');   // a Thursday: no countdown shaking, no lock
+const DEVICE_NOW = Date.parse('2026-10-08T10:00:00Z');   // a Thursday: the countdown shakes, no lock
 
 const browser = await chromium.launch();
 const errors = [];
@@ -51,7 +51,8 @@ const INIT = () => {
   const T = window.__T = {
     vis: el => !!el && !el.closest('[hidden]') && el.getClientRects().length > 0,
     app: () => [...document.querySelectorAll('.wrap > *')].find(e => e.matches('#home,[id$=App]') && !e.hidden),
-    clean(el) { const c = el.cloneNode(true); c.querySelectorAll('#cdBody').forEach(x => x.innerHTML = ''); c.querySelectorAll('script:not([type])').forEach(x => x.remove()); return c; },
+    // The shake on each second (.tick) comes and goes, so it is left out
+    clean(el) { const c = el.cloneNode(true); c.querySelectorAll('#cdBody').forEach(x => x.innerHTML = ''); c.querySelectorAll('#countdown').forEach(x => x.classList.remove('tick')); c.querySelectorAll('script:not([type])').forEach(x => x.remove()); return c; },
     snap(full) {
       const a = full ? document.body : T.app();
       const cd = document.getElementById('cdBody'), cdText = cd ? cd.innerText : '';
@@ -414,23 +415,12 @@ tests.settings = async () => {
   }
 };
 
-// Nynorsk comes with the launch (Wednesday 14 October 10:00 Oslo). Before it: no picker, and bokmål
-// even with nynorsk stored; with ?ristetid, the picker. After it: picked in Innstillinger (the page
-// reloads), then every page, a round of each quiz, the countdown and the sheets in nynorsk; and back
-const LAUNCHED = Date.parse('2026-10-15T10:00:00Z');   // the Thursday after
+// Nynorsk, picked in Innstillinger (the page reloads), then every page, a round of each quiz, the
+// countdown and the sheets in nynorsk; and back
+const NN_NOW = Date.parse('2026-10-15T10:00:00Z');   // a Thursday
 tests.nynorsk = async () => {
-  {
-    const rec = new Rec('nynorsk-before');
-    for (const [label, url] of [['before', BASE + '#settings'], ['before-test', BASE + '?ristetid#settings']]) {
-      const page = await newPage(rec.name, { url, deviceNow: Date.parse('2026-10-14T07:59:00Z'), storage: { lang: 'nn' } });
-      await rec.snap(page, label + ':settings', true);
-      await page.goto(url.replace('#settings', '')); await page.waitForTimeout(150); await rec.snap(page, label + ':home', true);
-      await page.context().close();
-    }
-    rec.save();
-  }
   for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
-    const rec = new Rec('nynorsk-' + cfg), page = await newPage(rec.name, { ...opt, deviceNow: LAUNCHED, url: BASE + '#settings' });
+    const rec = new Rec('nynorsk-' + cfg), page = await newPage(rec.name, { ...opt, deviceNow: NN_NOW, url: BASE + '#settings' });
     await Promise.all([page.waitForEvent('load'), page.click('#stLangNn')]); await page.waitForTimeout(200);
     await rec.snap(page, 'settings', true); await rec.shoot(page, 'settings');
     await page.goto(BASE); await page.waitForTimeout(150); await rec.snap(page, 'home', true); await rec.shoot(page, 'home');
@@ -449,7 +439,7 @@ tests.nynorsk = async () => {
       await page.evaluate(() => __T.click('.install')); await page.waitForTimeout(100);
       await rec.snap(page, 'install-sheet', true);
     }
-    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(150);
+    await page.goto(BASE); await page.waitForTimeout(150);
     await page.evaluate(() => document.getElementById('shakeBtn').click()); await page.waitForTimeout(50);
     await rec.snap(page, 'shake-sheet', true);
     await page.click('#shakeAds'); await page.waitForTimeout(700);
@@ -472,19 +462,19 @@ tests.nynorsk = async () => {
   rec.save();
 };
 
-// Ads (?ristetid), and the real shaking window
+// Ads, and the shaking all week but for the quiz itself
 tests.ads = async () => {
   const rec = new Rec('ads');
   for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
-    const page = await newPage('ads', { ...opt, url: BASE + '?ristetid' });
+    const page = await newPage('ads', { ...opt, url: BASE });
     await rec.snap(page, cfg + ':shaking', true);
     await page.evaluate(() => document.getElementById('shakeBtn').click()); await page.waitForTimeout(50);
     await rec.snap(page, cfg + ':shake-sheet', true);
     await page.click('#shakeAds'); await page.waitForTimeout(700);
     await rec.snap(page, cfg + ':ads-home', true); await rec.shoot(page, cfg + '-ads-home');
-    await page.goto(BASE + '?ristetid#prep'); await page.waitForTimeout(700);
+    await page.goto(BASE + '#prep'); await page.waitForTimeout(700);
     await rec.snap(page, cfg + ':ads-prep', true); await rec.shoot(page, cfg + '-ads-prep');
-    await page.goto(BASE + '?ristetid#mgp'); await page.waitForTimeout(700);
+    await page.goto(BASE + '#mgp'); await page.waitForTimeout(700);
     await rec.snap(page, cfg + ':ads-mgp', true);
     const ad = page.locator('.ad').first();
     if (await ad.count()) {
@@ -505,48 +495,42 @@ tests.ads = async () => {
   }
   // Just the shaking off, from the countdown's sheet; then the ads on and off again, from their own sheet
   {
-    const page = await newPage('ads', { url: BASE + '?ristetid' });
+    const page = await newPage('ads', { url: BASE });
     await page.evaluate(() => document.getElementById('shakeBtn').click()); await page.waitForTimeout(50);
     await page.click('#shakeStop'); await page.waitForTimeout(700);
     await rec.snap(page, 'calm:home', true);
-    await page.goto(BASE + '?ristetid#settings'); await page.waitForTimeout(100);
+    await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
     await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'calm:settings-ads-on', true);
-    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(700);
+    await page.goto(BASE); await page.waitForTimeout(700);
     await page.evaluate(() => { const a = [...document.querySelectorAll('.adwhy')].find(x => x.getClientRects().length); a.click(); });
     await page.waitForTimeout(50); await rec.snap(page, 'calm:why', true);
     await page.click('#adWhyOff'); await page.waitForTimeout(100);
     await rec.snap(page, 'calm:ads-off', true);
-    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(150); await rec.snap(page, 'calm:reloaded', true);
+    await page.goto(BASE); await page.waitForTimeout(150); await rec.snap(page, 'calm:reloaded', true);
     await page.context().close();
   }
   // The same in Innstillinger: two switches, each on its own
   {
-    const page = await newPage('ads', { url: BASE + '?ristetid#settings' });
+    const page = await newPage('ads', { url: BASE + '#settings' });
     await rec.snap(page, 'settings:shaking', true);
     await page.click('#stShake'); await page.waitForTimeout(80); await rec.snap(page, 'settings:shake-off', true);
-    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(700); await rec.snap(page, 'settings:calm-home', true);
-    await page.goto(BASE + '?ristetid#settings'); await page.waitForTimeout(100);
+    await page.goto(BASE); await page.waitForTimeout(700); await rec.snap(page, 'settings:calm-home', true);
+    await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
     await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'settings:ads-on', true);
     await page.click('#stShake'); await page.waitForTimeout(80); await rec.snap(page, 'settings:both-on', true);
-    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(700); await rec.snap(page, 'settings:both-home', true);
-    await page.goto(BASE + '?ristetid#settings'); await page.waitForTimeout(100);
+    await page.goto(BASE); await page.waitForTimeout(700); await rec.snap(page, 'settings:both-home', true);
+    await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
     await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'settings:ads-off', true);
-    await page.goto(BASE + '?ristetid'); await page.waitForTimeout(150); await rec.snap(page, 'settings:shaking-home', true);
+    await page.goto(BASE); await page.waitForTimeout(150); await rec.snap(page, 'settings:shaking-home', true);
     await page.context().close();
   }
-  // Tuesday 20:00 Oslo, before the shaking starts; Wednesday during the quiz and in the morning
-  const page = await newPage('ads', { deviceNow: Date.parse('2026-10-13T18:00:00Z') });
-  await rec.snap(page, 'tuesday', true);
-  await page.context().close();
-  const page2 = await newPage('ads', { deviceNow: Date.parse('2026-10-14T17:00:00Z'), url: BASE + '#prep' });
+  // The prep during the quiz, Wednesday 19:00 Oslo: no shaking and no ads
+  const page2 = await newPage('ads', { deviceNow: Date.parse('2026-10-14T17:00:00Z'), url: BASE + '#prep', storage: { ads: '1' } });
   await rec.snap(page2, 'wednesday-quiz-prep', true);
   await page2.context().close();
-  const page3 = await newPage('ads', { deviceNow: Date.parse('2026-10-14T09:00:00Z'), url: BASE + '#prep' });
-  await rec.snap(page3, 'wednesday-morning-prep', true);
-  await page3.context().close();
-  // The shaking starts Wednesday 14 October 10:00 Oslo, then lasts all week but for the quiz itself
-  for (const [label, at] of [['before-start', '2026-10-14T07:59:00Z'], ['after-start', '2026-10-14T08:01:00Z'],
-    ['thursday-after', '2026-10-15T10:00:00Z'], ['tuesday-after', '2026-10-20T18:00:00Z'], ['quiz-after', '2026-10-21T18:00:00Z']]) {
+  // The shaking lasts all week but for the quiz itself, Wednesday 19–22 Oslo
+  for (const [label, at] of [['tuesday', '2026-10-20T18:00:00Z'], ['before-quiz', '2026-10-21T16:59:00Z'],
+    ['quiz-start', '2026-10-21T17:01:00Z'], ['quiz-end', '2026-10-21T20:01:00Z'], ['thursday', '2026-10-22T10:00:00Z']]) {
     const p = await newPage('ads', { deviceNow: Date.parse(at) });
     await rec.snap(p, 'window:' + label, true);
     await p.context().close();
@@ -554,16 +538,16 @@ tests.ads = async () => {
   // Loading the prep with a server that answers with the time: the prep is redrawn when it has
   // answered, and what was filled into it must still be there. Saved from before the shaking and
   // the ads were split: shakeOff alone still means ads
-  const page4 = await newPage('ads', { url: BASE + '?ristetid#prep', headDate: DEVICE_NOW, storage: { shakeOff: '1' } });
+  const page4 = await newPage('ads', { url: BASE + '#prep', headDate: DEVICE_NOW, storage: { shakeOff: '1' } });
   await page4.waitForTimeout(700);
   await rec.snap(page4, 'prep-load-server-clock', true); await rec.shoot(page4, 'prep-load-server-clock');
   await page4.context().close();
   // Ads on from before the split: told once that both can now be turned off, then never again
   for (const [label, btn] of [['news-off', '#adsNewsOff'], ['news-keep', '#adsNewsKeep']]) {
-    const p = await newPage('ads', { url: BASE + '?ristetid', storage: { ads: '1', shakeOff: '1' } });
+    const p = await newPage('ads', { url: BASE, storage: { ads: '1', shakeOff: '1' } });
     await p.waitForTimeout(150); await rec.snap(p, label + ':sheet', true);
     await p.click(btn); await p.waitForTimeout(700); await rec.snap(p, label + ':after', true);
-    await p.goto(BASE + '?ristetid'); await p.waitForTimeout(150); await rec.snap(p, label + ':reloaded', true);
+    await p.goto(BASE); await p.waitForTimeout(150); await rec.snap(p, label + ':reloaded', true);
     await p.context().close();
   }
   rec.save();
@@ -574,7 +558,7 @@ tests.ads = async () => {
 tests.clock = async () => {
   const rec = new Rec('clock');
   const cd = async (page, label) => rec.rows.push({ label: 'countdown:' + label,
-    text: await page.evaluate(() => document.getElementById('countdown').className + ' | ' + document.getElementById('cdBody').innerText.replace(/\s+/g, ' ').replace(/\d+ (sekund|sekunder|millisekund|millisekunder)\b.*$/, '')) });
+    text: await page.evaluate(() => document.getElementById('countdown').className.replace(/ ?\btick\b/, '') + ' | ' + document.getElementById('cdBody').innerText.replace(/\s+/g, ' ').replace(/\d+ (sekund|sekunder|millisekund|millisekunder)\b.*$/, '')) });
   for (const [label, device, server] of [
     ['device-late', '2026-10-20T10:00:00Z', '2026-10-08T10:00:00Z'],
     ['device-early', '2026-09-20T10:00:00Z', '2026-10-08T10:00:00Z'],

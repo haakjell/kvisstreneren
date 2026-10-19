@@ -69,7 +69,6 @@ async function refreshClock(){
   renderCountdown();
   if(curMode==='home'||curMode==='prep') renderPrep();
   if(curMode==='home') renderNewTags();
-  if(curMode==='settings') stOpen();   // the language picker comes with the launch
 }
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') refreshClock(); });
 

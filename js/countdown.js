@@ -25,7 +25,7 @@ function renderCountdown(){
   const ms=Math.max(0,osloInstant(tw,now)-now), fine=ms<3600000;
   // Rounded up to whole seconds, except in the last hour, where milliseconds are shown too
   const left=fine?Math.floor(ms/1000):Math.ceil(ms/1000);
-  const shake=shakeState(true,now);   // unless ads were chosen instead, or before the launch
+  const shake=shakeState(true,now);   // unless ads were chosen instead
   const units=[[Math.floor(left/86400),'dag',L('dager','dagar')],[Math.floor(left/3600)%24,'time',L('timer','timar')],[Math.floor(left/60)%60,'minutt',L('minutter','minutt')],[left%60,'sekund',L('sekunder','sekund')]];
   if(fine) units.push([ms%1000,'millisekund',L('millisekunder','millisekund')]);
   while(units.length>1 && units[0][0]===0) units.shift();   // drop leading zero units: no "0 dager"

@@ -1,5 +1,5 @@
 // Shared helpers, loaded first: $, storage, Commons links, text matching, randomness (rnd), the
-// time (Oslo, by the server's clock), the launch, the language (L), and the mixed quiz sources (MIX).
+// time (Oslo, by the server's clock), the language (L), and the mixed quiz sources (MIX).
 const $=id=>document.getElementById(id);
 
 // localStorage can be missing or refuse (private mode, blocked site data): reads then give null
@@ -80,23 +80,13 @@ const osloDay=t=>new Date(osloWall(t)).toISOString().slice(0,10);
 // Wednesday 19–22 in Oslo: the quiz is on
 function quizLive(t){ const d=new Date(osloWall(t)), h=d.getUTCHours(); return d.getUTCDay()===QUIZ_DAY&&h>=QUIZ_START&&h<QUIZ_END; }
 
-// ---------- Launch ----------
-// The shaking, the ads (ads.js) and nynorsk (below) come out together at LAUNCH_AT, Oslo time, by
-// the server's clock; before that there is none of them. ?ristetid in the address pretends the
-// time has come, so they can be tested any day.
-const LAUNCH_AT='2026-10-14 10:00';
-const LAUNCH_TEST=new URLSearchParams(location.search).has('ristetid');
-const launched=now=>LAUNCH_TEST||now>=osloAt(LAUNCH_AT,now);
-
 // ---------- Language ----------
 // Bokmål or nynorsk, as picked in Innstillinger (localStorage 'lang'; none = bokmål). It is fixed
 // for the life of the page: picking the other one reloads it. Text in the code and the data is
 // written as L(bokmål, nynorsk). The markup is written in bokmål, with the nynorsk next to it:
 // data-nn holds an element's inner HTML, and data-nn-<attribute> an attribute (data-nn-aria-label).
-// The ads are not translated. Nynorsk comes with the launch: before launched(), the picker is
-// hidden and the page is in bokmål even with 'nn' stored (from testing with ?ristetid). This is
-// decided at start-up, before the server has answered, so by the device's clock.
-const LANG=store.get('lang')==='nn'&&launched(serverNow())?'nn':'nb';
+// The ads are not translated.
+const LANG=store.get('lang')==='nn'?'nn':'nb';
 const L=(nb,nn)=>LANG==='nn'?nn:nb;
 if(LANG==='nn'){
   document.documentElement.lang='nn';

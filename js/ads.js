@@ -1,8 +1,7 @@
 // ---------- Shaking and ads ----------
-// Once launched() (core.js), the countdown shakes all week, except while the quiz is on, and the
-// page can show (fake) ads. Both can be turned off, each on its own; the choices are kept for good
-// (localStorage 'shakeOff' and 'ads'), but only matter in that window: outside it there is no
-// button, no shaking and no ads. Those who ask for less motion get none of it.
+// The countdown shakes all week, except while the quiz is on, and the page can show (fake) ads.
+// Both can be turned off, each on its own; the choices are kept for good (localStorage 'shakeOff'
+// and 'ads'). While the quiz is on there is no button, no shaking and no ads. Those who ask for less motion get none of it.
 // Until the two were split, turning the shaking off meant ads instead, so with no 'ads' saved,
 // the ads follow 'shakeOff'.
 const calmMotion=matchMedia('(prefers-reduced-motion: reduce)');
@@ -18,7 +17,7 @@ const adsOn=()=>adsShown;
 // on every tick (with false while the quiz is on), so the ads come and go by themselves.
 // Returns whether to shake.
 function shakeState(on,now){
-  const live=on&&launched(now)&&!calmMotion.matches, sh=live&&!shakeOff, ad=live&&adsWanted;
+  const live=on&&!calmMotion.matches, sh=live&&!shakeOff, ad=live&&adsWanted;
   if(sh!==shaking){
     shaking=sh;
     $('shakeBtn').hidden=!sh;

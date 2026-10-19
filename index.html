@@ -508,7 +508,7 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
     </div>
   </header>
   <section class="card settings">
-    <div class="setrow" id="stLangRow" hidden>
+    <div class="setrow" id="stLangRow">
       <h2 id="stLangLabel">Språk</h2>
       <div class="setswitch" role="radiogroup" aria-labelledby="stLangLabel">
         <button role="radio" id="stLangNb" aria-checked="true"><svg class="flag" viewBox="0 0 37 28" aria-hidden="true"><rect width="37" height="28" fill="#C8102E"/><path d="M12 0h4v28h-4zM0 12h37v4H0z" fill="#fff"/></svg>Bokmål</button>
@@ -554,6 +554,28 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
       <h2 data-nn="Heimeskjermen">Hjemskjermen</h2>
       <button type="button" class="switch" role="switch" id="stInstall" aria-checked="true" data-nn="Vis «Legg til på heimeskjermen» på framsida">Vis «Legg til på hjemskjermen» på forsida</button>
     </div>
+  </section>
+  </div>
+
+  <div id="debugApp" hidden>
+  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <header>
+    <div>
+      <h1>Debug</h1>
+      <div class="sub" data-nn="Testbrytarar og det som er lagra på denne eininga">Testbrytere og det som er lagret på denne enheten</div>
+    </div>
+  </header>
+  <section class="card debug">
+    <h2 data-nn="Testbrytarar">Testbrytere</h2>
+    <p class="setnote" data-nn="Gjeld berre for den eine innlastinga. Trykk på pila for å sjå kva dei gjer.">Gjelder bare for den ene innlastingen. Trykk på pila for å se hva de gjør.</p>
+    <ul class="dblist" id="dbFlags"></ul>
+    <h2>Modusene</h2>
+    <ul class="dblinks" id="dbModes"></ul>
+    <h2>Status</h2>
+    <dl class="dbstatus" id="dbStatus"></dl>
+    <h2 data-nn="Lagra på denne eininga">Lagret på denne enheten</h2>
+    <ul class="dblist" id="dbStore"></ul>
+    <button class="ghost" id="dbClear" data-nn="Slett alt">Slett alt</button>
   </section>
   </div>
 
@@ -658,6 +680,7 @@ Nyheitsvindauget er komplett. Namnedagane 15. og 16. oktober ligg fram i tid, me
 <script src="js/countdown.js"></script>
 <script src="js/install.js"></script>
 <script src="js/settings.js"></script>
+<script src="js/debug.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
