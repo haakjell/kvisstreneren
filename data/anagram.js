@@ -8,7 +8,7 @@
 //   f  a line shown after it is solved
 const ANAGRAMS=[
   {a:'Dagbøkene Røra', n:'Dan Børge Akerø', h:L('programleder','programleiar'),
-   f:L('Dan Børge Akerø ledet «Casino» på TV 2.','Dan Børge Akerø leidde «Casino» på TV 2.')},
+   f:L('Dan Børge Akerø ledet «LørDan», «QuizDan» og «Den store klassefesten».','Dan Børge Akerø leidde «LørDan», «QuizDan» og «Den store klassefesten».')},
   {a:'Bergens Lora', n:'Erna Solberg', h:L('politiker','politikar'),
    f:L('Erna Solberg var statsminister fra 2013 til 2021.','Erna Solberg var statsminister frå 2013 til 2021.')},
   {a:'Mandolinen', n:'Anne Lindmo', h:L('programleder','programleiar'),
