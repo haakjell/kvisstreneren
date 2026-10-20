@@ -304,12 +304,11 @@ Sida viser bare den nyeste prepen; `prep/`-mappa er arkivet.
 ### Captchaen
 
 I to uker må man løse en falsk captcha før preppen åpnes, én gang per uke (`js/captcha.js`,
-`css/captcha.css`, `#captchaSheet` i markupen). Fra onsdag 21. oktober 2026 kl. 10 er det en
-kopi av Googles reCAPTCHA-boks, «Jeg er ikke en kvissmaster», med logoen og «kvissCAPTCHA» (begge
-captchaene har dem); den spinner litt, får en grønn hake
-og slipper deg inn. Fra onsdag 28. oktober kl. 10 er det forvrengt tekst («kokkekult», tegnet som
-SVG i `capDraw()` med nye skjevheter for hvert forsøk), der svaret må være riktig (uansett store
-bokstaver og mellomrom). Fra 4. november kl. 10 er det ingenting. Tidene står i `CAPTCHAS` og
+`css/captcha.css`, `#captchaSheet` i markupen). Fra onsdag 21. oktober 2026 kl. 10 er det forvrengt
+tekst («kokkekult», tegnet som SVG i `capDraw()` med nye skjevheter for hvert forsøk), der svaret
+må være riktig (uansett store bokstaver og mellomrom). Fra onsdag 28. oktober kl. 10 er det en kopi
+av Googles reCAPTCHA-boks, «Jeg er ikke en kvissmaster»; den spinner litt, får en grønn hake og
+slipper deg inn. Begge har logoen og «kvissCAPTCHA». Fra 4. november kl. 10 er det ingenting. Tidene står i `CAPTCHAS` og
 `CAPTCHA_END`, i norsk tid etter serverens klokke (se «Tid»).
 
 Den som er løst sist, lagres i `localStorage` under `captcha` (`'robot'`/`'text'`), så hver blir
@@ -318,7 +317,7 @@ sida man står på: `openMode('prep')` og `syncMode()` i `app.js` spør `captcha
 (`prepGated()`), så en lenke rett til `#prep` gir forsida med captchaen over, og Esc eller et trykk utenfor boksen
 lar en bli på forsida. Viser serveren at enhetens klokke gikk for sakte, sendes man tilbake til forsida
 fra preppen (`refreshClock()`). Captchaboksene har reCAPTCHAs faste farger og skrift, også i mørk
-modus, som annonsene. **Testbryter:** `?captcha=robot` eller `?captcha=text` later som det er den
+modus, som annonsene. **Testbryter:** `?captcha=text` eller `?captcha=robot` later som det er den
 uka (svaret lagres likevel; fjern `captcha` i `localStorage` for å prøve igjen). Når perioden er over,
 kan `captcha.js`, `captcha.css`, `#captchaSheet`, `prepGated()`, testen i regresjonstesten og de to radene i `DB_FLAGS` (`debug.js`) fjernes.
 
@@ -722,7 +721,7 @@ bredere når preppen vises.
 ## Debug-sida
 
 En skjult side (`#debugApp`, `js/debug.js`, bolken «Debug» i `modes.css`) med alle testbryterne i
-adressen (nå `?captcha=robot` og `?captcha=text`) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
+adressen (nå `?captcha=text` og `?captcha=robot`) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
 modusene, klokkene (serverens og enhetens), om kvissen pågår, hvilken captcha som venter, og alt som er
 lagret i `localStorage`, med en knapp for å slette hver nøkkel eller alt.
 

@@ -8,12 +8,12 @@ const DEBUG=[...new URLSearchParams(location.search).keys()].some(k=>seedOf(k)==
 
 // Each test switch the page reads from the address: the query, what it does, and links to try it
 const DB_FLAGS=[
-  {q:'captcha=robot', what:L('Later som det er den første captcha-uka: «Jeg er ikke en kvissmaster» (captcha.js).',
-                             'Lèt som det er den første captcha-veka: «Jeg er ikke en kvissmaster» (captcha.js).'),
-   links:['?captcha=robot#prep']},
-  {q:'captcha=text', what:L('Later som det er den andre captcha-uka: den forvrengte teksten (captcha.js).',
-                            'Lèt som det er den andre captcha-veka: den forvrengde teksten (captcha.js).'),
+  {q:'captcha=text', what:L('Later som det er den første captcha-uka: den forvrengte teksten (captcha.js).',
+                            'Lèt som det er den første captcha-veka: den forvrengde teksten (captcha.js).'),
    links:['?captcha=text#prep']},
+  {q:'captcha=robot', what:L('Later som det er den andre captcha-uka: «Jeg er ikke en kvissmaster» (captcha.js).',
+                             'Lèt som det er den andre captcha-veka: «Eg er ikkje ein kvissmaster» (captcha.js).'),
+   links:['?captcha=robot#prep']},
 ];
 
 const dbEsc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
