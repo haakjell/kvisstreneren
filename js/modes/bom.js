@@ -1,4 +1,4 @@
-// ---------- Bommet på onsdag ----------
+// ---------- Kvisslagets offisielle bommedatabase ----------
 // The questions we got wrong at the Wednesday quiz (BOM in data/bom.js), one closed <details> per
 // question, grouped by quiz with the newest first. «Se svar» opens it to the right answer and what
 // the team answered.

@@ -65,7 +65,7 @@ tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølg
 | `prep` | `js/prep.js` | `#prepSource` i `index.html` | Ukas prepp — se under |
 | `dagens` | `js/dagens.js` | — | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`) — se under |
 | `anagram` | `js/modes/anagram.js` | `data/anagram.js` | Anagram: kjendiser med bokstavene stokket om, på et kart med skattekister der alle går samme vei — se under |
-| `bom` | `js/modes/bom.js` | `data/bom.js` | Bommet på onsdag: spørsmålene vi bommet på i kvissen — se under |
+| `bom` | `js/modes/bom.js` | `data/bom.js` | Kvisslagets offisielle bommedatabase: spørsmålene vi har bomma på — se under |
 | `bydel` | `js/modes/bydel.js` | `data/bydeler.js` | Bydelene: Oslos bydeler (`BSETS`) |
 | `tbane` | `js/modes/tbane.js` | `data/tbane.js`, `data/ruter-map.js` | T-banen: «neste stopp»-kviss og kart — se under |
 | `regjering` | `js/modes/regjering.js` | `data/statsrad.js` | Regjeringen: statsrådene og postene deres — se under |
@@ -99,7 +99,7 @@ fast tidspunkt: `addMode('<navn>', open, {newUntil:'2026-10-14 19:00'})` — nor
 `ÅÅÅÅ-MM-DD TT:MM`. `renderNewTags()` i `app.js` setter inn eller fjerner merket (`.newtag` i
 `modes.css`) hver gang forsida vises og når klokka er spurt på nytt, etter serverens klokke (se
 «Tid»). Merket forsvinner av seg selv; `newUntil` kan bli stående, men rydd den gjerne bort
-neste gang du er i fila. Nå: Anagram og Bommet på onsdag, til onsdag 4. november 2026 kl. 19.
+neste gang du er i fila. Nå: Anagram og Bommedatabasen, til onsdag 4. november 2026 kl. 19.
 
 ### Spillmotoren
 
@@ -197,7 +197,7 @@ Sida er tegnet som «bento»: store, runde flater i fargetemaets farger, uten st
 faner og fliser har ingen ramme, men en mørkere kant under seg (`box-shadow: 0 4px 0 var(--edge)`;
 fargede flater `--edge-strong`), og knappene synker ned på kanten når de trykkes. Forsida er et
 rutenett med to kolonner: Ukas prepp (i `--accent2`) og Dagens kviss (i `--ink`) som store fliser
-øverst, Anagram og Bommet på onsdag som lave striper over hele bredden under dem, så de andre modusene som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
+øverst, Anagram og Bommedatabasen som lave striper over hele bredden under dem, så de andre modusene som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
 tegnet i temaets farger (`--ink`, `--accent`, `--paper`, på `--tint`), også bydelskartet og
 Hotel Cæsar-logoen, som tegnes i skriptene. Ny CSS: bruk fargevariablene, aldri faste farger.
 
@@ -460,9 +460,10 @@ viste stoppene ikke avgjør svaret, droppes (linje 5 passerer Tøyen og Carl Ber
 ganger). Er det skjulte stoppet en endestasjon, spørres det etter endestasjonen i stedet, siden
 «mot X» ellers ville røpet svaret.
 
-## Bommet på onsdag
+## Kvisslagets offisielle bommedatabase
 
-Spørsmålene vi har bommet på i onsdagskvissen. Modusen er ingen kviss, bare en liste: én del per
+Spørsmålene vi har bommet på i onsdagskvissen (på nynorsk «Den offisielle bommedatabasen til
+kvisslaget»). Modusen er ingen kviss, bare en liste: én del per
 kviss, nyeste øverst, skilt med en vannrett strek (`.boweek`). Hvert spørsmål er en lukket
 `<details>` med «Se svar» til høyre, og åpnet viser den det riktige svaret og hva kvisslaget
 svarte. Øverst står det at lyd- og bildeoppgaver ikke er tatt med. Modusen har ingen faner og er
@@ -789,7 +790,7 @@ fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene 
 spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
 og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også fargetemaet og en runde uten automatisk videre),
 stengt onsdag kveld, uten nett og som lokal fil, reklamen, hele sida på nynorsk (valgt i innstillingene),
-captchaen før preppen, Bommet på onsdag, og at nedtellingen og preppen følger
+captchaen før preppen, Bommedatabasen, og at nedtellingen og preppen følger
 serverens klokke når enheten tar feil. `Math.random`, klokka, serverdatoen og alle eksterne bilder
 og fonter er låst, så to kjøringer av samme kode gir identisk resultat. Trenger Playwright (Chromium), og
 Python med Pillow for å sammenligne skjermbilder.

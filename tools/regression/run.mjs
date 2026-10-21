@@ -596,7 +596,7 @@ tests.anagram = async () => {
 
 // Server and device disagree about the time: the countdown and the prep's «utdatert» notice
 // should follow the server (the device's clock is only a fallback before it has answered)
-// Bommet på onsdag: the list of questions, opened by click and by Enter, on both screens and in
+// Kvisslagets offisielle bommedatabase: the list of questions, opened by click and by Enter, on both screens and in
 // nynorsk with the dark theme
 tests.bom = async () => {
   for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
