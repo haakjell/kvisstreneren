@@ -596,6 +596,24 @@ tests.anagram = async () => {
 
 // Server and device disagree about the time: the countdown and the prep's «utdatert» notice
 // should follow the server (the device's clock is only a fallback before it has answered)
+// Bommet på onsdag: the list of questions, opened by click and by Enter, on both screens and in
+// nynorsk with the dark theme
+tests.bom = async () => {
+  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
+    const rec = new Rec('bom-' + cfg), page = await newPage(rec.name, opt);
+    await rec.snap(page, 'home'); await rec.shoot(page, 'home');
+    await page.evaluate(() => __T.click('.mode[data-mode=bom]')); await page.waitForTimeout(100);
+    await rec.snap(page, 'open'); await rec.shoot(page, 'open');
+    await page.evaluate(() => __T.click('summary', 0)); await page.waitForTimeout(30);
+    await rec.snap(page, 'opened'); await rec.shoot(page, 'opened');
+    await page.evaluate(() => [...__T.app().querySelectorAll('summary')].filter(__T.vis).at(-1).focus());
+    await page.keyboard.press('Enter'); await page.waitForTimeout(30); await rec.snap(page, 'key-enter');
+    await page.evaluate(() => __T.click('summary', 0)); await page.waitForTimeout(30); await rec.snap(page, 'closed');
+    await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'back');
+    rec.save(); await page.context().close();
+  }
+};
+
 tests.clock = async () => {
   const rec = new Rec('clock');
   const cd = async (page, label) => rec.rows.push({ label: 'countdown:' + label,
