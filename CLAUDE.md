@@ -852,6 +852,10 @@ De tre `update-`skriptene skriver datafila si helt på nytt; ikke rediger de fil
   Unntaket er egennavn og faguttrykk som ikke har noen naturlig engelsk form — `FYLKER`,
   `KOMMUNER`, `bydel`, `vapen` — de blir stående som de er.
 - **Commit-meldinger skrives alltid på engelsk**, selv om sida og denne fila er på norsk.
+- **Branchene skal ha navn som sier hva de gjør**, på engelsk med bindestreker, f.eks.
+  `claude/bom-database-icon` eller `claude/fix-countdown-dst` — ikke tilfeldige navn som
+  `claude/pensive-sagan-1o21l0`. Har økta fått et tilfeldig navn, lag en ny branch med et
+  beskrivende navn før du committer.
 - **Før push til main:** squash alle commits i branchen til én, rebase den på nyeste
   `origin/main`, og fast-forward main til den (`git push origin HEAD:main`, aldri force-push
   til main). Kjør syntakssjekken under «Testing» på nytt etter rebasen.
