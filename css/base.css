@@ -39,12 +39,19 @@ body{
   font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
   font-size:17px;line-height:1.45;
 }
-.wrap{max-width:560px;margin:0 auto;padding:20px 16px 40px}
-/* Ukas prepp is pure reading, so on desktop it gets about half the screen width */
+/* The page's width, --wrapw, is set per page (data-mode on <body>); the side ads (ads.css) sit outside it.
+   Phones get 560 px. On desktop the modes get a little more, Ukas prepp, which is pure reading, about
+   half the screen, and the home page as much as it can use, leaving room for the side ads when they show.
+   .wrap is a container, so the home page's grid (modes.css) goes by the width it actually gets. */
+:root{--wrapw:560px}
 @media (min-width:900px){
-  .wrap.wide{max-width:clamp(560px,60vw,960px)}
+  body{--wrapw:640px}
+  body[data-mode="prep"]{--wrapw:clamp(560px,60vw,960px)}
+  body[data-mode="home"]{--wrapw:min(1080px,100vw - 64px)}
   .wrap.wide .prose{padding:30px 40px 34px}
 }
+@media (min-width:1100px){body.ads[data-mode="home"]{--wrapw:clamp(560px,100vw - 480px,1080px)}}
+.wrap{container:wrap/inline-size;max-width:var(--wrapw);margin:0 auto;padding:20px 16px 40px}
 header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
 h1{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:2.1rem;line-height:1;margin:0;letter-spacing:-.02em}
 .sub{color:var(--muted);font-size:.95rem;font-weight:500;margin-top:5px}

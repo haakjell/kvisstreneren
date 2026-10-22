@@ -201,6 +201,15 @@ rutenett med to kolonner: Ukas prepp (i `--accent2`) og Dagens kviss (i `--ink`)
 tegnet i temaets farger (`--ink`, `--accent`, `--paper`, på `--tint`), også bydelskartet og
 Hotel Cæsar-logoen, som tegnes i skriptene. Ny CSS: bruk fargevariablene, aldri faste farger.
 
+**Forsida på desktop.** Når sida får minst 760 px (en container-spørring på `.wrap`, så det går etter
+bredden sida faktisk får, også med sidekolonnene med reklame), blir forsida ett rutenett med tolv
+kolonner (bolken øverst i `modes.css`): tittelen øverst, nedtellingen ved siden av Ukas prepp og
+Dagens kviss, Anagram og Bommedatabasen side om side, og de andre modusene tre i hver rad. `.modes`
+er da `display: contents`, så knappene står i samme rutenett som nedtellingen, og `order` løfter
+tittelen over den. En «Sponset»-annonse tar fortsatt en hel rad; med `grid-auto-flow: row dense`
+fyller flisene etter den raden den ellers ville latt halvtom, og annonsen havner under dem. Med mus
+løfter flisene seg litt under pekeren. På mobil er forsida som før.
+
 **Fargetema.** Det finnes fem: Lyng (standard), Fjord, Rabarbra, Gran og Multe, valgt i
 innstillingene med en fargeprøve hver (`.swatches`). Hvert tema er én sterk farge (`--accent`) og en
 lys nabofarge i samme familie (`--accent2`), hver med tekstfargen som står på den (`--accent-ink`,
@@ -322,10 +331,12 @@ modus, som annonsene. **Testbryter:** `?captcha=text` eller `?captcha=robot` lat
 uka (svaret lagres likevel; fjern `captcha` i `localStorage` for å prøve igjen). Når perioden er over,
 kan `captcha.js`, `captcha.css`, `#captchaSheet`, `prepGated()`, testen i regresjonstesten og de to radene i `DB_FLAGS` (`debug.js`) fjernes.
 
-På desktop (fra 900 px) er preppen bredere enn resten av sida, siden den bare er tekst:
-`goMode()` setter klassen `wide` på `.wrap` når preppen vises (`addMode('prep', …, {wide:true})`),
-og den får da `clamp(560px, 60vw, 960px)` — omtrent halve skjermen på en vanlig 1920-skjerm. Forsida og
-kvissene beholder 560 px.
+På desktop (fra 900 px) er preppen bredere enn resten av sida, siden den bare er tekst: den får
+`clamp(560px, 60vw, 960px)` — omtrent halve skjermen på en vanlig 1920-skjerm. Bredden står i
+`--wrapw` i `base.css`, satt etter `data-mode` på `<body>`: 560 px på mobil, 640 px for kvissene på
+desktop, preppen som over, og forsida så bred den kan (opptil 1080 px, og smalere når sidekolonnene
+med reklame trenger plass, fra 1100 px) — se «Utseende». `goMode()` setter også klassen `wide` på
+`.wrap` når preppen vises (`addMode('prep', …, {wide:true})`), som gir teksten mer luft.
 
 Når kvissdagen er over (fra dagen etter datoen i `data-uke`, eller i rapportens første linje om
 attributtet mangler), viser `renderPrep()` et varsel øverst (`#prepStale`) om at preppen er
@@ -734,8 +745,8 @@ eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjen
 
 Kvissmodusene får ikke reklame inne i innholdet, bare sidekolonnene på desktop. Plassene som bare
 vises på mobil, har klassen `ad-in`, de som vises på alle skjermer `ad-all`, og sidekolonnene
-`ad-side`. Sidekolonnene er så brede det er plass til (160–300 px), regnet ut fra `--wrapw`, som er
-bredere når preppen vises.
+`ad-side`. Sidekolonnene er så brede det er plass til (160–300 px), regnet ut fra `--wrapw` (i `base.css`),
+som er bredere når preppen eller forsida vises.
 
 ## Debug-sida
 

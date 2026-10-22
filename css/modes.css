@@ -35,6 +35,30 @@
 .gear{display:grid;place-items:center;flex:none;width:48px;height:48px;padding:0;color:var(--ink);background:var(--paper);border:0;border-radius:50%;box-shadow:0 3px 0 var(--edge);cursor:pointer}
 .gear:hover{background:var(--paper2)}
 .gear svg{width:22px;height:22px}
+/* Desktop: when the page is wide enough (the .wrap container, base.css), the home page is one grid of
+   twelve columns. The title on top; the countdown beside Ukas prepp and Dagens kviss; Anagram and the
+   bommedatabase side by side; the other modes three to a row. An ad still takes a whole row: with the
+   dense flow, the tiles after it fill the row it would have left half empty, and it drops below them. */
+@container wrap (min-width:760px){
+  #home{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-flow:row dense;gap:16px}
+  #home>*,#home .modes>*{grid-column:span 12}
+  #home .modes{display:contents}
+  #home .install{order:-4}
+  #home .hometitle{order:-3}
+  #home .sub{order:-2;margin:-12px 0 4px}
+  #home .countdown{order:-1;grid-column:span 6;margin:0;align-content:space-between}
+  #home .adslot[data-fmt="banner"]{order:-1;margin:0}
+  .home h1{font-size:3rem}
+  #home .mode[data-mode="prep"],#home .mode[data-mode="dagens"]{grid-column:span 3;min-height:200px}
+  #home .mode[data-mode="anagram"],#home .mode[data-mode="bom"]{grid-column:span 6;padding:14px 18px}
+  #home .mode:not([data-mode="prep"],[data-mode="dagens"],[data-mode="anagram"],[data-mode="bom"]){grid-column:span 4}
+}
+/* With a mouse, a tile lifts a little under the pointer */
+@media (hover:hover){
+  .mode{transition:transform .12s}
+  .mode:hover{transform:translateY(-2px)}
+}
+@media (hover:hover) and (prefers-reduced-motion:reduce){.mode{transition:none}.mode:hover{transform:none}}
 .back{display:inline-flex;align-items:center;gap:4px;font:inherit;font-size:.92rem;font-weight:700;background:var(--paper);border:0;border-radius:999px;color:var(--ink);cursor:pointer;padding:8px 14px;margin:0 0 14px;box-shadow:0 3px 0 var(--edge)}
 .back:hover{background:var(--paper2)}
 .omap{display:flex;justify-content:center;margin:0 0 14px}

@@ -6,8 +6,6 @@
 @container (min-width:400px){.shakebtn{position:absolute;right:20px;bottom:18px}}
 /* Slots: ad-in sits in the content on phones only, ad-side in fixed side columns (desktop, from 1100 px),
    and ad-all (and the tiles under «Anbefalt for deg») everywhere. A slot with no ad left for it is .none */
-:root{--wrapw:560px}
-body[data-mode="prep"]{--wrapw:clamp(560px,60vw,960px)}
 .adslot,.adrecs{display:none}
 body.ads .adslot.ad-in,body.ads .adslot.ad-all,body.ads .adrecs,body.ads .adrecs .adslot{display:block}
 @media (min-width:1100px){
