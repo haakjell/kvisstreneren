@@ -466,14 +466,17 @@ Spørsmålene vi har bommet på i onsdagskvissen (på nynorsk «Den offisielle b
 kvisslaget»). Modusen er ingen kviss, bare en liste: én del per
 kviss, nyeste øverst, skilt med en vannrett strek (`.boweek`). Hvert spørsmål er en lukket
 `<details>` med «Se svar» til høyre, og åpnet viser den det riktige svaret og hva kvisslaget
-svarte. Øverst står det at lyd- og bildeoppgaver ikke er tatt med. Modusen har ingen faner og er
-ikke med i Dagens kviss.
+svarte. Lyd- og bildeoppgaver står bare som et register for laget, siden oppgaven selv ikke er med:
+én liten lukket «Bilde- og lydoppgaver (N)» under de andre spørsmålene den dagen (`.boextra`), med
+én linje per oppgave. Navnet har «™» på slutten, både på forsideknappen og i overskriften. Modusen
+har ingen faner og er ikke med i Dagens kviss.
 
 - `BOM` (`data/bom.js`) — én rad per spørsmål: `d` kvissdatoen (`'ÅÅÅÅ-MM-DD'`), `q` spørsmålet,
   `a` riktig svar, `t` hva laget svarte (`''` om vi ikke svarte noe — vises som «Ingenting»), og
   eventuelt `n` en merknad (gjerne årstall og bakgrunn, sjekket mot en kilde). Tekst skrives med
   `L()` der bokmål og nynorsk er ulike.
-- Bilde- og lydoppgaver legges ikke inn.
+- Bilde- og lydoppgaver har `m:'pic'` eller `m:'sound'` og trenger ingen `q` (eventuelt en kort
+  beskrivelse av klippet eller bildet); de havner i registeret under dagens spørsmål.
 
 ## Regjeringen
 

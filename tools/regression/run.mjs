@@ -609,6 +609,8 @@ tests.bom = async () => {
     await page.evaluate(() => [...__T.app().querySelectorAll('summary')].filter(__T.vis).at(-1).focus());
     await page.keyboard.press('Enter'); await page.waitForTimeout(30); await rec.snap(page, 'key-enter');
     await page.evaluate(() => __T.click('summary', 0)); await page.waitForTimeout(30); await rec.snap(page, 'closed');
+    await page.evaluate(() => __T.click('.boextra summary')); await page.waitForTimeout(30);
+    await rec.snap(page, 'media'); await rec.shoot(page, 'media');
     await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'back');
     rec.save(); await page.context().close();
   }
