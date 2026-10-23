@@ -57,7 +57,7 @@ noen få ny `index.html` med gamle skript; en oppdatering av sida retter det.
 
 ## Struktur
 
-Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og ti
+Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og elleve
 moduser. I tillegg er det innstillingene (`#settings`), som åpnes med tannhjulet til høyre for
 tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølge som knappene på forsida.
 
@@ -67,6 +67,7 @@ tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølg
 | `dagens` | `js/dagens.js` | — | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`) — se under |
 | `anagram` | `js/modes/anagram.js` | `data/anagram.js` | Anagram: kjendiser med bokstavene stokket om, på et kart med skattekister der alle går samme vei — se under |
 | `bom` | `js/modes/bom.js` | `data/bom.js` | Kvisslagets offisielle bommedatabase: spørsmålene vi har bomma på — se under |
+| `flagg` | `js/modes/flagg.js` | `data/flagg.js` | Flagg: alle landene i verden, per verdensdel, og Antarktis — se under |
 | `bydel` | `js/modes/bydel.js` | `data/bydeler.js` | Bydelene: Oslos bydeler (`BSETS`) |
 | `tbane` | `js/modes/tbane.js` | `data/tbane.js`, `data/ruter-map.js` | T-banen: «neste stopp»-kviss og kart — se under |
 | `regjering` | `js/modes/regjering.js` | `data/statsrad.js` | Regjeringen: statsrådene og postene deres — se under |
@@ -100,7 +101,8 @@ fast tidspunkt: `addMode('<navn>', open, {newUntil:'2026-10-14 19:00'})` — nor
 `ÅÅÅÅ-MM-DD TT:MM`. `renderNewTags()` i `app.js` setter inn eller fjerner merket (`.newtag` i
 `modes.css`) hver gang forsida vises og når klokka er spurt på nytt, etter serverens klokke (se
 «Tid»). Merket forsvinner av seg selv; `newUntil` kan bli stående, men rydd den gjerne bort
-neste gang du er i fila. Nå: Anagram og Bommedatabasen, til onsdag 4. november 2026 kl. 19.
+neste gang du er i fila. Nå: Anagram og Bommedatabasen, til onsdag 4. november 2026 kl. 19, og Flagg,
+til onsdag 11. november 2026 kl. 19.
 
 ### Spillmotoren
 
@@ -220,6 +222,7 @@ hver hovedfeature etter den, og PATCH for hver commit mellom dem:
 | 2.3.0 | `b13eee1` | Bommedatabasen |
 | 2.4.0 | `d5664e1` | Forsida på desktop |
 | 2.4.4 | | Versjonen i innstillingene, den første med tagg fra workflowen |
+| 2.5.0 | | Flagg |
 
 Tagger finnes bare fra 2.4.4. Får MINOR et nytt nummer, legg det til i tabellen.
 
@@ -236,14 +239,14 @@ Sida er tegnet som «bento»: store, runde flater i fargetemaets farger, uten st
 faner og fliser har ingen ramme, men en mørkere kant under seg (`box-shadow: 0 4px 0 var(--edge)`;
 fargede flater `--edge-strong`), og knappene synker ned på kanten når de trykkes. Forsida er et
 rutenett med to kolonner: Ukas prepp (i `--accent2`) og Dagens kviss (i `--ink`) som store fliser
-øverst, Anagram og Bommedatabasen som lave striper over hele bredden under dem, så de andre modusene som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
+øverst, Anagram, Bommedatabasen og Flagg som lave striper over hele bredden under dem, så de andre modusene som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
 tegnet i temaets farger (`--ink`, `--accent`, `--paper`, på `--tint`), også bydelskartet og
 Hotel Cæsar-logoen, som tegnes i skriptene. Ny CSS: bruk fargevariablene, aldri faste farger.
 
 **Forsida på desktop.** Når sida får minst 760 px (en container-spørring på `.wrap`, så det går etter
 bredden sida faktisk får, også med sidekolonnene med reklame), blir forsida ett rutenett med tolv
 kolonner (bolken øverst i `modes.css`): tittelen øverst, nedtellingen ved siden av Ukas prepp og
-Dagens kviss, Anagram og Bommedatabasen side om side, og de andre modusene tre i hver rad. `.modes`
+Dagens kviss, Anagram, Bommedatabasen og Flagg side om side (tre i raden), og de andre modusene tre i hver rad. `.modes`
 er da `display: contents`, så knappene står i samme rutenett som nedtellingen, og `order` løfter
 tittelen over den. En «Sponset»-annonse tar fortsatt en hel rad; med `grid-auto-flow: row dense`
 fyller flisene etter den raden den ellers ville latt halvtom, og annonsen havner under dem. Med mus
@@ -528,6 +531,38 @@ har ingen faner og er ikke med i Dagens kviss.
 - Bilde- og lydoppgaver har `m:'pic'` eller `m:'sound'` og trenger ingen `q` (eventuelt en kort
   beskrivelse av klippet eller bildet); de havner i registeret under dagens spørsmål.
 
+## Flagg
+
+Kviss om flaggene til alle land i verden: de 193 FN-landene, Vatikanstaten, Palestina, Kosovo og
+Taiwan, og Antarktis for moro skyld. Modusen har to sider, som Anagram: en startside (`#fgPickView`)
+der man velger retning og verdensdel, og kvissen (`#fgPlayView`), med egen historikkoppføring, så
+tilbakegesten og «← Verdensdelene» går tilbake til startsida. Retningen velges bare på startsida,
+ikke under kvissen, så den ikke kan nullstille en runde midt i.
+
+- **Retning:** «Flagg → land» (flagget vises, velg blant seks land) eller «Land → flagg» (landet
+  vises, velg blant fire flagg; flaggene er alternativene, `.fgname ~ .options`). Alt-teksten på
+  flaggene i alternativene er bare et nummer, så den ikke røper svaret.
+- **Verdensdel:** Hele verden (alle landene, uten Antarktis), Afrika, Asia, Europa, Nord-Amerika
+  (med Mellom-Amerika og Karibia), Sør-Amerika, Oseania og Antarktis. En runde er alle flaggene i
+  verdensdelen, i tilfeldig rekkefølge, og feilalternativene kommer bare fra den samme verdensdelen.
+  Antarktis har bare ett flagg og ett alternativ (det er vitsen). Etter runden: «Øv på dem du bommet
+  på», «Start på nytt med alle N» og «Velg en annen verdensdel».
+- **Pugg** viser alle flaggene, per verdensdel, med «Skjul navn».
+
+- `FLAGG` (`data/flagg.js`) — én rad per land: `c` ISO-koden (gir bildet), `n` navnet (`L()` der
+  bokmål og nynorsk er ulike), `w` verdensdelen (`af`, `as`, `eu`, `na`, `sa`, `oc`, `an`), eller en
+  liste for et land i to (`['eu','as']`), `k`
+  hovedstaden, som vises etter svaret, eller `kf` en hel setning i stedet der det trengs mer
+  (Nederland, Bolivia, Sør-Afrika …), og eventuelt `f` en merknad (flagg som ligner hverandre).
+- Land i to verdensdeler er med i begge (i kvissen og i «Pugg»), og én gang i Hele verden: Russland,
+  Tyrkia og Kypros i Europa og Asia, Egypt i Afrika og Asia, og Indonesia i Asia og Oseania. Georgia,
+  Armenia, Aserbajdsjan og Kasakhstan står bare i Asia. Valgt av eieren.
+- Bildene er SVG-er fra flagcdn.com (`FG_IMG()`), lenket direkte som våpnene, og ligger ikke i
+  repoet. Antarktis' flagg er Graham Bartrams forslag fra 1996 (`aq` hos flagcdn).
+
+Modusen er ikke med i Dagens kviss. Det finnes ikke noe skript: endrer et land navn eller flagg,
+rett `FLAGG` for hånd (et nytt flagg kommer av seg selv fra flagcdn).
+
 ## Regjeringen
 
 Kviss om hvem som har hvilken post i regjeringen. To spørsmålstyper, valgt med knappene øverst:
@@ -778,7 +813,7 @@ eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjen
 |---|---|---|
 | Sidekolonner (`side`) | Én høy annonse fast på hver side av innholdet, på alle sidene | Fra 1100 px |
 | Toppbanner (`#adTop`, `banner`) | Rett under nedtellingen; `goMode()` flytter den med | Under 1100 px |
-| «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp, Dagens kviss og Anagram, og under raden med Regjeringen og Våpenskjold | Alle |
+| «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp, Dagens kviss og stripene (Anagram, Bommedatabasen og Flagg), og under raden med Regjeringen og Våpenskjold | Alle |
 | I preppen (`box`) | Mellom hver `##`-del, lagt inn av `renderPrep()` | Alle |
 | «Anbefalt for deg» (`tile`) | Fire småsaker nederst i preppen | Alle |
 
@@ -830,7 +865,7 @@ Etter en endring, fra reporoten:
 for f in js/*.js js/modes/*.js data/*.js tools/*.mjs tools/regression/*.mjs; do node --check "$f" || echo "FEIL i $f"; done
 ```
 
-Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle ti modusene, innstillingene (og gjerne debug-sida), både
+Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle elleve modusene, innstillingene (og gjerne debug-sida), både
 bokmål og nynorsk, både lys og mørk modus (følger `prefers-color-scheme`, eller valget i innstillingene), og gjerne et par fargetemaer. Knappen for hjemskjermen vises bare
 med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes både
 smalt (under 1100 px) og bredt (utenom onsdag 19–22).
@@ -840,7 +875,7 @@ smalt (under 1100 px) og bredt (utenom onsdag 19–22).
 `tools/regression/` er et Playwright-oppsett som kjører gjennom hele sida bare via grensesnittet
 (ingen interne funksjonsnavn), og lagrer et øyeblikksbilde etter hvert steg: markup, synlig tekst,
 fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene med alle
-spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
+spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), Flagg (begge retninger, flere verdensdeler og tilbakegesten), «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
 og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også fargetemaet og en runde uten automatisk videre),
 stengt onsdag kveld, uten nett og som lokal fil, reklamen, hele sida på nynorsk (valgt i innstillingene),
 captchaen før preppen, Bommedatabasen, og at nedtellingen og preppen følger

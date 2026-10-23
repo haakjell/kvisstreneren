@@ -36,8 +36,8 @@
 .gear:hover{background:var(--paper2)}
 .gear svg{width:22px;height:22px}
 /* Desktop: when the page is wide enough (the .wrap container, base.css), the home page is one grid of
-   twelve columns. The title on top; the countdown beside Ukas prepp and Dagens kviss; Anagram and the
-   bommedatabase side by side; the other modes three to a row. An ad still takes a whole row: with the
+   twelve columns. The title on top; the countdown beside Ukas prepp and Dagens kviss; Anagram, the
+   bommedatabase and Flagg side by side; the other modes three to a row. An ad still takes a whole row: with the
    dense flow, the tiles after it fill the row it would have left half empty, and it drops below them. */
 @container wrap (min-width:760px){
   #home{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-flow:row dense;gap:16px}
@@ -50,8 +50,8 @@
   #home .adslot[data-fmt="banner"]{order:-1;margin:0}
   .home h1{font-size:3rem}
   #home .mode[data-mode="prep"],#home .mode[data-mode="dagens"]{grid-column:span 3;min-height:200px}
-  #home .mode[data-mode="anagram"],#home .mode[data-mode="bom"]{grid-column:span 6;padding:14px 18px}
-  #home .mode:not([data-mode="prep"],[data-mode="dagens"],[data-mode="anagram"],[data-mode="bom"]){grid-column:span 4}
+  #home .mode[data-mode="anagram"],#home .mode[data-mode="bom"],#home .mode[data-mode="flagg"]{grid-column:span 4;padding:14px 18px}
+  #home .mode:not([data-mode="prep"],[data-mode="dagens"],[data-mode="anagram"],[data-mode="bom"],[data-mode="flagg"]){grid-column:span 4}
 }
 /* With a mouse, a tile lifts a little under the pointer */
 @media (hover:hover){
@@ -220,11 +220,32 @@
 .boextra ul{margin:6px 0 0;padding:0 4px;list-style:none;display:grid;gap:8px}
 .boextra small{display:block;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
 .boextra strong{color:var(--ink);font-weight:700}
+/* ---------- Flagg ---------- */
+/* The start page: a tile for each part of the world, the whole world across the top */
+.fgparts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fgparts button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font:inherit;text-align:left;color:var(--ink);background:var(--paper);border:0;border-radius:22px;padding:16px;box-shadow:0 4px 0 var(--edge);cursor:pointer}
+.fgparts button:hover{background:var(--paper2)}
+.fgparts button:active{transform:translateY(2px);box-shadow:0 2px 0 var(--edge)}
+.fgparts button[data-part="all"]{grid-column:1/-1;background:var(--accent);color:var(--accent-ink);box-shadow:0 4px 0 var(--edge-strong)}
+.fgparts strong{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.25rem;line-height:1.1}
+.fgparts span{font-size:.85rem;font-weight:600;opacity:.75}
+@media (prefers-reduced-motion:reduce){.fgparts button:active{transform:none}}
+/* A flag: the outline follows its shape (Nepal's isn't square), so white flags show on white */
+.fgflag{display:flex;justify-content:center;margin:4px 0 18px}
+.fgflag img,.fgopt,.fgstudy img,.fgthumb{filter:drop-shadow(0 0 1px rgba(0,0,0,.45))}
+.fgflag img{width:min(72vw,300px);height:min(48vw,200px);object-fit:contain}
+.fgflag.pop img{animation:pop .35s ease}
+/* Country → flag: four flags as the options */
+.fgname~.options button{display:grid;place-items:center;padding:12px}
+.fgopt{display:block;width:100%;height:clamp(64px,22vw,110px);object-fit:contain}
+.fgstudy{margin-bottom:22px}
+.fgstudy img{width:110px;height:80px}
 /* ---------- Anagram ---------- */
-/* Under Ukas prepp and Dagens kviss: a low strip across the whole row, laid out sideways */
-.mode[data-mode="anagram"],.mode[data-mode="bom"]{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:flex-start;min-height:0;padding:10px 16px}
-.mode[data-mode="anagram"]>div:first-child,.mode[data-mode="bom"]>div:first-child{width:46px;height:46px}
-.mode[data-mode="anagram"]>div:first-child svg,.mode[data-mode="bom"]>div:first-child svg{width:36px;height:36px}
+/* Under Ukas prepp and Dagens kviss: a low strip across the whole row, laid out sideways (Anagram,
+   the bommedatabase and Flagg) */
+.mode[data-mode="anagram"],.mode[data-mode="bom"],.mode[data-mode="flagg"]{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:flex-start;min-height:0;padding:10px 16px}
+.mode[data-mode="anagram"]>div:first-child,.mode[data-mode="bom"]>div:first-child,.mode[data-mode="flagg"]>div:first-child{width:46px;height:46px}
+.mode[data-mode="anagram"]>div:first-child svg,.mode[data-mode="bom"]>div:first-child svg,.mode[data-mode="flagg"]>div:first-child svg{width:36px;height:36px}
 /* The map: a road winding up from «Start», a stop per anagram, and a cloud for those to come.
    The road is drawn in a stretched SVG (x in %, y in px), the stops and labels are placed over it. */
 .agmap{position:relative;border-radius:28px;background:var(--paper);box-shadow:0 5px 0 var(--edge);overflow:hidden}
@@ -304,7 +325,7 @@
 
 /* The question's picture, map or name pops in (quiz.js); not for those who ask for less motion.
    Last, so it wins over the .pop rules of every mode above. */
-@media (prefers-reduced-motion:reduce){.shield.pop svg,.shield.pop img,.omap.pop svg,.tmap.pop svg,.cprompt.pop strong{animation:none}}
+@media (prefers-reduced-motion:reduce){.shield.pop svg,.shield.pop img,.omap.pop svg,.tmap.pop svg,.cprompt.pop strong,.fgflag.pop img{animation:none}}
 /* ---------- Innstillinger ---------- */
 .settings h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.2rem;margin:26px 0 10px}
 .settings>h2:first-child,.settings>.setrow:first-child>h2,.settings>[hidden]:first-child+h2{margin-top:0}

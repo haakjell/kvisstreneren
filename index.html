@@ -43,6 +43,7 @@
       <button class="mode" data-mode="dagens"><div aria-hidden="true"><svg viewBox="0 0 116 44" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="24" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="48" y="0" width="20" height="20" rx="5" fill="var(--bad)"/><rect x="72" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="96" y="0" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="0" y="24" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="24" y="24" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="48" y="24" width="20" height="20" rx="5" fill="var(--ok)"/><rect x="72" y="24" width="20" height="20" rx="5" fill="var(--bad)"/><rect x="96" y="24" width="20" height="20" rx="5" fill="var(--ok)"/></svg></div><div><strong>Dagens kviss</strong><span data-nn="Ti blanda spørsmål, nye kvar dag">Ti blandede spørsmål, nye hver dag</span></div></button>
       <button class="mode" data-mode="anagram"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><g font-family="Bricolage Grotesque,system-ui,sans-serif" font-weight="800" font-size="24" text-anchor="middle"><rect x="6" y="30" width="26" height="28" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="4" transform="rotate(-8 19 44)"/><text x="19" y="53" fill="var(--ink)" transform="rotate(-8 19 44)">N</text><rect x="31" y="22" width="26" height="28" rx="6" fill="var(--accent)" stroke="var(--ink)" stroke-width="4"/><text x="44" y="45" fill="var(--accent-ink)">A</text><rect x="56" y="30" width="26" height="28" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="4" transform="rotate(8 69 44)"/><text x="69" y="53" fill="var(--ink)" transform="rotate(8 69 44)">G</text></g><path d="M22 70q22 12 44 0" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><path d="M60 64l7 5-6 6" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><strong>Anagram</strong><span id="agTeaser"></span></div></button>
       <button class="mode" data-mode="bom"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><path d="M12 17v46a24 8 0 0 0 48 0V17" fill="var(--paper)" stroke="var(--ink)" stroke-width="4.5" stroke-linejoin="round"/><path d="M12 32a24 8 0 0 0 48 0M12 47a24 8 0 0 0 48 0" fill="none" stroke="var(--ink)" stroke-width="4.5"/><ellipse cx="36" cy="17" rx="24" ry="8" fill="var(--tint)" stroke="var(--ink)" stroke-width="4.5"/><circle cx="64" cy="64" r="17" fill="var(--accent)" stroke="var(--ink)" stroke-width="4.5"/><path d="M57.5 57.5l13 13M70.5 57.5l-13 13" stroke="var(--accent-ink)" stroke-width="5" stroke-linecap="round"/></svg></div><div><strong data-nn="Den offisielle bommedatabasen til kvisslaget™">Kvisslagets offisielle bommedatabase™</strong><span data-nn="Spørsmåla vi har bomma på">Spørsmålene vi har bomma på</span></div></button>
+      <button class="mode" data-mode="flagg"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><path d="M18 10v70" stroke="var(--ink)" stroke-width="5.5" stroke-linecap="round"/><path d="M21 15c16-7 30 7 52-1v36c-22 8-36-6-52 1z" fill="var(--accent)" stroke="var(--ink)" stroke-width="4.5" stroke-linejoin="round"/><path d="M23 33c16-7 30 7 48-1M37 13.5v35" fill="none" stroke="var(--paper)" stroke-width="7"/><path d="M21 15c16-7 30 7 52-1v36c-22 8-36-6-52 1z" fill="none" stroke="var(--ink)" stroke-width="4.5" stroke-linejoin="round"/></svg></div><div><strong>Flagg</strong><span data-nn="Alle flagga i verda">Alle flaggene i verden</span></div></button>
       <div class="adslot ad-all" data-fmt="card" data-label="Sponset"></div>
       <button class="mode" data-mode="bydel"><div class="omap" id="modeMapIcon" aria-hidden="true" style="margin:0"></div><div><strong data-nn="Bydelane">Bydelene</strong><span data-nn="Dagens 15 eller dei nye 8">Dagens 15 eller de nye 8</span></div></button>
       <button class="mode" data-mode="tbane"><div aria-hidden="true"><svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12 L38 36 H78" stroke="var(--accent)"/><path d="M8 46 H80" stroke="var(--ink)"/><path d="M8 56 H46 L68 78" stroke="var(--accent)"/></g><rect x="36" y="28" width="16" height="36" rx="8" fill="var(--paper)" stroke="var(--ink)" stroke-width="4.5"/></svg></div><div><strong>T-banen</strong><span>Neste stopp på alle fem linjer</span></div></button>
@@ -392,6 +393,46 @@ Nyheitsvindauget er komplett. Namnedagane 22. og 23. oktober ligg fram i tid, me
   <p class="note" data-nn="Bilde: Wikimedia Commons (norske våpen i det fri). Krev nettilgang; viss eit bilde ikkje blir lasta, blir ei grov strekteikning vist i staden.">Bilder: Wikimedia Commons (norske våpen i det fri). Krever nettilgang; hvis et bilde ikke lastes, vises en grov strektegning i stedet.</p>
   </div>
 
+  <div id="flaggApp" hidden>
+  <div id="fgPickView">
+  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <header>
+    <div>
+      <h1>Flagg</h1>
+      <div class="sub" id="fgSub" data-nn="Vel retning og verdsdel">Velg retning og verdensdel</div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="fgTabQuiz" aria-selected="true">Kviss</button>
+      <button role="tab" id="fgTabStudy" aria-selected="false">Pugg</button>
+    </div>
+  </header>
+  <section id="fgPick">
+    <div class="setswitch" role="radiogroup" aria-label="Velg retning" data-nn-aria-label="Vel retning">
+      <button role="radio" id="fgDirFlag" aria-checked="true">Flagg → land</button>
+      <button role="radio" id="fgDirLand" aria-checked="false">Land → flagg</button>
+    </div>
+    <div class="fgparts" id="fgParts"><!-- a button for each part of the world, from fgRenderParts() in js/modes/flagg.js --></div>
+  </section>
+  <main id="fgStudy" hidden>
+    <div class="studybar">
+      <span data-nn="Trykk på eit flagg for å sjå namnet når namna er skjulte.">Trykk på et flagg for å se navnet når navnene er skjult.</span>
+      <button class="ghost" id="fgToggle" style="padding:8px 12px" data-nn="Skjul namn">Skjul navn</button>
+    </div>
+    <div id="fgStudyGrid"></div>
+  </main>
+  </div>
+  <div id="fgPlayView" hidden>
+  <button class="back" id="fgBack" data-nn="← Verdsdelane">← Verdensdelene</button>
+  <header>
+    <div>
+      <h1 id="fgTitle"></h1>
+      <div class="sub" id="fgPlaySub"></div>
+    </div>
+  </header>
+  <main id="fgQuiz"><!-- the quiz card, from makeQuiz() in js/quiz.js --></main>
+  </div>
+  </div>
+
   <div id="bomApp" hidden>
   <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
   <header>
@@ -714,6 +755,7 @@ Nyheitsvindauget er komplett. Namnedagane 22. og 23. oktober ligg fram i tid, me
 <script src="data/bydeler.js"></script>
 <script src="data/anagram.js"></script>
 <script src="data/bom.js"></script>
+<script src="data/flagg.js"></script>
 <script src="data/ads.js"></script>
 <script src="js/modes/vapen.js"></script>
 <script src="js/modes/tbane.js"></script>
@@ -723,6 +765,7 @@ Nyheitsvindauget er komplett. Namnedagane 22. og 23. oktober ligg fram i tid, me
 <script src="js/modes/bydel.js"></script>
 <script src="js/modes/anagram.js"></script>
 <script src="js/modes/bom.js"></script>
+<script src="js/modes/flagg.js"></script>
 <script src="js/prep.js"></script>
 <script src="js/captcha.js"></script>
 <script src="js/dagens.js"></script>

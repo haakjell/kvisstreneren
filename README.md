@@ -13,6 +13,7 @@ Sida finnes på bokmål og nynorsk, og kan legges til på hjemskjermen på mobil
 - **Dagens kviss:** ti blandede spørsmål, de samme for alle hver dag, med resultat som kan deles
 - **Anagram:** kjendiser med bokstavene stokket om
 - **Kvisslagets offisielle bommedatabase™:** spørsmålene vi har bommet på
+- **Flagg:** alle flaggene i verden, for hele verden eller én verdensdel om gangen
 - **Bydelene:** Oslos bydeler, både dagens og de nye fra 2028
 - **T-banen:** neste stopp på linjene og kartet
 - **Regjeringen:** statsrådene og postene deres
@@ -47,7 +48,7 @@ Skriptene i `tools/` kjøres fra reporoten med Node:
 - `node tools/update-ruter-map.mjs`: leser stasjonsnavnene på Ruters linjekart
 - `node tools/update-caesar-images.mjs`: henter bildene av rollefigurene i Hotel Cæsar
 
-Resten av dataene (regjeringen, MGP, anagrammene, bommedatabasen) oppdateres for hånd i
+Resten av dataene (regjeringen, MGP, anagrammene, bommedatabasen, flaggene) oppdateres for hånd i
 `data/`.
 
 ## Testing

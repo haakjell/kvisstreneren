@@ -619,6 +619,51 @@ tests.bom = async () => {
   }
 };
 
+// Flagg: the start page, a round each way (Oseania, Antarktis and a part of the whole world), retry,
+// restart, another part, back from the quiz with «← Verdensdelene» and the back gesture, the
+// keyboard, and «Pugg»; on both screens and in nynorsk with the dark theme
+tests.flagg = async () => {
+  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
+    const rec = new Rec('flagg-' + cfg), page = await newPage(rec.name, opt);
+    await page.evaluate(() => __T.click('.mode[data-mode=flagg]')); await page.waitForTimeout(100);
+    await rec.snap(page, 'pick'); await rec.shoot(page, 'pick');
+    const part = async p => { await page.evaluate(p => __T.click(`[data-part="${p}"]`), p); await waitReady(page); };
+    // Flag → country, Oseania: a round, retry the misses, start again
+    await part('oc'); await rec.snap(page, 'oc-open'); await rec.shoot(page, 'oc-open');
+    await playRound(page, rec, 'oc', 1); await rec.shoot(page, 'oc-done');
+    if (await page.evaluate(() => __T.click('.card.done .btns .primary'))) await playRound(page, rec, 'oc-retry', 2);
+    await page.evaluate(() => __T.click('.card.done .btns .ghost', 0)); await waitReady(page);
+    await rec.snap(page, 'oc-restarted');
+    // Halfway through: back with the back gesture, then the other way round
+    await page.evaluate(() => __T.answer(0)); await page.goBack(); await page.waitForTimeout(150);
+    await rec.snap(page, 'back-gesture');
+    await page.evaluate(() => __T.click('.setswitch [role=radio]', 1)); await page.waitForTimeout(30);
+    await rec.snap(page, 'dir-land');
+    await part('an'); await rec.snap(page, 'an-land'); await playRound(page, rec, 'an-land'); await rec.shoot(page, 'an-done');
+    await page.evaluate(() => __T.click('.card.done .btns .ghost', 1)); await page.waitForTimeout(100);
+    await rec.snap(page, 'other-part');
+    await part('sa'); await rec.shoot(page, 'sa-land');
+    await playRound(page, rec, 'sa-land', 3);
+    await page.evaluate(() => __T.click('#fgBack')); await page.waitForTimeout(100);
+    await page.evaluate(() => __T.click('.setswitch [role=radio]', 0)); await page.waitForTimeout(30);
+    await part('an'); await playRound(page, rec, 'an-flag');
+    await page.evaluate(() => __T.click('#fgBack')); await page.waitForTimeout(100);
+    // The whole world: a few questions, by keyboard
+    await part('all'); await rec.snap(page, 'all');
+    await page.evaluate(() => document.activeElement && document.activeElement.blur());
+    for (const k of ['3', 'Enter', '1', 'Enter']) { await page.keyboard.press(k); await page.waitForTimeout(30); await rec.snap(page, 'key-' + k); }
+    await page.evaluate(() => __T.click('#fgBack')); await page.waitForTimeout(100);
+    // «Pugg»
+    await page.evaluate(() => __T.click('[role=tab]', 1)); await page.waitForTimeout(150);
+    await rec.snap(page, 'study'); await rec.shoot(page, 'study');
+    await page.evaluate(() => __T.click('.studybar button')); await page.waitForTimeout(30);
+    await page.evaluate(() => __T.click('.study figure', 2)); await rec.snap(page, 'study-hidden');
+    await page.evaluate(() => __T.click('[role=tab]', 0)); await page.waitForTimeout(50);
+    await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'home');
+    rec.save(); await page.context().close();
+  }
+};
+
 tests.clock = async () => {
   const rec = new Rec('clock');
   const cd = async (page, label) => rec.rows.push({ label: 'countdown:' + label,
