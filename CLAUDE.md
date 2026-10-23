@@ -18,7 +18,7 @@ css/themes.css        fargetemaene, hvert med en lys og en mørk utgave — se �
 css/base.css          lys/mørk modus, layout, kort, knapper, faner, alternativer, brytere, «Skjul navn»
 css/modes.css         forsida, hver modus og innstillingene, i hver sin bolk
 css/countdown.css · install.css · captcha.css · ads.css
-js/core.js            felles hjelpere: $(), store, språket (L()), navn (normName()), tilfeldighet (rnd()),
+js/core.js            versjonen (VERSION) og felles hjelpere: $(), store, språket (L()), navn (normName()), tilfeldighet (rnd()),
                       tid (serverNow(), osloWall(), quizLive() …), modusregisteret (addMode()) og MIX
 js/ui.js              felles grensesnitt: tabs(), radios(), hideAnswers(), dropBrokenPics()
 js/quiz.js            spillmotoren, makeQuiz(): spørsmåls- og resultatkortet for alle kvissene
@@ -32,6 +32,7 @@ data/<navn>.js        dataene, én fil per tema — se tabellen under
 tools/                skript som oppdaterer data og prepp, og regresjonstesten — se «Verktøy»
 prep/                 arkivet over ukas prepp, én markdown-fil per kviss og språk
 manifest.webmanifest, icons/   for hjemskjermen — se «Hjemskjermen»
+.github/workflows/tag-version.yml   tagger hver push til main med versjonen — se «Versjon»
 ads/                  fotoer til annonsene — se «Reklame»
 ```
 
@@ -184,12 +185,37 @@ gang sida åpnes. Ny innstilling: en rad i `#settingsApp` (`.switch` for av/på,
 valg), og koden i `settings.js`. Når automatisk videre er av, venter et riktig svar på «Neste»
 (eller Enter), akkurat som et feil.
 
+Nederst, under kortet, står versjonen og en lenke til kildekoden på GitHub (`.setfoot`) — se
+«Versjon».
+
 Utseendet og fargetemaet er beskrevet under «Utseende». Skjuler man «Legg til på hjemskjermen»
 med «Ikke vis knappen igjen», kan den slås på igjen her.
 
 Ristingen og reklamen er to uavhengige brytere (`shakeOff` og `ads`): man kan ha begge, én av dem
 eller ingen. Raden (`#stShakeRow`) er skjult for dem med `prefers-reduced-motion`, som verken
 får risting eller reklame.
+
+## Versjon
+
+Sida har et versjonsnummer, `VERSION` øverst i `core.js` (`MAJOR.MINOR.PATCH`, f.eks. `1.0.3`).
+Det vises bare nederst i innstillingene, «Kvisstreneren 1.0.3 · Kildekoden på GitHub», der
+nummeret lenker til taggen og resten til repoet (`REPO_URL`). Ingen bunnlinje på forsida.
+
+**Hver push til main skal ha et nytt nummer.** Som standard økes PATCH (`1.0.3` → `1.0.4`), uansett
+hva endringen er — også en ny prepp eller nye data. MINOR (`1.0.3` → `1.1.0`) og MAJOR økes **bare
+med samtykke fra eieren**: du kan foreslå å øke MINOR, f.eks. for en ny modus eller en stor ny
+funksjon, men øk PATCH hvis du ikke har fått ja. MAJOR skal i prinsippet aldri økes igjen. Økningen
+gjøres i den samme squashede committen som endringen (se «Konvensjoner»), aldri i en egen commit.
+
+Nummereringen begynte på 2.0.0 med redesignen («Redesign the page as bento tiles, with five colour
+themes», 19. oktober 2026, taggen `v2.0.0`); hver commit på main etter den har fått sitt PATCH-nummer,
+så den første med versjon på sida var 2.0.18. Bare 2.0.0 og versjonene fra 2.0.18 har tagg.
+
+Taggen lager du ikke selv: `.github/workflows/tag-version.yml` kjører på hver push til main, leser
+`VERSION` fra `core.js` og lager en release med taggen `v<VERSION>` på committen (notatet er
+commit-meldingen). Er nummeret allerede brukt på en annen commit, feiler workflowen og sier fra — da
+er det glemt å øke det; rett det i neste push. Sida publiseres av Pages uansett; workflowen rører
+ikke den. Linja må stå på formen `const VERSION='x.y.z';`, ellers finner ikke workflowen den.
 
 ## Utseende
 
@@ -820,6 +846,9 @@ node tools/regression/compare.mjs /tmp/reg-for /tmp/reg-etter          # alt må
 node tools/regression/compare.mjs /tmp/reg-for /tmp/reg-etter --text   # bare synlig tekst o.l.
 ```
 
+Versjonen låses til `0.0.0` i testen (serveren skriver om linja i `core.js`), så den ikke gir
+forskjeller mellom to commits.
+
 Skjermbilder som bare skiller seg med kantutjevning (maks 8 i fargeforskjell), regnes som like.
 `compare.mjs` viser de første forskjellene per test med litt tekst rundt; `--max N` viser flere.
 Testen klikker seg fram med vanlige klasser (`.options`, `.card.done`, `.qnext`, `[role=tab]`,
@@ -856,7 +885,8 @@ De tre `update-`skriptene skriver datafila si helt på nytt; ikke rediger de fil
   `claude/bom-database-icon` eller `claude/fix-countdown-dst` — ikke tilfeldige navn som
   `claude/pensive-sagan-1o21l0`. Har økta fått et tilfeldig navn, lag en ny branch med et
   beskrivende navn før du committer.
-- **Før push til main:** squash alle commits i branchen til én, rebase den på nyeste
+- **Før push til main:** øk `VERSION` i `core.js` (PATCH, med mindre eieren har sagt ja til MINOR —
+  se «Versjon»), squash alle commits i branchen til én, rebase den på nyeste
   `origin/main`, og fast-forward main til den (`git push origin HEAD:main`, aldri force-push
   til main). Kjør syntakssjekken under «Testing» på nytt etter rebasen.
 - Denne fila (CLAUDE.md) er på norsk, som dokumentasjon for deg.

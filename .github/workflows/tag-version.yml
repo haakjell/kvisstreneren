@@ -1,0 +1,29 @@
+# Tags every push to main with the version in js/core.js (const VERSION='x.y.z'), as a GitHub
+# release v<VERSION>. Fails if the version is malformed, or already tagged on another commit
+# (someone forgot to raise it). GitHub Pages deploys from main on its own; this does not touch it.
+name: Tag version
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Read VERSION and tag the commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v=$(sed -n "s/^const VERSION='\([0-9]*\.[0-9]*\.[0-9]*\)';.*/\1/p" js/core.js)
+          if [ -z "$v" ]; then echo "::error file=js/core.js::Found no const VERSION='x.y.z' in js/core.js"; exit 1; fi
+          tag="v$v"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            if [ "$(git rev-list -n1 "$tag")" = "$GITHUB_SHA" ]; then echo "$tag is already on this commit"; exit 0; fi
+            echo "::error file=js/core.js::$tag is already used by $(git rev-list -n1 "$tag"); raise VERSION in js/core.js"
+            exit 1
+          fi
+          gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes "$(git log -1 --format=%B "$GITHUB_SHA")"

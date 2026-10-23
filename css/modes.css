@@ -325,6 +325,9 @@
 .swatches button[aria-checked="true"] i{box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--ink)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .swatches button{--sw-a:var(--d-accent);--sw-b:var(--d-accent2)}}
 :root[data-theme="dark"] .swatches button{--sw-a:var(--d-accent);--sw-b:var(--d-accent2)}
+/* The version and the link to the source code, under the card */
+.setfoot{color:var(--muted);font-size:.88rem;text-align:center;margin:18px 0 0}
+.setfoot a{color:inherit;font-weight:600;text-underline-offset:3px}
 /* ---------- Debug ---------- */
 .debug h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.2rem;margin:26px 0 10px}
 .debug>h2:first-child{margin-top:0}

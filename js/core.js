@@ -2,6 +2,11 @@
 // time (Oslo, by the server's clock), the language (L), and the mixed quiz sources (MIX).
 const $=id=>document.getElementById(id);
 
+// The version, shown at the bottom of the settings. Raise it in every push to main; the workflow in
+// .github/workflows/tag-version.yml reads this line and tags the commit v<VERSION>.
+const VERSION='2.0.18';
+const REPO_URL='https://github.com/haakjell/kvisstreneren';
+
 // localStorage can be missing or refuse (private mode, blocked site data): reads then give null
 // and writes do nothing. set() with null removes the key.
 const store={

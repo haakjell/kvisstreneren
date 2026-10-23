@@ -30,7 +30,10 @@ const server = http.createServer((req, res) => {
   const f = path.join(repo, p === '/' ? '/index.html' : p);
   if (!f.startsWith(path.resolve(repo)) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); res.end(); return; }
   res.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
-  res.end(req.method === 'HEAD' ? undefined : fs.readFileSync(f));
+  // The version changes with every push to main, so it is locked to one value
+  let body = fs.readFileSync(f);
+  if (p === '/js/core.js') body = body.toString().replace(/^const VERSION='[^']*';/m, "const VERSION='0.0.0';");
+  res.end(req.method === 'HEAD' ? undefined : body);
 });
 await new Promise(r => server.listen(0, r));
 const BASE = `http://127.0.0.1:${server.address().port}/index.html`;

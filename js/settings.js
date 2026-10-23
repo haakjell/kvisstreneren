@@ -32,6 +32,11 @@ $('stInstall').addEventListener('click',()=>{
   store.set('installHidden',on?null:'1'); installShow(); stSwitch('stInstall',on);
 });
 
+// The version and the source code, at the bottom; the version links to its tag on GitHub
+$('stVersion').textContent=VERSION;
+$('stVersion').href=REPO_URL+'/releases/tag/v'+VERSION;
+$('stRepo').href=REPO_URL;
+
 function stOpen(){
   stMarkLang(LANG);
   stSwitch('stAuto',quizAuto());
