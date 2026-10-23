@@ -214,3 +214,35 @@ const FLAGG=[
   // Antarktis
   {c:'aq',n:'Antarktis',w:'an',kf:L('Antarktis har ikke noe offisielt flagg. Dette er Graham Bartrams forslag fra 1996.','Antarktis har ikkje noko offisielt flagg. Dette er forslaget til Graham Bartram frå 1996.')},
 ];
+
+// Flags that look alike, by code: the others in a flag's group come first among its wrong options
+// (only those in the part of the world being played; a group bigger than the options gets a random
+// few). A country may be in more than one group.
+const FLAGG_LIKE=[
+  ['td','ro','ad','md'],             // blue, yellow and red, upright
+  ['id','mc','pl'],                  // red over white, white over red
+  ['ie','ci','it'],                  // green, white and orange or red, upright
+  ['nl','lu','py'],                  // red, white and blue, lying
+  ['ru','sk','si','rs','hr'],        // white, blue and red, the Slavic colours
+  ['no','is','dk','se','fi'],        // the Nordic cross
+  ['au','nz','tv','fj'],             // the Union Jack in the corner
+  ['ml','gn','sn','cm'],             // green, yellow and red, upright
+  ['co','ec','ve'],                  // yellow, blue and red, lying
+  ['hn','ni','sv','gt','ar'],        // blue and white
+  ['jo','ps','sd'],                  // black, white and green with a red triangle
+  ['kw','ae'],                       // the same with the red bar upright
+  ['eg','iq','sy','ye'],             // red, white and black
+  ['qa','bh'],                       // white and maroon with a zigzag
+  ['hu','ir','tj','bg'],             // red, white and green, lying
+  ['at','lv'],                       // red, white, red
+  ['ht','li'],                       // blue over red
+  ['be','de'],                       // black, yellow and red
+  ['tr','tn'],                       // a white crescent and star on red
+  ['jp','bd','pw'],                  // a disc
+  ['us','lr','my'],                  // stripes and a canton
+  ['cn','vn'],                       // yellow stars on red
+  ['xk','cy','ba'],                  // the country's map
+  ['ne','in'],                       // orange, white and green with a disc
+  ['so','fm'],                       // white stars on light blue
+  ['bo','gh'],                       // red, yellow and green, lying
+];

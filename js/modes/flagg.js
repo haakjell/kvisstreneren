@@ -19,8 +19,11 @@ const fgFact=f=>(f.kf||L(`Hovedstaden i ${f.n} er ${f.k}.`,`Hovudstaden i ${f.n}
 const fgMissLi=f=>`<span class="mxthumb"><img class="fgthumb" src="${FG_IMG(f)}" alt=""></span><div><strong>${f.n}</strong>${f.k?`<small>${f.k}</small>`:''}</div>`;
 // dir 'flag': the flag is shown, and the answer is one of six names. dir 'land': the name is
 // shown, and the answer is one of four flags.
+// Flags that look like f's (FLAGG_LIKE) come first among the wrong options, then any in the pool.
 function fgQuestion(f, dir, pool){
-  const others=shuffle(pool.filter(x=>x!==f)).slice(0,dir==='flag'?5:3);
+  const codes=new Set(FLAGG_LIKE.filter(g=>g.includes(f.c)).flat());
+  const rest=pool.filter(x=>x!==f), like=shuffle(rest.filter(x=>codes.has(x.c)));
+  const others=[...like,...shuffle(rest.filter(x=>!codes.has(x.c)))].slice(0,dir==='flag'?5:3);
   const opts=shuffle([f,...others]).map(x=>dir==='flag'
     ?{label:x.n, ok:x===f}
     :{flag:x, ok:x===f, info:x===f?'':L(`Du valgte flagget til ${x.n}.`,`Du valde flagget til ${x.n}.`)});

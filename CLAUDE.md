@@ -545,6 +545,7 @@ ikke under kvissen, så den ikke kan nullstille en runde midt i.
 - **Verdensdel:** Hele verden (alle landene, uten Antarktis), Afrika, Asia, Europa, Nord-Amerika
   (med Mellom-Amerika og Karibia), Sør-Amerika, Oseania og Antarktis. En runde er alle flaggene i
   verdensdelen, i tilfeldig rekkefølge, og feilalternativene kommer bare fra den samme verdensdelen.
+  Flagg som ligner (`FLAGG_LIKE`), kommer først blant feilalternativene, så tilfeldige.
   Antarktis har bare ett flagg og ett alternativ (det er vitsen). Etter runden: «Øv på dem du bommet
   på», «Start på nytt med alle N» og «Velg en annen verdensdel».
 - **Underveis:** øverst til høyre i kvissen er «Gå videre av seg selv ved riktig svar» en rund
@@ -559,6 +560,9 @@ ikke under kvissen, så den ikke kan nullstille en runde midt i.
   liste for et land i to (`['eu','as']`), `k`
   hovedstaden, som vises etter svaret, eller `kf` en hel setning i stedet der det trengs mer
   (Nederland, Bolivia, Sør-Afrika …), og eventuelt `f` en merknad (flagg som ligner hverandre).
+- `FLAGG_LIKE` (samme fil) — grupper av ISO-koder for flagg som ligner (Tsjad og Romania, Norden,
+  Union Jack i hjørnet …). Et land kan stå i flere grupper. Er gruppa større enn antallet
+  alternativer, trekkes noen av dem.
 - Land i to verdensdeler er med i begge (i kvissen og i «Pugg»), og én gang i Hele verden: Russland,
   Tyrkia og Kypros i Europa og Asia, Egypt i Afrika og Asia, og Indonesia i Asia og Oseania. Georgia,
   Armenia, Aserbajdsjan og Kasakhstan står bare i Asia. Valgt av eieren.
