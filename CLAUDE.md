@@ -207,9 +207,20 @@ med samtykke fra eieren**: du kan foreslå å øke MINOR, f.eks. for en ny modus
 funksjon, men øk PATCH hvis du ikke har fått ja. MAJOR skal i prinsippet aldri økes igjen. Økningen
 gjøres i den samme squashede committen som endringen (se «Konvensjoner»), aldri i en egen commit.
 
-Nummereringen begynte på 2.0.0 med redesignen («Redesign the page as bento tiles, with five colour
-themes», 19. oktober 2026, taggen `v2.0.0`); hver commit på main etter den har fått sitt PATCH-nummer,
-så den første med versjon på sida var 2.0.18. Bare 2.0.0 og versjonene fra 2.0.18 har tagg.
+Nummereringen begynte i ettertid på 2.0.0 med redesignen (19. oktober 2026). MINOR ble talt opp for
+hver hovedfeature etter den, og PATCH for hver commit mellom dem:
+
+| Versjon | Commit | Hva |
+|---|---|---|
+| 2.0.0 | `e2adba4` | Redesignen: bento og fem fargetemaer |
+| 2.1.0 | `57da681` | Captchaen før preppen |
+| 2.2.0 | `d98c7d8` | Anagram |
+| 2.3.0 | `b13eee1` | Bommedatabasen |
+| 2.4.0 | `d5664e1` | Forsida på desktop |
+| 2.4.4 | | Versjonen i innstillingene, den første med tagg fra workflowen |
+
+Releasen `v2.0.18` er fra et første forsøk og gjelder samme kode som 2.4.3. Tagger finnes bare fra
+2.4.4 (og 2.0.18). Får MINOR et nytt nummer, legg det til i tabellen.
 
 Taggen lager du ikke selv: `.github/workflows/tag-version.yml` kjører på hver push til main, leser
 `VERSION` fra `core.js` og lager en release med taggen `v<VERSION>` på committen (notatet er
