@@ -242,6 +242,12 @@
 .fgauto[aria-checked="false"]{background:none;box-shadow:inset 0 0 0 2px var(--line)}
 .fgauto[aria-checked="true"]{background:var(--accent);color:var(--accent-ink);box-shadow:0 3px 0 var(--edge-strong)}
 .fgauto[aria-checked="true"] .off{display:none}
+/* After the answer: flags very like it, side by side with their names; its own in bold */
+.fgtwins{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 14px;margin:12px 0 6px}
+.fgtwins figure{margin:0;width:84px;text-align:center}
+.fgtwins img{display:block;width:84px;height:56px;object-fit:contain;filter:drop-shadow(0 0 1px rgba(0,0,0,.45))}
+.fgtwins figcaption{font-size:.8rem;line-height:1.2;margin-top:4px}
+.fgtwins .me figcaption{color:var(--ink);font-weight:800}
 /* Country → flag: four flags as the options */
 .fgname~.options button{display:grid;place-items:center;padding:12px}
 .fgopt{display:block;width:100%;height:clamp(64px,22vw,110px);object-fit:contain}

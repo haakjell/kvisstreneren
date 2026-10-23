@@ -15,7 +15,12 @@ const FG_DIRS={flag:'Flagg → land', land:'Land → flagg'};
 let fgDir='flag', fgPart=null;
 
 const fgCount=n=>n===1?'1 flagg':`${n} flagg`;
-const fgFact=f=>(f.kf||L(`Hovedstaden i ${f.n} er ${f.k}.`,`Hovudstaden i ${f.n} er ${f.k}.`))+(f.f?' '+f.f:'');
+// The line after the answer: the capital, a note, and the flags very like it side by side (FLAGG_TWINS)
+function fgFact(f){
+  const twins=(FLAGG_TWINS.find(g=>g.includes(f.c))||[]).map(c=>FLAGG.find(x=>x.c===c));
+  const side=twins.length?`<span class="fgtwins">${twins.map(x=>`<figure${x===f?' class="me"':''}><img src="${FG_IMG(x)}" alt=""><figcaption>${x.n}</figcaption></figure>`).join('')}</span>`:'';
+  return (f.kf||L(`Hovedstaden i ${f.n} er ${f.k}.`,`Hovudstaden i ${f.n} er ${f.k}.`))+(f.f?' '+f.f:'')+side;
+}
 const fgMissLi=f=>`<span class="mxthumb"><img class="fgthumb" src="${FG_IMG(f)}" alt=""></span><div><strong>${f.n}</strong>${f.k?`<small>${f.k}</small>`:''}</div>`;
 // dir 'flag': the flag is shown, and the answer is one of six names. dir 'land': the name is
 // shown, and the answer is one of four flags.

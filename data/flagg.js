@@ -20,7 +20,7 @@ const FLAGG=[
   {c:'fi',n:'Finland',w:'eu',k:'Helsingfors'},
   {c:'fr',n:'Frankrike',w:'eu',k:'Paris'},
   {c:'gr',n:'Hellas',w:'eu',k:'Aten'},
-  {c:'ie',n:'Irland',w:'eu',k:'Dublin',f:L('Grønt ved stanga – Elfenbeinskysten har oransje ved stanga.','Grønt ved stonga – Elfenbeinskysten har oransje ved stonga.')},
+  {c:'ie',n:'Irland',w:'eu',k:'Dublin',f:L('Grønt ved stanga – Elfenbenskysten har oransje ved stanga.','Grønt ved stonga – Elfenbeinskysten har oransje ved stonga.')},
   {c:'is',n:'Island',w:'eu',k:'Reykjavík'},
   {c:'it',n:'Italia',w:'eu',k:'Roma'},
   {c:'xk',n:'Kosovo',w:'eu',k:'Pristina'},
@@ -36,10 +36,10 @@ const FLAGG=[
   {c:'me',n:'Montenegro',w:'eu',k:'Podgorica'},
   {c:'nl',n:'Nederland',w:'eu',kf:L('Hovedstaden i Nederland er Amsterdam, men regjeringen sitter i Haag.','Hovudstaden i Nederland er Amsterdam, men regjeringa sit i Haag.')},
   {c:'mk',n:'Nord-Makedonia',w:'eu',k:'Skopje'},
-  {c:'no',n:'Norge',w:'eu',k:'Oslo'},
+  {c:'no',n:L('Norge','Noreg'),w:'eu',k:'Oslo'},
   {c:'pl',n:'Polen',w:'eu',k:'Warszawa'},
   {c:'pt',n:'Portugal',w:'eu',k:'Lisboa'},
-  {c:'ro',n:'Romania',w:'eu',k:'București',f:L('Flagget er nesten likt Tchads.','Flagget er nesten likt flagget til Tchad.')},
+  {c:'ro',n:'Romania',w:'eu',k:'București',f:L('Flagget er nesten likt Tsjads.','Flagget er nesten likt flagget til Tsjad.')},
   {c:'ru',n:'Russland',w:['eu','as'],k:'Moskva'},
   {c:'sm',n:'San Marino',w:'eu',k:'San Marino'},
   {c:'rs',n:'Serbia',w:'eu',k:'Beograd'},
@@ -116,7 +116,7 @@ const FLAGG=[
   {c:'dj',n:'Djibouti',w:'af',k:'Djibouti'},
   {c:'eg',n:'Egypt',w:['af','as'],k:'Kairo'},
   {c:'gq',n:'Ekvatorial-Guinea',w:'af',k:'Malabo'},
-  {c:'ci',n:'Elfenbeinskysten',w:'af',k:'Yamoussoukro',f:L('Oransje ved stanga – Irland har grønt ved stanga.','Oransje ved stonga – Irland har grønt ved stonga.')},
+  {c:'ci',n:L('Elfenbenskysten','Elfenbeinskysten'),w:'af',k:'Yamoussoukro',f:L('Oransje ved stanga – Irland har grønt ved stanga.','Oransje ved stonga – Irland har grønt ved stonga.')},
   {c:'er',n:'Eritrea',w:'af',k:'Asmara'},
   {c:'sz',n:'Eswatini',w:'af',k:'Mbabane'},
   {c:'et',n:'Etiopia',w:'af',k:'Addis Abeba'},
@@ -153,7 +153,7 @@ const FLAGG=[
   {c:'za',n:'Sør-Afrika',w:'af',kf:L('Sør-Afrika har tre hovedsteder: Pretoria, Kapp og Bloemfontein.','Sør-Afrika har tre hovudstader: Pretoria, Kapp og Bloemfontein.')},
   {c:'ss',n:'Sør-Sudan',w:'af',k:'Juba'},
   {c:'tz',n:'Tanzania',w:'af',k:'Dodoma'},
-  {c:'td',n:'Tchad',w:'af',k:'N’Djamena',f:L('Flagget er nesten likt Romanias; det blå er litt mørkere.','Flagget er nesten likt flagget til Romania; det blå er litt mørkare.')},
+  {c:'td',n:'Tsjad',w:'af',k:'N’Djamena',f:L('Flagget er nesten likt Romanias; det blå er litt mørkere.','Flagget er nesten likt flagget til Romania; det blå er litt mørkare.')},
   {c:'tg',n:'Togo',w:'af',k:'Lomé'},
   {c:'tn',n:'Tunisia',w:'af',k:'Tunis'},
   {c:'ug',n:'Uganda',w:'af',k:'Kampala'},
@@ -245,4 +245,12 @@ const FLAGG_LIKE=[
   ['ne','in'],                       // orange, white and green with a disc
   ['so','fm'],                       // white stars on light blue
   ['bo','gh'],                       // red, yellow and green, lying
+];
+
+// Flags so alike that the line after the answer shows them side by side, with their names
+// (a narrower pick from FLAGG_LIKE)
+const FLAGG_TWINS=[
+  ['id','mc','pl'], ['td','ro'], ['ad','md'], ['ie','ci'], ['nl','lu'], ['au','nz'], ['ml','gn','sn'],
+  ['co','ec'], ['ni','sv','hn'], ['jo','ps'], ['kw','ae'], ['eg','iq','sy','ye'], ['qa','bh'],
+  ['at','lv'], ['ht','li'], ['ru','si','sk'], ['ne','in'], ['us','lr','my'], ['tr','tn'], ['no','is'],
 ];

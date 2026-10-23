@@ -563,6 +563,8 @@ ikke under kvissen, så den ikke kan nullstille en runde midt i.
 - `FLAGG_LIKE` (samme fil) — grupper av ISO-koder for flagg som ligner (Tsjad og Romania, Norden,
   Union Jack i hjørnet …). Et land kan stå i flere grupper. Er gruppa større enn antallet
   alternativer, trekkes noen av dem.
+- `FLAGG_TWINS` (samme fil) — et smalere utvalg: flagg som er så like (Indonesia, Monaco og Polen;
+  Tsjad og Romania …) at linja etter svaret viser dem side om side med navn (`fgFact()`).
 - Land i to verdensdeler er med i begge (i kvissen og i «Pugg»), og én gang i Hele verden: Russland,
   Tyrkia og Kypros i Europa og Asia, Egypt i Afrika og Asia, og Indonesia i Asia og Oseania. Georgia,
   Armenia, Aserbajdsjan og Kasakhstan står bare i Asia. Valgt av eieren.
