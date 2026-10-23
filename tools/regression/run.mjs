@@ -634,8 +634,14 @@ tests.flagg = async () => {
     if (await page.evaluate(() => __T.click('.card.done .btns .primary'))) await playRound(page, rec, 'oc-retry', 2);
     await page.evaluate(() => __T.click('.card.done .btns .ghost', 0)); await waitReady(page);
     await rec.snap(page, 'oc-restarted');
-    // Halfway through: back with the back gesture, then the other way round
+    // Halfway through: back asks first, by the gesture (stay) and by the button (go), then the other way round
     await page.evaluate(() => __T.answer(0)); await page.goBack(); await page.waitForTimeout(150);
+    await rec.snap(page, 'back-gesture-asks', true); await rec.shoot(page, 'leave-sheet');
+    await page.evaluate(() => document.getElementById('fgLeaveStay').click()); await page.waitForTimeout(50);
+    await rec.snap(page, 'stayed', true);
+    await page.evaluate(() => __T.click('#fgBack')); await page.waitForTimeout(50);
+    await rec.snap(page, 'back-button-asks', true);
+    await page.evaluate(() => document.getElementById('fgLeaveGo').click()); await page.waitForTimeout(150);
     await rec.snap(page, 'back-gesture');
     await page.evaluate(() => __T.click('.setswitch [role=radio]', 1)); await page.waitForTimeout(30);
     await rec.snap(page, 'dir-land');
@@ -648,11 +654,16 @@ tests.flagg = async () => {
     await page.evaluate(() => __T.click('.setswitch [role=radio]', 0)); await page.waitForTimeout(30);
     await part('an'); await playRound(page, rec, 'an-flag');
     await page.evaluate(() => __T.click('#fgBack')); await page.waitForTimeout(100);
-    // The whole world: a few questions, by keyboard
+    // The whole world: a few questions, by keyboard, with «Gå videre av seg selv» off by its icon
     await part('all'); await rec.snap(page, 'all');
+    await page.evaluate(() => __T.click('#fgAuto')); await rec.snap(page, 'auto-off');
     await page.evaluate(() => document.activeElement && document.activeElement.blur());
     for (const k of ['3', 'Enter', '1', 'Enter']) { await page.keyboard.press(k); await page.waitForTimeout(30); await rec.snap(page, 'key-' + k); }
-    await page.evaluate(() => __T.click('#fgBack')); await page.waitForTimeout(100);
+    await page.evaluate(() => __T.click('#fgBack')); await page.waitForTimeout(50);
+    await page.evaluate(() => document.getElementById('fgLeaveGo').click()); await page.waitForTimeout(100);
+    await page.goto(BASE + '#settings'); await page.waitForTimeout(100);   // the switch there is off too
+    await rec.snap(page, 'settings-auto');
+    await page.goto(BASE + '#flagg'); await page.waitForTimeout(100);
     // «Pugg»
     await page.evaluate(() => __T.click('[role=tab]', 1)); await page.waitForTimeout(150);
     await rec.snap(page, 'study'); await rec.shoot(page, 'study');

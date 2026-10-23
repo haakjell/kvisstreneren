@@ -1,7 +1,8 @@
 // ---------- Flagg ----------
 // A start page where the way round (flag → country or country → flag) and the part of the world
 // are picked, then a page with the quiz: every flag in that part, in random order. The quiz has
-// its own history entry, as Anagram's stops do, so the back gesture goes back to the start page.
+// its own history entry, as Anagram's stops do, so the back gesture goes back to the start page;
+// halfway through a round it asks first (#fgLeaveSheet), since the round is lost.
 // Wrong options come from the same part of the world; Antarctica has only itself.
 const FG_IMG=f=>`https://flagcdn.com/${f.c}.svg`;
 const FG_PARTS={
@@ -52,7 +53,7 @@ function fgStart(k){
   $('fgTitle').textContent=FG_PARTS[k].n;
   $('fgPlaySub').textContent=`${FG_DIRS[fgDir]} · ${fgCount(n)}`;
   fgQuiz.button('restart').textContent=n===1?'Start på nytt':`Start på nytt med alle ${n}`;
-  fgView(true);
+  fgView(true); $('fgAuto').setAttribute('aria-checked',quizAuto());
   history.pushState({fgPlay:true},'',location.href);
   fgQuiz.start(fgAll());
 }
@@ -62,8 +63,20 @@ function fgView(play){
   window.scrollTo(0,0);
 }
 function fgToPick(){ if(history.state&&history.state.fgPlay) history.back(); else fgView(false); }
-$('fgBack').addEventListener('click',fgToPick);
-addEventListener('popstate',()=>{ if(!$('fgPlayView').hidden&&!(history.state&&history.state.fgPlay)) fgView(false); });
+// Halfway through a round: at least one answer, and not at the result yet
+const fgMidway=()=>!!fgQuiz.current()&&fgQuiz.marks().length>0;
+let fgLeaving=false;   // the back was confirmed, so the popstate it causes goes through
+$('fgBack').addEventListener('click',()=>fgMidway()?$('fgLeaveSheet').showModal():fgToPick());
+// The back gesture has already left the quiz's entry: put it back while the sheet asks
+addEventListener('popstate',()=>{
+  if($('fgPlayView').hidden||(history.state&&history.state.fgPlay)) return;
+  if(fgMidway()&&!fgLeaving){ history.pushState({fgPlay:true},'',location.href); $('fgLeaveSheet').showModal(); return; }
+  fgLeaving=false; fgView(false);
+});
+$('fgLeaveStay').addEventListener('click',()=>$('fgLeaveSheet').close());
+$('fgLeaveGo').addEventListener('click',()=>{ $('fgLeaveSheet').close(); fgLeaving=true; fgToPick(); });
+// «Gå videre av seg selv», the same setting as in Innstillinger, as «Auto» in the quiz's header
+$('fgAuto').addEventListener('click',()=>{ setQuizAuto(!quizAuto()); $('fgAuto').setAttribute('aria-checked',quizAuto()); });
 
 // Study list: every flag, by part of the world
 function fgRenderStudy(){

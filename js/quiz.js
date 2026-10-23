@@ -31,6 +31,7 @@
 const QUIZ_AUTO=1000;   // ms on a right answer before the next question
 // On unless turned off in Innstillinger: then a right answer waits for «Neste», like a wrong one
 const quizAuto=()=>store.get('autoNext')!=='0';
+const setQuizAuto=on=>store.set('autoNext',on?null:'0');   // here, in Innstillinger and in Flagg
 const quizzes=[];       // every engine: goMode() stops their timers, and one keydown listener serves them
 
 function makeQuiz(mount, o={}){

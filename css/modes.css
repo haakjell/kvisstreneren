@@ -235,6 +235,13 @@
 .fgflag img,.fgopt,.fgstudy img,.fgthumb{filter:drop-shadow(0 0 1px rgba(0,0,0,.45))}
 .fgflag img{width:min(72vw,300px);height:min(48vw,200px);object-fit:contain}
 .fgflag.pop img{animation:pop .35s ease}
+/* «Gå videre av seg selv» as a pill switch in the quiz's header: a clock going round, and «Auto».
+   On, it is filled with the accent; off, it is only an outline, and the clock is struck through. */
+.fgauto{display:flex;align-items:center;gap:6px;flex:none;height:44px;padding:0 16px 0 12px;border:0;border-radius:999px;background:var(--paper);color:var(--muted);font:inherit;font-weight:800;font-size:.95rem;box-shadow:0 3px 0 var(--edge);cursor:pointer}
+.fgauto svg{width:20px;height:20px}
+.fgauto[aria-checked="false"]{background:none;box-shadow:inset 0 0 0 2px var(--line)}
+.fgauto[aria-checked="true"]{background:var(--accent);color:var(--accent-ink);box-shadow:0 3px 0 var(--edge-strong)}
+.fgauto[aria-checked="true"] .off{display:none}
 /* Country → flag: four flags as the options */
 .fgname~.options button{display:grid;place-items:center;padding:12px}
 .fgopt{display:block;width:100%;height:clamp(64px,22vw,110px);object-fit:contain}

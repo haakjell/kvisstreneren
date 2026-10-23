@@ -171,7 +171,7 @@ tabellen over og ikke i Dagens kviss. Alt lagres i `localStorage` på enheten.
 
 | Innstilling | Nøkkel | Bor i |
 |---|---|---|
-| Gå videre av seg selv ved riktig svar (standard på) | `autoNext` (`'0'` = av) | `quizAuto()` i `quiz.js` |
+| Gå videre av seg selv ved riktig svar (standard på; også som «Auto»-knapp i Flagg) | `autoNext` (`'0'` = av) | `quizAuto()`/`setQuizAuto()` i `quiz.js` |
 | Språk: Bokmål / Nynorsk | `lang` (`'nn'`; ingen = bokmål) | `LANG` i `core.js` — se «Språk» |
 | Bilder i Hotel Cæsar (standard på) | `cPics` | `cSetPics()` i `caesar.js` |
 | T-banekartet: Geografisk / Linjekart | `tMapKind` | `tSetKind()` i `tbane.js` |
@@ -547,6 +547,11 @@ ikke under kvissen, så den ikke kan nullstille en runde midt i.
   verdensdelen, i tilfeldig rekkefølge, og feilalternativene kommer bare fra den samme verdensdelen.
   Antarktis har bare ett flagg og ett alternativ (det er vitsen). Etter runden: «Øv på dem du bommet
   på», «Start på nytt med alle N» og «Velg en annen verdensdel».
+- **Underveis:** øverst til høyre i kvissen er «Gå videre av seg selv ved riktig svar» en rund
+  knapp med en klokke med pil rundt og «Auto» (`#fgAuto`; av: bare omriss og strek over klokka), den samme innstillingen som i innstillingene (`setQuizAuto()`). Prøver man å gå
+  tilbake midt i en runde (minst ett svar, ikke på resultatet), med «← Verdensdelene» eller
+  tilbakegesten, spør arket `#fgLeaveSheet` først, siden runden går tapt. Tilbakegesten har da
+  allerede gått ut av kvissens historikkoppføring, så den legges inn igjen mens arket spør.
 - **Pugg** viser alle flaggene, per verdensdel, med «Skjul navn».
 
 - `FLAGG` (`data/flagg.js`) — én rad per land: `c` ISO-koden (gir bildet), `n` navnet (`L()` der
@@ -928,7 +933,9 @@ De tre `update-`skriptene skriver datafila si helt på nytt; ikke rediger de fil
 - **Koden er på engelsk**: variabel- og funksjonsnavn, id-er, CSS-klasser og kommentarer.
   Unntaket er egennavn og faguttrykk som ikke har noen naturlig engelsk form — `FYLKER`,
   `KOMMUNER`, `bydel`, `vapen` — de blir stående som de er.
-- **Commit-meldinger skrives alltid på engelsk**, selv om sida og denne fila er på norsk.
+- **Commit-meldinger skrives alltid på engelsk**, selv om sida og denne fila er på norsk. De skal ikke
+  ha `Claude-Session:`-linja (lenken til Claude-økta): commit-meldingen blir notatet i releasen, som er
+  offentlig. `Co-Authored-By:` kan stå.
 - **Branchene skal ha navn som sier hva de gjør**, på engelsk med bindestreker, f.eks.
   `claude/bom-database-icon` eller `claude/fix-countdown-dst` — ikke tilfeldige navn som
   `claude/pensive-sagan-1o21l0`. Har økta fått et tilfeldig navn, lag en ny branch med et

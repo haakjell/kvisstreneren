@@ -428,6 +428,7 @@ Nyheitsvindauget er komplett. Namnedagane 22. og 23. oktober ligg fram i tid, me
       <h1 id="fgTitle"></h1>
       <div class="sub" id="fgPlaySub"></div>
     </div>
+    <button type="button" class="fgauto" role="switch" id="fgAuto" aria-checked="true" aria-label="Gå videre av seg selv ved riktig svar" title="Gå videre av seg selv ved riktig svar" data-nn-aria-label="Gå vidare av seg sjølv ved rett svar" data-nn-title="Gå vidare av seg sjølv ved rett svar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/><path d="M12 8v4l2.5 2"/><path class="off" d="M3 3l18 18"/></svg><span aria-hidden="true">Auto</span></button>
   </header>
   <main id="fgQuiz"><!-- the quiz card, from makeQuiz() in js/quiz.js --></main>
   </div>
@@ -684,6 +685,15 @@ Nyheitsvindauget er komplett. Namnedagane 22. og 23. oktober ligg fram i tid, me
   <div class="sheetbtns">
     <button class="primary" id="installClose" data-nn="Skjønar">Skjønner</button>
     <button class="linkbtn" id="installNever" data-nn="Ikkje vis knappen igjen">Ikke vis knappen igjen</button>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="fgLeaveSheet" aria-labelledby="fgLeaveTitle">
+  <h2 id="fgLeaveTitle" data-nn="Vil du gå tilbake?">Vil du gå tilbake?</h2>
+  <p data-nn="Du mistar det du har svart så langt i denne runden.">Du mister det du har svart så langt i denne runden.</p>
+  <div class="sheetbtns">
+    <button class="primary" id="fgLeaveStay" data-nn="Nei, hald fram">Nei, fortsett</button>
+    <button class="ghost" id="fgLeaveGo" data-nn="Ja, gå tilbake">Ja, gå tilbake</button>
   </div>
 </dialog>
 
