@@ -201,8 +201,10 @@ Sida har et versjonsnummer, `VERSION` øverst i `core.js` (`MAJOR.MINOR.PATCH`, 
 Det vises bare nederst i innstillingene, «Kvisstreneren 1.0.3 · Kildekoden på GitHub», der
 nummeret lenker til taggen og resten til repoet (`REPO_URL`). Ingen bunnlinje på forsida.
 
-**Hver push til main skal ha et nytt nummer.** Som standard økes PATCH (`1.0.3` → `1.0.4`), uansett
-hva endringen er — også en ny prepp eller nye data. MINOR (`1.0.3` → `1.1.0`) og MAJOR økes **bare
+**Hver push til main som endrer sida, skal ha et nytt nummer.** Som standard økes PATCH (`1.0.3` →
+`1.0.4`), uansett hva endringen er — også en ny prepp eller nye data. Endringer som ikke når sida
+(bare CLAUDE.md, README, `tools/` eller workflowen) kan pushes uten nytt nummer; da blir det ingen
+ny release. MINOR (`1.0.3` → `1.1.0`) og MAJOR økes **bare
 med samtykke fra eieren**: du kan foreslå å øke MINOR, f.eks. for en ny modus eller en stor ny
 funksjon, men øk PATCH hvis du ikke har fått ja. MAJOR skal i prinsippet aldri økes igjen. Økningen
 gjøres i den samme squashede committen som endringen (se «Konvensjoner»), aldri i en egen commit.
@@ -219,13 +221,14 @@ hver hovedfeature etter den, og PATCH for hver commit mellom dem:
 | 2.4.0 | `d5664e1` | Forsida på desktop |
 | 2.4.4 | | Versjonen i innstillingene, den første med tagg fra workflowen |
 
-Releasen `v2.0.18` er fra et første forsøk og gjelder samme kode som 2.4.3. Tagger finnes bare fra
-2.4.4 (og 2.0.18). Får MINOR et nytt nummer, legg det til i tabellen.
+Taggen `v2.0.18` er fra et første forsøk og står på samme kode som 2.4.3 (releasen er slettet).
+Ellers finnes tagger bare fra 2.4.4. Får MINOR et nytt nummer, legg det til i tabellen.
 
 Taggen lager du ikke selv: `.github/workflows/tag-version.yml` kjører på hver push til main, leser
 `VERSION` fra `core.js` og lager en release med taggen `v<VERSION>` på committen (notatet er
-commit-meldingen). Er nummeret allerede brukt på en annen commit, feiler workflowen og sier fra — da
-er det glemt å øke det; rett det i neste push. Sida publiseres av Pages uansett; workflowen rører
+commit-meldingen). Er nummeret allerede brukt, lager den ingenting og sier bare fra i loggen
+(kjøringen blir likevel grønn) — har pushen endret sida, er det glemt å øke det; rett det i neste
+push. Workflowen feiler bare når versjonslinja mangler eller har feil form. Sida publiseres av Pages uansett; workflowen rører
 ikke den. Linja må stå på formen `const VERSION='x.y.z';`, ellers finner ikke workflowen den.
 
 ## Utseende
@@ -896,8 +899,8 @@ De tre `update-`skriptene skriver datafila si helt på nytt; ikke rediger de fil
   `claude/bom-database-icon` eller `claude/fix-countdown-dst` — ikke tilfeldige navn som
   `claude/pensive-sagan-1o21l0`. Har økta fått et tilfeldig navn, lag en ny branch med et
   beskrivende navn før du committer.
-- **Før push til main:** øk `VERSION` i `core.js` (PATCH, med mindre eieren har sagt ja til MINOR —
-  se «Versjon»), squash alle commits i branchen til én, rebase den på nyeste
+- **Før push til main:** øk `VERSION` i `core.js` hvis endringen når sida (PATCH, med mindre eieren
+  har sagt ja til MINOR — se «Versjon»), squash alle commits i branchen til én, rebase den på nyeste
   `origin/main`, og fast-forward main til den (`git push origin HEAD:main`, aldri force-push
   til main). Kjør syntakssjekken under «Testing» på nytt etter rebasen.
 - Denne fila (CLAUDE.md) er på norsk, som dokumentasjon for deg.

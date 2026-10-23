@@ -1,6 +1,7 @@
 # Tags every push to main with the version in js/core.js (const VERSION='x.y.z'), as a GitHub
-# release v<VERSION>. Fails if the version is malformed, or already tagged on another commit
-# (someone forgot to raise it). GitHub Pages deploys from main on its own; this does not touch it.
+# release v<VERSION>. If that version is already tagged, the push did not raise it, and nothing is
+# made. Fails only if the version line is missing or malformed. GitHub Pages deploys from main on
+# its own; this does not touch it.
 name: Tag version
 on:
   push:
@@ -23,7 +24,7 @@ jobs:
           tag="v$v"
           if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
             if [ "$(git rev-list -n1 "$tag")" = "$GITHUB_SHA" ]; then echo "$tag is already on this commit"; exit 0; fi
-            echo "::error file=js/core.js::$tag is already used by $(git rev-list -n1 "$tag"); raise VERSION in js/core.js"
-            exit 1
+            echo "::notice file=js/core.js::VERSION is still $v (tagged on $(git rev-list -n1 "$tag")), so no new release"
+            exit 0
           fi
           gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --notes "$(git log -1 --format=%B "$GITHUB_SHA")"
