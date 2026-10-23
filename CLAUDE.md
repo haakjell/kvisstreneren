@@ -221,8 +221,7 @@ hver hovedfeature etter den, og PATCH for hver commit mellom dem:
 | 2.4.0 | `d5664e1` | Forsida på desktop |
 | 2.4.4 | | Versjonen i innstillingene, den første med tagg fra workflowen |
 
-Taggen `v2.0.18` er fra et første forsøk og står på samme kode som 2.4.3 (releasen er slettet).
-Ellers finnes tagger bare fra 2.4.4. Får MINOR et nytt nummer, legg det til i tabellen.
+Tagger finnes bare fra 2.4.4. Får MINOR et nytt nummer, legg det til i tabellen.
 
 Taggen lager du ikke selv: `.github/workflows/tag-version.yml` kjører på hver push til main, leser
 `VERSION` fra `core.js` og lager en release med taggen `v<VERSION>` på committen (notatet er
