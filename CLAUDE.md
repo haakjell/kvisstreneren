@@ -430,8 +430,8 @@ per spørsmål, og `log` med poeng per dag). Oppdaterer man sida midt i runden, 
 der man slapp, uten å gi samme spørsmål på nytt. `log` gir «N dager på rad».
 
 Rundene er nummerert fra `MX_FIRST` (1. oktober 2026 er #0, dagen etter #1 osv.), og nummeret
-står under overskriften. Etter runden kan resultatet deles som i Wordle (delingsarket på mobil,
-ellers utklippstavla), i akkurat dette formatet:
+står under overskriften. Etter runden kan resultatet kopieres som i Wordle («Kopier resultatet», rett til utklippstavla
+på alle enheter — ikke delingsarket, som på PC ikke alltid kan kopiere), i akkurat dette formatet:
 
 ```
 Kvisstreneren #N
