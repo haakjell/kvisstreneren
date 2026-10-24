@@ -908,6 +908,14 @@ node tools/regression/compare.mjs /tmp/reg-for /tmp/reg-etter          # alt må
 node tools/regression/compare.mjs /tmp/reg-for /tmp/reg-etter --text   # bare synlig tekst o.l.
 ```
 
+Testene kjøres side om side, like mange som maskinen har kjerner (høyst åtte); `-j1` kjører dem én
+og én, `-j4` fire om gangen. Resultatet skal være det samme uansett (sammenlign gjerne en `-j1`-kjøring
+med en vanlig). Derfor må hver test klare seg selv: egne sider og egen `Rec`, ingen delt tilstand.
+Lange tester deles i biter med `split()`, som setter radene sammen igjen i riktig rekkefølge (Dagens
+kviss og reklamen), og de tregeste startes først (`SLOW`). Et øyeblikksbilde venter til annonsene
+har kommet inn, og et element som har fokus men er skjult, regnes som uten fokus, så resultatet ikke
+avhenger av hvor fort maskinen er.
+
 Versjonen låses til `0.0.0` i testen (serveren skriver om linja i `core.js`), så den ikke gir
 forskjeller mellom to commits.
 

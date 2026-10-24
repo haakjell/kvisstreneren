@@ -2,7 +2,8 @@
 // through the UI only (no internal function names), so the same run works before and after a
 // refactor. Output: <out>/<test>.json with one record per step, <out>/html/<hash>.html with the
 // markup, <out>/shots/*.png and <out>/errors.json. Compare two runs with compare.mjs.
-//   node tools/regression/run.mjs <repoDir> <outDir> [only-test-prefix]
+//   node tools/regression/run.mjs <repoDir> <outDir> [only-test-prefix] [-jN]
+// The tests run N at a time (-j1: one by one; default: the number of CPUs, at most 8).
 // Needs Playwright with Chromium, installed locally or globally (npm i -g playwright).
 import { createRequire } from 'module';
 import { execSync } from 'child_process';
@@ -10,13 +11,16 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import os from 'os';
 let pw;
 try { pw = await import('playwright'); }
 catch { pw = createRequire(path.join(execSync('npm root -g').toString().trim(), 'x.js'))('playwright'); }
 const { chromium } = pw;
 
-const [repoArg, out, only] = process.argv.slice(2);
-if (!repoArg || !out) { console.error('usage: run.mjs <repo> <out> [only]'); process.exit(1); }
+const jobsArg = process.argv.slice(2).find(a => /^-j\d+$/.test(a));
+const JOBS = jobsArg ? +jobsArg.slice(2) : Math.max(1, Math.min(8, os.cpus().length));
+const [repoArg, out, only] = process.argv.slice(2).filter(a => a !== jobsArg);
+if (!repoArg || !out || !(JOBS >= 1)) { console.error('usage: run.mjs <repo> <out> [only] [-jN]'); process.exit(1); }
 const repo = path.resolve(repoArg);
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(path.join(out, 'html'), { recursive: true });
@@ -65,7 +69,8 @@ const INIT = () => {
       return { html: T.clean(a).innerHTML + (dl ? '\n<!--dialogs-->\n' + dl : ''), text: text + (dl ? '\n[dialog] ' + [...document.querySelectorAll('dialog[open]')].map(d => d.innerText).join('\n') : ''),
         url: location.hash + location.search, mode: document.body.dataset.mode || '', bodyCls: document.body.className,
         wrapCls: document.querySelector('.wrap').className,
-        focus: ae && ae !== document.body ? ae.tagName + ':' + (ae.textContent || ae.value || '').trim().slice(0, 40) : '',
+        // A focused element that has just been hidden loses its focus on the next frame, which may come late
+        focus: ae && ae !== document.body && T.vis(ae) ? ae.tagName + ':' + (ae.textContent || ae.value || '').trim().slice(0, 40) : '',
         ls: JSON.stringify(Object.keys(localStorage).sort().filter(k => !k.startsWith('wd-')).map(k => [k, localStorage.getItem(k)])) };
     },
     card() { const a = T.app(); return [...a.querySelectorAll('.card')].find(T.vis); },
@@ -145,12 +150,18 @@ async function newPage(test, { width = 412, height = 915, mobile = true, headDat
 }
 
 class Rec {
-  constructor(name) { this.name = name; this.rows = []; this.shot = 0; }
+  constructor(name, part = '') { this.name = name; this.part = part; this.rows = []; this.shot = 0; }
   push(label, snap) { this.rows.push({ label, ...store(snap) }); }
-  async snap(page, label, full = false) { this.push(label, await page.evaluate(f => __T.snap(f), full)); }
+  // After the ads have come in, 50–500 ms after the page shows, so the snapshot does not depend on how quickly the machine got there
+  async snap(page, label, full = false) {
+    this.push(label, await page.evaluate(async f => {
+      for (let t = 0; t < 150 && document.querySelector('.ad.wait'); t++) await new Promise(r => setTimeout(r, 20));
+      return __T.snap(f);
+    }, full));
+  }
   async shoot(page, label) {
     await page.waitForFunction(() => !document.querySelector('.ad.wait'), null, { timeout: 3000 }).catch(() => {});
-    const f = `${this.name}-${String(++this.shot).padStart(2, '0')}-${label.replace(/[^a-z0-9]+/gi, '_')}.png`;
+    const f = `${this.name}${this.part}-${String(++this.shot).padStart(2, '0')}-${label.replace(/[^a-z0-9]+/gi, '_')}.png`;
     await page.screenshot({ path: path.join(out, 'shots', f), fullPage: !this.name.startsWith('ads'), animations: 'disabled', mask: [page.locator('#cdBody')], caret: 'hide' });
     this.rows.push({ label: 'shot:' + label, shot: f });
   }
@@ -176,9 +187,20 @@ async function playRound(page, rec, tag, startStep = 0) {
 }
 
 const tests = {};
+// One test in parts that run side by side, each with its own Rec; the rows are put back together
+// in order, as one test, when the last part is done
+function split(name, parts) {
+  const recs = []; let left = parts.length;
+  parts.forEach((fn, k) => tests[`${name}:${k}`] = async () => {
+    try { await fn(recs[k] = new Rec(name, k ? '.' + k : '')); }
+    finally { if (!--left) { recs[0].rows = recs.flatMap(r => r.rows); recs[0].save(); } }
+  });
+}
+// Started first, so no long test is left running alone at the end
+const SLOW = ['anagram', 'dagens', 'ads', 'nynorsk', 'flagg', 'home', 'settings', 'captcha', 'clock'];
 
-tests.home = async () => {
-  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
+for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
+  tests['home-' + cfg] = async () => {
     const rec = new Rec('home-' + cfg), page = await newPage(rec.name, opt);
     await rec.snap(page, 'home-full', true); await rec.shoot(page, 'home');
     await page.goto(BASE + '#prep'); await page.waitForTimeout(150);
@@ -209,8 +231,8 @@ tests.home = async () => {
     await page.goto(BASE); await page.waitForTimeout(150); await rec.shoot(page, 'home-dark');
     await page.goto(BASE + '#caesar'); await page.waitForTimeout(150); await rec.shoot(page, 'caesar-dark');
     rec.save(); await page.context().close();
-  }
-};
+  };
+}
 
 // Each quiz mode: every radio, a round each, retry, restart, extra switches, the study tab
 const MODES = ['bydel', 'tbane', 'regjering', 'vapen', 'mgp', 'caesar'];
@@ -315,9 +337,10 @@ for (const [name, days, opt] of [
   ['dagens-desktop', dagensDays(3, 8, 5), { width: 1280, height: 900, mobile: false }],
   ['dagens-geo', dagensDays(1, 10, 3), { storage: { tMapKind: 'geo' } }],
 ]) {
-  tests[name] = async () => {
-    const rec = new Rec(name);
-    for (const d of days) {
+  const chunks = [];
+  for (let i = 0; i < days.length; i += 8) chunks.push(days.slice(i, i + 8));
+  split(name, chunks.map(part => async rec => {
+    for (const d of part) {
       const page = await newPage(name, { ...opt, headDate: d, url: BASE + '#dagens' });
       const tag = new Date(d).toISOString().slice(0, 10);
       await waitReady(page);
@@ -327,8 +350,7 @@ for (const [name, days, opt] of [
       if (d === days[0]) await rec.shoot(page, 'done-' + tag);
       await page.context().close();
     }
-    rec.save();
-  };
+  }));
 }
 
 tests['dagens-flow'] = async () => {
@@ -382,8 +404,8 @@ tests['dagens-flow'] = async () => {
 };
 
 // Innstillinger: every setting, that the modes follow them, and a round without auto-advance
-tests.settings = async () => {
-  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
+for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
+  tests['settings-' + cfg] = async () => {
     const rec = new Rec('settings-' + cfg), page = await newPage(rec.name, opt);
     const click = async (sel, label) => { await page.click(sel); await page.waitForTimeout(80); await rec.snap(page, label); };
     await page.evaluate(() => document.querySelector('#home .gear').click()); await page.waitForTimeout(150);
@@ -415,14 +437,14 @@ tests.settings = async () => {
     await page.click('#stThemeDark'); await rec.shoot(page, 'dark'); await page.click('#stThemeAuto');
     await page.click('#stPalMulte'); await rec.shoot(page, 'multe'); await page.click('#stPalLyng');
     rec.save(); await page.context().close();
-  }
-};
+  };
+}
 
 // Nynorsk, picked in Innstillinger (the page reloads), then every page, a round of each quiz, the
 // countdown and the sheets in nynorsk; and back
 const NN_NOW = Date.parse('2026-10-15T10:00:00Z');   // a Thursday
-tests.nynorsk = async () => {
-  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
+for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
+  tests['nynorsk-' + cfg] = async () => {
     const rec = new Rec('nynorsk-' + cfg), page = await newPage(rec.name, { ...opt, deviceNow: NN_NOW, url: BASE + '#settings' });
     await Promise.all([page.waitForEvent('load'), page.click('#stLangNn')]); await page.waitForTimeout(200);
     await rec.snap(page, 'settings', true); await rec.shoot(page, 'settings');
@@ -453,7 +475,9 @@ tests.nynorsk = async () => {
     await Promise.all([page.waitForEvent('load'), page.click('#stLangNb')]); await page.waitForTimeout(200);
     await rec.snap(page, 'back-to-bokmal', true);
     rec.save(); await page.context().close();
-  }
+  };
+}
+tests['nynorsk-clock'] = async () => {
   // The countdown in nynorsk: plural forms, «I morgon», and during the quiz
   const rec = new Rec('nynorsk-clock');
   for (const [label, at] of [['thursday', '2026-10-15T10:00:00Z'], ['tuesday', '2026-10-20T08:00:00Z'], ['last-hour', '2026-10-21T16:30:00Z'], ['quiz-live', '2026-10-21T18:30:00Z'], ['stale-prep', '2026-10-22T10:00:00Z']]) {
@@ -466,9 +490,8 @@ tests.nynorsk = async () => {
 };
 
 // Ads, and the shaking all week but for the quiz itself
-tests.ads = async () => {
-  const rec = new Rec('ads');
-  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
+split('ads', [
+  ...[['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]].map(([cfg, opt]) => async rec => {
     const page = await newPage('ads', { ...opt, url: BASE });
     await rec.snap(page, cfg + ':shaking', true);
     await page.evaluate(() => document.getElementById('shakeBtn').click()); await page.waitForTimeout(50);
@@ -495,72 +518,75 @@ tests.ads = async () => {
       await rec.snap(page, cfg + ':shake-back', true);
     }
     await page.context().close();
-  }
-  // Just the shaking off, from the countdown's sheet; then the ads on and off again, from their own sheet
-  {
-    const page = await newPage('ads', { url: BASE });
-    await page.evaluate(() => document.getElementById('shakeBtn').click()); await page.waitForTimeout(50);
-    await page.click('#shakeStop'); await page.waitForTimeout(700);
-    await rec.snap(page, 'calm:home', true);
-    await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
-    await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'calm:settings-ads-on', true);
-    await page.goto(BASE); await page.waitForTimeout(700);
-    await page.evaluate(() => { const a = [...document.querySelectorAll('.adwhy')].find(x => x.getClientRects().length); a.click(); });
-    await page.waitForTimeout(50); await rec.snap(page, 'calm:why', true);
-    await page.click('#adWhyOff'); await page.waitForTimeout(100);
-    await rec.snap(page, 'calm:ads-off', true);
-    await page.goto(BASE); await page.waitForTimeout(150); await rec.snap(page, 'calm:reloaded', true);
-    await page.context().close();
-  }
-  // The same in Innstillinger: two switches, each on its own
-  {
-    const page = await newPage('ads', { url: BASE + '#settings' });
-    await rec.snap(page, 'settings:shaking', true);
-    await page.click('#stShake'); await page.waitForTimeout(80); await rec.snap(page, 'settings:shake-off', true);
-    await page.goto(BASE); await page.waitForTimeout(700); await rec.snap(page, 'settings:calm-home', true);
-    await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
-    await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'settings:ads-on', true);
-    await page.click('#stShake'); await page.waitForTimeout(80); await rec.snap(page, 'settings:both-on', true);
-    await page.goto(BASE); await page.waitForTimeout(700); await rec.snap(page, 'settings:both-home', true);
-    await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
-    await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'settings:ads-off', true);
-    await page.goto(BASE); await page.waitForTimeout(150); await rec.snap(page, 'settings:shaking-home', true);
-    await page.context().close();
-  }
-  // The prep during the quiz, Wednesday 19:00 Oslo: no shaking and no ads
-  const page2 = await newPage('ads', { deviceNow: Date.parse('2026-10-14T17:00:00Z'), url: BASE + '#prep', storage: { ads: '1' } });
-  await rec.snap(page2, 'wednesday-quiz-prep', true);
-  await page2.context().close();
-  // The shaking lasts all week but for the quiz itself, Wednesday 19–22 Oslo
-  for (const [label, at] of [['tuesday', '2026-10-20T18:00:00Z'], ['before-quiz', '2026-10-21T16:59:00Z'],
-    ['quiz-start', '2026-10-21T17:01:00Z'], ['quiz-end', '2026-10-21T20:01:00Z'], ['thursday', '2026-10-22T10:00:00Z']]) {
-    const p = await newPage('ads', { deviceNow: Date.parse(at) });
-    await rec.snap(p, 'window:' + label, true);
-    await p.context().close();
-  }
-  // Loading the prep with a server that answers with the time: the prep is redrawn when it has
-  // answered, and what was filled into it must still be there. Saved from before the shaking and
-  // the ads were split: shakeOff alone still means ads
-  const page4 = await newPage('ads', { url: BASE + '#prep', headDate: DEVICE_NOW, storage: { shakeOff: '1' } });
-  await page4.waitForTimeout(700);
-  await rec.snap(page4, 'prep-load-server-clock', true); await rec.shoot(page4, 'prep-load-server-clock');
-  await page4.context().close();
-  // Ads on from before the split: told once that both can now be turned off, then never again
-  for (const [label, btn] of [['news-off', '#adsNewsOff'], ['news-keep', '#adsNewsKeep']]) {
-    const p = await newPage('ads', { url: BASE, storage: { ads: '1', shakeOff: '1' } });
-    await p.waitForTimeout(150); await rec.snap(p, label + ':sheet', true);
-    await p.click(btn); await p.waitForTimeout(700); await rec.snap(p, label + ':after', true);
-    await p.goto(BASE); await p.waitForTimeout(150); await rec.snap(p, label + ':reloaded', true);
-    await p.context().close();
-  }
-  rec.save();
-};
+  }),
+  async rec => {
+    // Just the shaking off, from the countdown's sheet; then the ads on and off again, from their own sheet
+    {
+      const page = await newPage('ads', { url: BASE });
+      await page.evaluate(() => document.getElementById('shakeBtn').click()); await page.waitForTimeout(50);
+      await page.click('#shakeStop'); await page.waitForTimeout(700);
+      await rec.snap(page, 'calm:home', true);
+      await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
+      await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'calm:settings-ads-on', true);
+      await page.goto(BASE); await page.waitForTimeout(700);
+      await page.evaluate(() => { const a = [...document.querySelectorAll('.adwhy')].find(x => x.getClientRects().length); a.click(); });
+      await page.waitForTimeout(50); await rec.snap(page, 'calm:why', true);
+      await page.click('#adWhyOff'); await page.waitForTimeout(100);
+      await rec.snap(page, 'calm:ads-off', true);
+      await page.goto(BASE); await page.waitForTimeout(150); await rec.snap(page, 'calm:reloaded', true);
+      await page.context().close();
+    }
+    // The same in Innstillinger: two switches, each on its own
+    {
+      const page = await newPage('ads', { url: BASE + '#settings' });
+      await rec.snap(page, 'settings:shaking', true);
+      await page.click('#stShake'); await page.waitForTimeout(80); await rec.snap(page, 'settings:shake-off', true);
+      await page.goto(BASE); await page.waitForTimeout(700); await rec.snap(page, 'settings:calm-home', true);
+      await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
+      await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'settings:ads-on', true);
+      await page.click('#stShake'); await page.waitForTimeout(80); await rec.snap(page, 'settings:both-on', true);
+      await page.goto(BASE); await page.waitForTimeout(700); await rec.snap(page, 'settings:both-home', true);
+      await page.goto(BASE + '#settings'); await page.waitForTimeout(100);
+      await page.click('#stAdsOn'); await page.waitForTimeout(80); await rec.snap(page, 'settings:ads-off', true);
+      await page.goto(BASE); await page.waitForTimeout(150); await rec.snap(page, 'settings:shaking-home', true);
+      await page.context().close();
+    }
+  },
+  async rec => {
+    // The prep during the quiz, Wednesday 19:00 Oslo: no shaking and no ads
+    const page2 = await newPage('ads', { deviceNow: Date.parse('2026-10-14T17:00:00Z'), url: BASE + '#prep', storage: { ads: '1' } });
+    await rec.snap(page2, 'wednesday-quiz-prep', true);
+    await page2.context().close();
+    // The shaking lasts all week but for the quiz itself, Wednesday 19–22 Oslo
+    for (const [label, at] of [['tuesday', '2026-10-20T18:00:00Z'], ['before-quiz', '2026-10-21T16:59:00Z'],
+      ['quiz-start', '2026-10-21T17:01:00Z'], ['quiz-end', '2026-10-21T20:01:00Z'], ['thursday', '2026-10-22T10:00:00Z']]) {
+      const p = await newPage('ads', { deviceNow: Date.parse(at) });
+      await rec.snap(p, 'window:' + label, true);
+      await p.context().close();
+    }
+    // Loading the prep with a server that answers with the time: the prep is redrawn when it has
+    // answered, and what was filled into it must still be there. Saved from before the shaking and
+    // the ads were split: shakeOff alone still means ads
+    const page4 = await newPage('ads', { url: BASE + '#prep', headDate: DEVICE_NOW, storage: { shakeOff: '1' } });
+    await page4.waitForTimeout(700);
+    await rec.snap(page4, 'prep-load-server-clock', true); await rec.shoot(page4, 'prep-load-server-clock');
+    await page4.context().close();
+    // Ads on from before the split: told once that both can now be turned off, then never again
+    for (const [label, btn] of [['news-off', '#adsNewsOff'], ['news-keep', '#adsNewsKeep']]) {
+      const p = await newPage('ads', { url: BASE, storage: { ads: '1', shakeOff: '1' } });
+      await p.waitForTimeout(150); await rec.snap(p, label + ':sheet', true);
+      await p.click(btn); await p.waitForTimeout(700); await rec.snap(p, label + ':after', true);
+      await p.goto(BASE); await p.waitForTimeout(150); await rec.snap(p, label + ':reloaded', true);
+      await p.context().close();
+    }
+  },
+]);
 
 // Anagram: the map, a stop's page, a wrong and a right answer, back via the button and the back
 // gesture, all of them in order, the treasure chest and the gold countdown, a solved stop again, the progress after a reload, and the home
 // button; also in nynorsk and dark. Reads ANAGRAMS for the answers.
-tests.anagram = async () => {
-  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
+for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
+  tests['anagram-' + cfg] = async () => {
     const rec = new Rec('anagram-' + cfg), page = await newPage(rec.name, { ...opt, url: BASE + '#anagram' });
     await page.waitForTimeout(150);
     await rec.snap(page, 'map'); await rec.shoot(page, 'map');
@@ -594,15 +620,15 @@ tests.anagram = async () => {
     await page.reload(); await page.waitForTimeout(150); await rec.snap(page, 'reloaded');
     await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'home', true);
     rec.save(); await page.context().close();
-  }
-};
+  };
+}
 
 // Server and device disagree about the time: the countdown and the prep's «utdatert» notice
 // should follow the server (the device's clock is only a fallback before it has answered)
 // Kvisslagets offisielle bommedatabase: the list of questions, opened by click and by Enter, on both screens and in
 // nynorsk with the dark theme
-tests.bom = async () => {
-  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
+for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
+  tests['bom-' + cfg] = async () => {
     const rec = new Rec('bom-' + cfg), page = await newPage(rec.name, opt);
     await rec.snap(page, 'home'); await rec.shoot(page, 'home');
     await page.evaluate(() => __T.click('.mode[data-mode=bom]')); await page.waitForTimeout(100);
@@ -616,14 +642,14 @@ tests.bom = async () => {
     await rec.snap(page, 'media'); await rec.shoot(page, 'media');
     await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'back');
     rec.save(); await page.context().close();
-  }
-};
+  };
+}
 
 // Flagg: the start page, a round each way (Oseania, Antarktis and a part of the whole world), retry,
 // restart, another part, back from the quiz with «← Verdensdelene» and the back gesture, the
 // keyboard, and «Pugg»; on both screens and in nynorsk with the dark theme
-tests.flagg = async () => {
-  for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
+for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
+  tests['flagg-' + cfg] = async () => {
     const rec = new Rec('flagg-' + cfg), page = await newPage(rec.name, opt);
     await page.evaluate(() => __T.click('.mode[data-mode=flagg]')); await page.waitForTimeout(100);
     await rec.snap(page, 'pick'); await rec.shoot(page, 'pick');
@@ -672,19 +698,20 @@ tests.flagg = async () => {
     await page.evaluate(() => __T.click('[role=tab]', 0)); await page.waitForTimeout(50);
     await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'home');
     rec.save(); await page.context().close();
-  }
-};
+  };
+}
 
 tests.clock = async () => {
   const rec = new Rec('clock');
   const cd = async (page, label) => rec.rows.push({ label: 'countdown:' + label,
     text: await page.evaluate(() => document.getElementById('countdown').className.replace(/ ?\btick\b/, '') + ' | ' + document.getElementById('cdBody').innerText.replace(/\s+/g, ' ').replace(/\d+ (sekund|sekunder|millisekund|millisekunder)\b.*$/, '')) });
   for (const [label, device, server] of [
-    ['device-late', '2026-10-20T10:00:00Z', '2026-10-08T10:00:00Z'],
-    ['device-early', '2026-09-20T10:00:00Z', '2026-10-08T10:00:00Z'],
-    ['server-quiz-live', '2026-10-08T10:00:00Z', '2026-10-14T18:30:00Z'],
-    ['server-tuesday-evening', '2026-10-08T10:00:00Z', '2026-10-13T18:00:00Z'],
-    ['server-wednesday-morning', '2026-10-08T10:00:00Z', '2026-10-14T08:00:00Z'],
+    // The server's times are half a minute past, so the minutes shown do not depend on how long the test takes
+    ['device-late', '2026-10-20T10:00:00Z', '2026-10-08T10:00:30Z'],
+    ['device-early', '2026-09-20T10:00:00Z', '2026-10-08T10:00:30Z'],
+    ['server-quiz-live', '2026-10-08T10:00:00Z', '2026-10-14T18:30:30Z'],
+    ['server-tuesday-evening', '2026-10-08T10:00:00Z', '2026-10-13T18:00:30Z'],
+    ['server-wednesday-morning', '2026-10-08T10:00:00Z', '2026-10-14T08:00:30Z'],
   ]) {
     const page = await newPage('clock', { deviceNow: Date.parse(device), headDate: Date.parse(server) });
     await page.waitForTimeout(400);
@@ -744,12 +771,17 @@ tests.captcha = async () => {
   rec.save();
 };
 
-for (const [name, fn] of Object.entries(tests)) {
-  if (only && !name.startsWith(only)) continue;
-  const t = Date.now();
-  try { await fn(); } catch (e) { errors.push({ test: name, type: 'harness', text: String(e.stack || e) }); }
-  console.log(name.padEnd(24), ((Date.now() - t) / 1000).toFixed(1) + 's');
-}
+// The tests share nothing but the browser, so they run side by side, longest first
+const queue = Object.entries(tests).filter(([name]) => !only || name.startsWith(only))
+  .sort(([a], [b]) => (SLOW.findIndex(x => a.startsWith(x)) + 1 || 99) - (SLOW.findIndex(x => b.startsWith(x)) + 1 || 99));
+await Promise.all(Array.from({ length: JOBS }, async () => {
+  for (let job; (job = queue.shift());) {
+    const [name, fn] = job, t = Date.now();
+    try { await fn(); } catch (e) { errors.push({ test: name, type: 'harness', text: String(e.stack || e) }); }
+    console.log(name.padEnd(24), ((Date.now() - t) / 1000).toFixed(1) + 's');
+  }
+}));
+errors.sort((a, b) => a.test < b.test ? -1 : a.test > b.test ? 1 : 0);
 fs.writeFileSync(path.join(out, 'errors.json'), JSON.stringify(errors, null, 1));
 console.log('errors:', errors.length);
 await browser.close(); server.close();
