@@ -21,7 +21,7 @@ const FLAGG=[
   {c:'bg',n:'Bulgaria',w:'eu',k:'Sofia'},
   {c:'dk',n:'Danmark',w:'eu',k:'København',f:L('Dannebrog regnes som det eldste nasjonalflagget som fortsatt er i bruk.','Dannebrog blir rekna som det eldste nasjonalflagget som framleis er i bruk.')},
   {c:'ee',n:'Estland',w:'eu',k:'Tallinn'},
-  {c:'fi',n:'Finland',w:'eu',k:'Helsingfors'},
+  {c:'fi',n:'Finland',w:'eu',k:'Helsinki'},
   {c:'fr',n:'Frankrike',w:'eu',k:'Paris'},
   {c:'gr',n:'Hellas',w:'eu',k:'Aten'},
   {c:'ie',n:'Irland',w:'eu',k:'Dublin',f:L('Grønt ved stanga – Elfenbenskysten har oransje ved stanga.','Grønt ved stonga – Elfenbeinskysten har oransje ved stonga.')},
