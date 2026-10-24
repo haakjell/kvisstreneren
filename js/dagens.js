@@ -32,7 +32,7 @@ function mxDeal(){
   return deck;
 }
 const mxQuiz=makeQuiz('mxMain',{marks:true, hint:true,
-  buttons:[{act:'share',cls:'primary',label:'Del resultatet'},{act:'more',cls:'ghost',label:L('Sju blandede spørsmål til','Sju blanda spørsmål til')},{act:'today',cls:'ghost',label:'Dagens resultat'}],
+  buttons:[{act:'share',cls:'primary',label:'Kopier resultatet'},{act:'more',cls:'ghost',label:L('Sju blandede spørsmål til','Sju blanda spørsmål til')},{act:'today',cls:'ghost',label:'Dagens resultat'}],
   actions:{share:()=>mxShare(), more:()=>mxStart(''), today:()=>mxStart(mxToday())},
   // Saved after every answer, and the day's score in the log once the round is done
   onAnswer(marks){
@@ -56,13 +56,12 @@ function mxStart(day){
   $('mxSub').textContent=mxSubText();
   mxQuiz.start(deck,{marks});
 }
-// Like Wordle: the round's number, the score, a row of squares and the link, through the phone's
-// share sheet when there is one, and the clipboard otherwise
+// Like Wordle: the round's number, the score, a row of squares and the link, copied to the
+// clipboard (not the share sheet, which on a PC may not even offer to copy, as in Edge)
 async function mxShare(){
   const marks=mxQuiz.marks();
   const text=[L('Kvisstreneren','Kvisstrenaren')+` #${mxNumber(mxDay)}`,`${mxScoreOf(marks)} av ${mxQuiz.size()}`,
     marks.split('').map(m=>m==='1'?'🟩':'🟥').join(''),MX_URL].join('\n');
-  if(navigator.share){ try{ await navigator.share({text}); return; }catch(e){ if(e.name==='AbortError') return; } }
   try{ await navigator.clipboard.writeText(text); mxQuiz.hint().textContent='Kopiert. Lim det inn der du vil dele det.'; }
   catch(e){ mxQuiz.hint().textContent=text; }
 }
