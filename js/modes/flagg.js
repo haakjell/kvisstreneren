@@ -49,6 +49,12 @@ const fgQuiz=makeQuiz('fgQuiz',{
   onFinish(z){ const miss=z.marks().includes('0'); z.button('retry').hidden=!miss; (miss?z.button('retry'):z.button('restart')).focus({preventScroll:true}); }
 });
 
+// Mixed quiz: any country in the world (not Antarctica), either way round, wrong options from all of them
+MIX.flagg={label:'Flagg', deal(n){
+  const pool=FG_PARTS.all.list;
+  return shuffle(pool).slice(0,n).map(f=>fgQuestion(f,rnd()<.5?'flag':'land',pool));
+}};
+
 // The start page: the way round, then a button for each part of the world
 function fgRenderParts(){
   $('fgParts').innerHTML=Object.keys(FG_PARTS).map(k=>`<button type="button" data-part="${k}"><strong>${FG_PARTS[k].n}</strong><span>${fgCount(FG_PARTS[k].list.length)}</span></button>`).join('');

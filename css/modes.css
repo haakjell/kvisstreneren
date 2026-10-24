@@ -27,7 +27,7 @@
 .mode[data-mode="dagens"]{background:var(--ink);color:var(--bg)}
 .mode[data-mode="dagens"] span{opacity:.8}
 .mode[data-mode="dagens"]>div:first-child{width:auto;height:auto;border-radius:0;background:none}
-.mode[data-mode="dagens"]>div:first-child svg{width:112px;height:46px}
+.mode[data-mode="dagens"]>div:first-child svg{width:96px;height:46px}
 /* «Ny» in the button's top right corner, on the edge (renderNewTags()) */
 .mode .newtag{position:absolute;top:-10px;right:16px;margin:0;padding:1px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:.85rem;line-height:1.4}
 /* The title, with the settings cog to its right */

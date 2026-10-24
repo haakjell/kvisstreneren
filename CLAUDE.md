@@ -101,7 +101,7 @@ fast tidspunkt: `addMode('<navn>', open, {newUntil:'2026-10-14 19:00'})` — nor
 `ÅÅÅÅ-MM-DD TT:MM`. `renderNewTags()` i `app.js` setter inn eller fjerner merket (`.newtag` i
 `modes.css`) hver gang forsida vises og når klokka er spurt på nytt, etter serverens klokke (se
 «Tid»). Merket forsvinner av seg selv; `newUntil` kan bli stående, men rydd den gjerne bort
-neste gang du er i fila. Nå: Anagram og Bommedatabasen, til onsdag 4. november 2026 kl. 19, og Flagg,
+neste gang du er i fila. Nå: Bommedatabasen, til onsdag 4. november 2026 kl. 19, og Flagg,
 til onsdag 11. november 2026 kl. 19.
 
 ### Spillmotoren
@@ -117,7 +117,7 @@ En modus gir motoren spørsmål på én felles form, beskrevet øverst i `quiz.j
 HTML i boksen (`prompt()`), eventuelt ny HTML etter svaret (`reveal()`), alternativene som
 `{label, ok, info}`, faktateksten og raden i lista over bom. Hver
 modus har én funksjon som lager et spørsmål — `vQuestion()`, `bQuestion()`, `tQuestion()`,
-`rgQuestion()`, `cQuestion()`, `mgQuestion()` — og den brukes både av modusens egen kviss (via
+`rgQuestion()`, `cQuestion()`, `mgQuestion()`, `fgQuestion()` — og den brukes både av modusens egen kviss (via
 `ask`) og av kilden i `MIX`. Det modusen selv gjør, er å lage stokken (`newDeck`), valgene øverst
 og «Pugg».
 
@@ -409,9 +409,9 @@ anførselstegn og spesialtegn går fint. Det eneste `set-prep.mjs` må røre er 
 
 ## Dagens kviss
 
-Ti blandede spørsmål med svaralternativer, alltid to fra hver modus og alltid i samme rekkefølge:
-to om bydelene, to om T-banen, to våpenskjold, to MGP og to Hotel Cæsar (`MX_ORDER`, `MX_EACH`).
-Det er et krav at hver runde har to fra hver modus, i den rekkefølgen.
+Sju blandede spørsmål med svaralternativer, alltid ett fra hver modus og alltid i samme rekkefølge:
+bydelene, T-banen, våpenskjold, flagg, Regjeringen, MGP og Hotel Cæsar (`MX_ORDER`, `MX_EACH`).
+Det er et krav at hver runde har ett fra hver modus, i den rekkefølgen.
 
 Dagens runde trekkes med et frø laget av datoen i norsk tid, så alle får de samme spørsmålene
 samme dag, og nye ved midnatt. Hver modus' trekning og hvert spørsmåls tegning får hvert sitt frø
@@ -435,12 +435,12 @@ ellers utklippstavla), i akkurat dette formatet:
 
 ```
 Kvisstreneren #N
-8 av 10
-🟩🟥🟩🟩🟩🟩🟩🟥🟩🟩
+6 av 7
+🟩🟥🟩🟩🟩🟩🟩
 https://haakjell.github.io/kvisstreneren/#dagens
 ```
 
-Lenken står i `MX_URL`. «Ti blandede spørsmål til» gir en fri runde uten frø, som ikke lagres.
+Lenken står i `MX_URL`. «Sju blandede spørsmål til» gir en fri runde uten frø, som ikke lagres.
 Onsdag 19–22 er modusen stengt, som nedtellingen. Endres dataene i en modus (en ny rad i `MGP`), kan dagens spørsmål bli andre for dem
 som ikke har spilt ennå; det er greit.
 
@@ -462,6 +462,9 @@ Valgene i modusene selv gjelder ikke i Dagens kviss. Utvalget der er fast:
 - **T-banen:** alle linjer, på det kartet som er valgt i T-banemodusen («Geografisk» eller
   «Linjekart», `tMapKind`), eller i innstillingene.
 - **Våpenskjold:** tilfeldig blant alle, både fylkesvåpen og kommunevåpen.
+- **Flagg:** tilfeldig blant alle landene (uten Antarktis), også feilalternativene. Flagg → land eller
+  land → flagg, tilfeldig.
+- **Regjeringen:** tilfeldig blant alle statsrådene. Statsråd → post eller post → statsråd, tilfeldig.
 - **MGP:** bare fra og med 2000 (`MG_MIX_FROM`), også feilalternativene, og det står i telleren
   («MGP fra og med 2000») og i teksten under kortet. År → artist eller artist → år, tilfeldig.
 - **Hotel Cæsar:** bare rolle → skuespiller.
@@ -571,7 +574,7 @@ ikke under kvissen, så den ikke kan nullstille en runde midt i.
 - Bildene er SVG-er fra flagcdn.com (`FG_IMG()`), lenket direkte som våpnene, og ligger ikke i
   repoet. Antarktis' flagg er Graham Bartrams forslag fra 1996 (`aq` hos flagcdn).
 
-Modusen er ikke med i Dagens kviss. Det finnes ikke noe skript: endrer et land navn eller flagg,
+I Dagens kviss er det ett flagg per runde (`MIX.flagg`). Det finnes ikke noe skript: endrer et land navn eller flagg,
 rett `FLAGG` for hånd (et nytt flagg kommer av seg selv fra flagcdn).
 
 ## Regjeringen
@@ -588,7 +591,7 @@ hele regjeringen, med en knapp som skjuler navnene.
 - `RG_ASOF` er datoen lista gjelder fra, og står i teksten under kortet.
 - Feilalternativene er de andre statsrådene (eller postene deres).
 
-Modusen er ikke med i Dagens kviss.
+I Dagens kviss er det én statsråd per runde (`MIX.regjering`).
 
 Lista er satt sammen for hånd fra «Jonas Gahr Støres regjering» på no.wikipedia og regjeringen.no
 («Endringer i regjeringen», 11. september 2026). Regjeringen.no står bak en Cloudflare-sjekk som

@@ -38,6 +38,11 @@ function rgQuestion(q){
 }
 const rgQuiz=makeQuiz('rgQuiz',{ask:rgQuestion, newDeck:rgNewDeck, onStart:rgPreload});
 
+// Mixed quiz: any member, either way round
+MIX.regjering={label:L('Regjeringen','Regjeringa'), deal(n){
+  return shuffle(STATSRAD.map((_,i)=>i)).slice(0,n).map(i=>rgQuestion({i,dir:rnd()<.5?'person':'post'}));
+}};
+
 // Study list: post, name and since when. The names can be hidden and revealed one by one.
 function rgRenderStudy(){
   const li=e=>{ const pic=rgPic(e,'thumb'); return `<li tabindex="0"${pic?' class="pic"':''}>${pic}<strong>${e.p}</strong><span class="act ans">${e.n}</span><small>${L(`Siden ${e.s}`,`Sidan ${e.s}`)}</small></li>`; };
@@ -56,5 +61,5 @@ function rgUse(m){
   rgQuiz.start(rgNewDeck());
 }
 function rgOpen(){ if(!rgQuiz.started()){ rgRenderStudy(); rgUse('person'); } }
-addMode('regjering',rgOpen,{newUntil:'2026-10-14 19:00'});
+addMode('regjering',rgOpen);
 $('rgNote').textContent=L(`Statsrådene per ${RG_ASOF}: regjeringen.no og Wikipedia. Bilder: Wikimedia Commons.`,`Statsrådane per ${RG_ASOF}: regjeringen.no og Wikipedia. Bilde: Wikimedia Commons.`);

@@ -197,4 +197,4 @@ function agOpen(){
   requestAnimationFrame(agScrollToStop);   // goMode() scrolls to the top after this
 }
 agLoad(); agTeaser();
-addMode('anagram',agOpen,{newUntil:'2026-11-04 19:00'});
+addMode('anagram',agOpen);
