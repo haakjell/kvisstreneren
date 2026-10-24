@@ -4,16 +4,22 @@
 // its own history entry, as Anagram's stops do, so the back gesture goes back to the start page;
 // halfway through a round it asks first (#fgLeaveSheet), since the round is lost.
 // Wrong options come from the same part of the world; Antarctica has only itself.
+// Hovedsteder (js/modes/hovedsteder.js) is the same machinery, fgMakeMode(), with capitals.
 const FG_IMG=f=>`https://flagcdn.com/${f.c}.svg`;
-const FG_PARTS={
-  all:{n:L('Hele verden','Heile verda'), list:FLAGG.filter(f=>f.w!=='an')},
-  af:{n:'Afrika'}, as:{n:'Asia'}, eu:{n:'Europa'}, na:{n:'Nord-Amerika'}, sa:{n:'Sør-Amerika'}, oc:{n:'Oseania'}, an:{n:'Antarktis'}
+const FG_NAMES={
+  all:L('Hele verden','Heile verda'), af:'Afrika', as:'Asia', eu:'Europa', na:'Nord-Amerika', sa:'Sør-Amerika', oc:'Oseania', an:'Antarktis'
 };
-// A country in two parts of the world (w is a list) is in both
-for(const k in FG_PARTS) if(!FG_PARTS[k].list) FG_PARTS[k].list=FLAGG.filter(f=>[].concat(f.w).includes(k));
-const FG_DIRS={flag:'Flagg → land', land:'Land → flagg'};
-let fgDir='flag', fgPart=null;
-
+// The parts of the world of the countries in list (an empty part is left out). A country in two
+// parts (w is a list) is in both, and once in the whole world, which has no Antarctica.
+function fgParts(list){
+  const parts={};
+  for(const k in FG_NAMES){
+    const xs=k==='all'?list.filter(f=>f.w!=='an'):list.filter(f=>[].concat(f.w).includes(k));
+    if(xs.length) parts[k]={n:FG_NAMES[k], list:xs};
+  }
+  return parts;
+}
+const FG_PARTS=fgParts(FLAGG);
 const fgCount=n=>n===1?'1 flagg':`${n} flagg`;
 // The line after the answer: the capital, a note, and the flags very like it side by side (FLAGG_TWINS)
 function fgFact(f){
@@ -40,67 +46,87 @@ function fgQuestion(f, dir, pool){
     :{q:L('Hvilket flagg har landet?','Kva flagg har landet?'), cls:'cprompt fgname', prompt:()=>`<small>Landet</small><strong>${f.n}</strong>`,
       opts, answer:`flagget til ${f.n}`, fact:fgFact(f), miss:fgMissLi(f)};
 }
-const fgAll=()=>shuffle(FG_PARTS[fgPart].list);
-const fgQuiz=makeQuiz('fgQuiz',{
-  ask:f=>fgQuestion(f,fgDir,FG_PARTS[fgPart].list), newDeck:fgAll,
-  buttons:[{act:'retry',cls:'primary',label:L('Øv på dem du bommet på','Øv på dei du bomma på')},
-    {act:'restart',cls:'ghost',label:''},{act:'pick',cls:'ghost',label:L('Velg en annen verdensdel','Vel ein annan verdsdel')}],
-  actions:{pick:()=>fgToPick()},
-  onFinish(z){ const miss=z.marks().includes('0'); z.button('retry').hidden=!miss; (miss?z.button('retry'):z.button('restart')).focus({preventScroll:true}); }
-});
+
+// The leave sheet is shared: it goes back in the mode that opened it
+let fgLeaveTo=null;
+$('fgLeaveStay').addEventListener('click',()=>$('fgLeaveSheet').close());
+$('fgLeaveGo').addEventListener('click',()=>{ $('fgLeaveSheet').close(); fgLeaveTo(); });
+
+// A mode of this kind. p is the prefix of its ids in the markup (fgPickView, fgQuiz …); o has
+//   mode      its name, for addMode()
+//   parts     fgParts() of its countries
+//   dirs      {dir: [text, id of its radio button]}, the first one picked to begin with
+//   question  (f, dir, pool) → a question for the engine
+//   count     n → «N flagg»
+//   sub       [the start page's subtitle in «Kviss», in «Pugg»]
+//   study     (part) → the HTML of a part in «Pugg»
+//   toggle    the labels of «Skjul navn»
+//   addMode   options for addMode() ({newUntil})
+function fgMakeMode(p, o){
+  const id=s=>$(p+s), dirs=Object.keys(o.dirs);
+  let dir=dirs[0], part=null;
+  const all=()=>shuffle(o.parts[part].list);
+  const quiz=makeQuiz(p+'Quiz',{
+    ask:f=>o.question(f,dir,o.parts[part].list), newDeck:all,
+    buttons:[{act:'retry',cls:'primary',label:L('Øv på dem du bommet på','Øv på dei du bomma på')},
+      {act:'restart',cls:'ghost',label:''},{act:'pick',cls:'ghost',label:L('Velg en annen verdensdel','Vel ein annan verdsdel')}],
+    actions:{pick:()=>toPick()},
+    onFinish(z){ const miss=z.marks().includes('0'); z.button('retry').hidden=!miss; (miss?z.button('retry'):z.button('restart')).focus({preventScroll:true}); }
+  });
+
+  // The start page: the way round, then a button for each part of the world
+  id('Parts').innerHTML=Object.keys(o.parts).map(k=>`<button type="button" data-part="${k}"><strong>${o.parts[k].n}</strong><span>${o.count(o.parts[k].list.length)}</span></button>`).join('');
+  const markDir=radios(Object.fromEntries(dirs.map(d=>[d,o.dirs[d][1]])),d=>{ dir=d; markDir(d); });
+  id('Parts').addEventListener('click',e=>{ const b=e.target.closest('[data-part]'); if(b) start(b.dataset.part); });
+  function start(k){
+    part=k;
+    const n=o.parts[k].list.length;
+    id('Title').textContent=o.parts[k].n;
+    id('PlaySub').textContent=`${o.dirs[dir][0]} · ${o.count(n)}`;
+    quiz.button('restart').textContent=n===1?'Start på nytt':`Start på nytt med alle ${n}`;
+    view(true); id('Auto').setAttribute('aria-checked',quizAuto());
+    history.pushState({fgPlay:true},'',location.href);
+    quiz.start(all());
+  }
+  function view(play){
+    id('PickView').hidden=play; id('PlayView').hidden=!play;
+    if(!play) quiz.stop();
+    window.scrollTo(0,0);
+  }
+  function toPick(){ if(history.state&&history.state.fgPlay) history.back(); else view(false); }
+  // Halfway through a round: at least one answer, and not at the result yet
+  const midway=()=>!!quiz.current()&&quiz.marks().length>0;
+  let leaving=false;   // the back was confirmed, so the popstate it causes goes through
+  const ask=()=>{ fgLeaveTo=()=>{ leaving=true; toPick(); }; $('fgLeaveSheet').showModal(); };
+  id('Back').addEventListener('click',()=>midway()?ask():toPick());
+  // The back gesture has already left the quiz's entry: put it back while the sheet asks
+  addEventListener('popstate',()=>{
+    if(id('PlayView').hidden||(history.state&&history.state.fgPlay)) return;
+    if(midway()&&!leaving){ history.pushState({fgPlay:true},'',location.href); ask(); return; }
+    leaving=false; view(false);
+  });
+  // «Gå videre av seg selv», the same setting as in Innstillinger, as «Auto» in the quiz's header
+  id('Auto').addEventListener('click',()=>{ setQuizAuto(!quizAuto()); id('Auto').setAttribute('aria-checked',quizAuto()); });
+
+  // Study list: by part of the world
+  id('StudyGrid').innerHTML=['eu','as','af','na','sa','oc','an'].filter(k=>o.parts[k]).map(k=>
+    `<h2 class="chead">${o.parts[k].n}</h2>${o.study(o.parts[k].list.slice().sort((a,b)=>a.n.localeCompare(b.n,'nb')))}`).join('');
+  hideAnswers(p+'Toggle',p+'StudyGrid',o.toggle);
+  tabs(p+'TabQuiz',p+'TabStudy',p+'Pick',p+'Study',q=>{ id('Sub').textContent=o.sub[q?0:1]; });
+
+  markDir(dir);
+  addMode(o.mode,()=>view(false),o.addMode);
+}
+
+fgMakeMode('fg',{mode:'flagg', parts:FG_PARTS, question:fgQuestion, count:fgCount,
+  dirs:{flag:['Flagg → land','fgDirFlag'], land:['Land → flagg','fgDirLand']},
+  sub:[L('Velg retning og verdensdel','Vel retning og verdsdel'),L('Alle flaggene, etter verdensdel','Alle flagga, etter verdsdel')],
+  study:list=>`<div class="study fgstudy">${list.map(f=>`<figure tabindex="0"><img src="${FG_IMG(f)}" alt="" loading="lazy"><figcaption class="ans"><strong>${f.n}</strong>${f.k?`<span>${f.k}</span>`:''}</figcaption></figure>`).join('')}</div>`,
+  toggle:L(['Skjul navn','Vis navn'],['Skjul namn','Vis namn']),
+  addMode:{newUntil:'2026-11-11 19:00'}});
 
 // Mixed quiz: any country in the world (not Antarctica), either way round, wrong options from all of them
 MIX.flagg={label:'Flagg', deal(n){
   const pool=FG_PARTS.all.list;
   return shuffle(pool).slice(0,n).map(f=>fgQuestion(f,rnd()<.5?'flag':'land',pool));
 }};
-
-// The start page: the way round, then a button for each part of the world
-function fgRenderParts(){
-  $('fgParts').innerHTML=Object.keys(FG_PARTS).map(k=>`<button type="button" data-part="${k}"><strong>${FG_PARTS[k].n}</strong><span>${fgCount(FG_PARTS[k].list.length)}</span></button>`).join('');
-}
-const fgMarkDir=radios({flag:'fgDirFlag',land:'fgDirLand'},d=>{ fgDir=d; fgMarkDir(d); });
-$('fgParts').addEventListener('click',e=>{ const b=e.target.closest('[data-part]'); if(b) fgStart(b.dataset.part); });
-function fgStart(k){
-  fgPart=k;
-  const n=FG_PARTS[k].list.length;
-  $('fgTitle').textContent=FG_PARTS[k].n;
-  $('fgPlaySub').textContent=`${FG_DIRS[fgDir]} · ${fgCount(n)}`;
-  fgQuiz.button('restart').textContent=n===1?'Start på nytt':`Start på nytt med alle ${n}`;
-  fgView(true); $('fgAuto').setAttribute('aria-checked',quizAuto());
-  history.pushState({fgPlay:true},'',location.href);
-  fgQuiz.start(fgAll());
-}
-function fgView(play){
-  $('fgPickView').hidden=play; $('fgPlayView').hidden=!play;
-  if(!play) fgQuiz.stop();
-  window.scrollTo(0,0);
-}
-function fgToPick(){ if(history.state&&history.state.fgPlay) history.back(); else fgView(false); }
-// Halfway through a round: at least one answer, and not at the result yet
-const fgMidway=()=>!!fgQuiz.current()&&fgQuiz.marks().length>0;
-let fgLeaving=false;   // the back was confirmed, so the popstate it causes goes through
-$('fgBack').addEventListener('click',()=>fgMidway()?$('fgLeaveSheet').showModal():fgToPick());
-// The back gesture has already left the quiz's entry: put it back while the sheet asks
-addEventListener('popstate',()=>{
-  if($('fgPlayView').hidden||(history.state&&history.state.fgPlay)) return;
-  if(fgMidway()&&!fgLeaving){ history.pushState({fgPlay:true},'',location.href); $('fgLeaveSheet').showModal(); return; }
-  fgLeaving=false; fgView(false);
-});
-$('fgLeaveStay').addEventListener('click',()=>$('fgLeaveSheet').close());
-$('fgLeaveGo').addEventListener('click',()=>{ $('fgLeaveSheet').close(); fgLeaving=true; fgToPick(); });
-// «Gå videre av seg selv», the same setting as in Innstillinger, as «Auto» in the quiz's header
-$('fgAuto').addEventListener('click',()=>{ setQuizAuto(!quizAuto()); $('fgAuto').setAttribute('aria-checked',quizAuto()); });
-
-// Study list: every flag, by part of the world
-function fgRenderStudy(){
-  const fig=f=>`<figure tabindex="0"><img src="${FG_IMG(f)}" alt="" loading="lazy"><figcaption class="ans"><strong>${f.n}</strong>${f.k?`<span>${f.k}</span>`:''}</figcaption></figure>`;
-  $('fgStudyGrid').innerHTML=['eu','as','af','na','sa','oc','an'].map(k=>
-    `<h2 class="chead">${FG_PARTS[k].n}</h2><div class="study fgstudy">${FG_PARTS[k].list.slice().sort((a,b)=>a.n.localeCompare(b.n,'nb')).map(fig).join('')}</div>`).join('');
-}
-hideAnswers('fgToggle','fgStudyGrid',L(['Skjul navn','Vis navn'],['Skjul namn','Vis namn']));
-tabs('fgTabQuiz','fgTabStudy','fgPick','fgStudy',q=>{ $('fgSub').textContent=q?L('Velg retning og verdensdel','Vel retning og verdsdel'):L('Alle flaggene, etter verdensdel','Alle flagga, etter verdsdel'); });
-
-function fgOpen(){ fgView(false); }
-fgRenderParts(); fgRenderStudy(); fgMarkDir(fgDir);
-addMode('flagg',fgOpen,{newUntil:'2026-11-11 19:00'});

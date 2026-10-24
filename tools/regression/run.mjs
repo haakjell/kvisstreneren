@@ -198,7 +198,7 @@ function split(name, parts) {
   });
 }
 // Started first, so no long test is left running alone at the end
-const SLOW = ['anagram', 'dagens', 'ads', 'nynorsk', 'flagg', 'home', 'settings', 'captcha', 'clock'];
+const SLOW = ['anagram', 'dagens', 'ads', 'nynorsk', 'flagg', 'hovedsteder', 'home', 'settings', 'captcha', 'clock'];
 
 for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
   tests['home-' + cfg] = async () => {
@@ -696,6 +696,36 @@ for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900
     await rec.snap(page, 'study'); await rec.shoot(page, 'study');
     await page.evaluate(() => __T.click('.studybar button')); await page.waitForTimeout(30);
     await page.evaluate(() => __T.click('.study figure', 2)); await rec.snap(page, 'study-hidden');
+    await page.evaluate(() => __T.click('[role=tab]', 0)); await page.waitForTimeout(50);
+    await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'home');
+    rec.save(); await page.context().close();
+  };
+}
+
+// Hovedsteder: the same machinery as Flagg, so less of it: a round each way (Oseania and Europa),
+// the cities taken for the capital among the options, back halfway through, and «Pugg»
+for (const [cfg, opt] of [['mobile', {}], ['nynorsk', { storage: { lang: 'nn', theme: 'dark' } }]]) {
+  tests['hovedsteder-' + cfg] = async () => {
+    const rec = new Rec('hovedsteder-' + cfg), page = await newPage(rec.name, opt);
+    await page.evaluate(() => __T.click('.mode[data-mode=hovedsteder]')); await page.waitForTimeout(100);
+    await rec.snap(page, 'pick'); await rec.shoot(page, 'pick');
+    const part = async p => { await page.evaluate(p => __T.click(`[data-part="${p}"]`), p); await waitReady(page); };
+    await part('oc'); await rec.shoot(page, 'oc-open');
+    await playRound(page, rec, 'oc', 1); await rec.shoot(page, 'oc-done');
+    await page.evaluate(() => __T.click('.card.done .btns .ghost', 1)); await page.waitForTimeout(100);
+    await page.evaluate(() => __T.click('.setswitch [role=radio]', 1)); await page.waitForTimeout(30);
+    await part('eu'); await rec.snap(page, 'eu-land'); await rec.shoot(page, 'eu-land');
+    await page.evaluate(() => __T.answer(0)); await page.goBack(); await page.waitForTimeout(150);
+    await rec.snap(page, 'back-gesture-asks', true);
+    await page.evaluate(() => document.getElementById('fgLeaveGo').click()); await page.waitForTimeout(150);
+    await rec.snap(page, 'back');
+    await page.evaluate(() => __T.click('.setswitch [role=radio]', 0)); await page.waitForTimeout(30);
+    await part('na'); await playRound(page, rec, 'na-cap', 2);
+    await page.evaluate(() => __T.click('#hsBack')); await page.waitForTimeout(100);
+    await page.evaluate(() => __T.click('[role=tab]', 1)); await page.waitForTimeout(150);
+    await rec.snap(page, 'study'); await rec.shoot(page, 'study');
+    await page.evaluate(() => __T.click('.studybar button')); await page.waitForTimeout(30);
+    await page.evaluate(() => __T.click('.hslist li', 2)); await rec.snap(page, 'study-hidden');
     await page.evaluate(() => __T.click('[role=tab]', 0)); await page.waitForTimeout(50);
     await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100); await rec.snap(page, 'home');
     rec.save(); await page.context().close();

@@ -57,7 +57,7 @@ noen få ny `index.html` med gamle skript; en oppdatering av sida retter det.
 
 ## Struktur
 
-Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og elleve
+Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og tolv
 moduser. I tillegg er det innstillingene (`#settings`), som åpnes med tannhjulet til høyre for
 tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølge som knappene på forsida.
 
@@ -68,6 +68,7 @@ tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølg
 | `anagram` | `js/modes/anagram.js` | `data/anagram.js` | Anagram: kjendiser med bokstavene stokket om, på et kart med skattekister der alle går samme vei — se under |
 | `bom` | `js/modes/bom.js` | `data/bom.js` | Kvisslagets offisielle bommedatabase: spørsmålene vi har bomma på — se under |
 | `flagg` | `js/modes/flagg.js` | `data/flagg.js` | Flagg: alle landene i verden, per verdensdel, og Antarktis — se under |
+| `hovedsteder` | `js/modes/hovedsteder.js` | `data/flagg.js` | Hovedsteder: landene i Flagg og hovedstedene deres — se under |
 | `bydel` | `js/modes/bydel.js` | `data/bydeler.js` | Bydelene: Oslos bydeler (`BSETS`) |
 | `tbane` | `js/modes/tbane.js` | `data/tbane.js`, `data/ruter-map.js` | T-banen: «neste stopp»-kviss og kart — se under |
 | `regjering` | `js/modes/regjering.js` | `data/statsrad.js` | Regjeringen: statsrådene og postene deres — se under |
@@ -101,8 +102,8 @@ fast tidspunkt: `addMode('<navn>', open, {newUntil:'2026-10-14 19:00'})` — nor
 `ÅÅÅÅ-MM-DD TT:MM`. `renderNewTags()` i `app.js` setter inn eller fjerner merket (`.newtag` i
 `modes.css`) hver gang forsida vises og når klokka er spurt på nytt, etter serverens klokke (se
 «Tid»). Merket forsvinner av seg selv; `newUntil` kan bli stående, men rydd den gjerne bort
-neste gang du er i fila. Nå: Bommedatabasen, til onsdag 4. november 2026 kl. 19, og Flagg,
-til onsdag 11. november 2026 kl. 19.
+neste gang du er i fila. Nå: Bommedatabasen, til onsdag 4. november 2026 kl. 19, Flagg,
+til onsdag 11. november 2026 kl. 19, og Hovedsteder, til onsdag 18. november 2026 kl. 19.
 
 ### Spillmotoren
 
@@ -117,7 +118,7 @@ En modus gir motoren spørsmål på én felles form, beskrevet øverst i `quiz.j
 HTML i boksen (`prompt()`), eventuelt ny HTML etter svaret (`reveal()`), alternativene som
 `{label, ok, info}`, faktateksten og raden i lista over bom. Hver
 modus har én funksjon som lager et spørsmål — `vQuestion()`, `bQuestion()`, `tQuestion()`,
-`rgQuestion()`, `cQuestion()`, `mgQuestion()`, `fgQuestion()` — og den brukes både av modusens egen kviss (via
+`rgQuestion()`, `cQuestion()`, `mgQuestion()`, `fgQuestion()`, `hsQuestion()` — og den brukes både av modusens egen kviss (via
 `ask`) og av kilden i `MIX`. Det modusen selv gjør, er å lage stokken (`newDeck`), valgene øverst
 og «Pugg».
 
@@ -223,6 +224,7 @@ hver hovedfeature etter den, og PATCH for hver commit mellom dem:
 | 2.4.0 | `d5664e1` | Forsida på desktop |
 | 2.4.4 | | Versjonen i innstillingene, den første med tagg fra workflowen |
 | 2.5.0 | | Flagg |
+| 2.6.0 | | Hovedsteder, og hovedstaden som det åttende spørsmålet i Dagens kviss |
 
 Tagger finnes bare fra 2.4.4. Får MINOR et nytt nummer, legg det til i tabellen.
 
@@ -239,14 +241,14 @@ Sida er tegnet som «bento»: store, runde flater i fargetemaets farger, uten st
 faner og fliser har ingen ramme, men en mørkere kant under seg (`box-shadow: 0 4px 0 var(--edge)`;
 fargede flater `--edge-strong`), og knappene synker ned på kanten når de trykkes. Forsida er et
 rutenett med to kolonner: Ukas prepp (i `--accent2`) og Dagens kviss (i `--ink`) som store fliser
-øverst, Anagram, Bommedatabasen og Flagg som lave striper over hele bredden under dem, så de andre modusene som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
+øverst, Anagram og Bommedatabasen som lave striper over hele bredden under dem, så de andre modusene (fra Flagg og Hovedsteder) som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
 tegnet i temaets farger (`--ink`, `--accent`, `--paper`, på `--tint`), også bydelskartet og
 Hotel Cæsar-logoen, som tegnes i skriptene. Ny CSS: bruk fargevariablene, aldri faste farger.
 
 **Forsida på desktop.** Når sida får minst 760 px (en container-spørring på `.wrap`, så det går etter
 bredden sida faktisk får, også med sidekolonnene med reklame), blir forsida ett rutenett med tolv
 kolonner (bolken øverst i `modes.css`): tittelen øverst, nedtellingen ved siden av Ukas prepp og
-Dagens kviss, Anagram, Bommedatabasen og Flagg side om side (tre i raden), og de andre modusene tre i hver rad. `.modes`
+Dagens kviss, Anagram og Bommedatabasen side om side, og de andre modusene tre i hver rad. `.modes`
 er da `display: contents`, så knappene står i samme rutenett som nedtellingen, og `order` løfter
 tittelen over den. En «Sponset»-annonse tar fortsatt en hel rad; med `grid-auto-flow: row dense`
 fyller flisene etter den raden den ellers ville latt halvtom, og annonsen havner under dem. Med mus
@@ -409,8 +411,9 @@ anførselstegn og spesialtegn går fint. Det eneste `set-prep.mjs` må røre er 
 
 ## Dagens kviss
 
-Sju blandede spørsmål med svaralternativer, alltid ett fra hver modus og alltid i samme rekkefølge:
-bydelene, T-banen, våpenskjold, flagg, Regjeringen, MGP og Hotel Cæsar (`MX_ORDER`, `MX_EACH`).
+Åtte blandede spørsmål med svaralternativer, alltid ett fra hver modus og alltid i samme rekkefølge:
+bydelene, T-banen, våpenskjold, flagg, hovedsteder, Regjeringen, MGP og Hotel Cæsar (`MX_ORDER`,
+`MX_EACH`). Hovedstedene kom inn som det åttende 24. oktober 2026.
 Det er et krav at hver runde har ett fra hver modus, i den rekkefølgen.
 
 Dagens runde trekkes med et frø laget av datoen i norsk tid, så alle får de samme spørsmålene
@@ -435,12 +438,12 @@ på alle enheter — ikke delingsarket, som på PC ikke alltid kan kopiere), i a
 
 ```
 Kvisstreneren #N
-6 av 7
-🟩🟥🟩🟩🟩🟩🟩
+7 av 8
+🟩🟥🟩🟩🟩🟩🟩🟩
 https://haakjell.github.io/kvisstreneren/#dagens
 ```
 
-Lenken står i `MX_URL`. «Sju blandede spørsmål til» gir en fri runde uten frø, som ikke lagres.
+Lenken står i `MX_URL`. «Åtte blandede spørsmål til» gir en fri runde uten frø, som ikke lagres.
 Onsdag 19–22 er modusen stengt, som nedtellingen. Endres dataene i en modus (en ny rad i `MGP`), kan dagens spørsmål bli andre for dem
 som ikke har spilt ennå; det er greit.
 
@@ -464,6 +467,8 @@ Valgene i modusene selv gjelder ikke i Dagens kviss. Utvalget der er fast:
 - **Våpenskjold:** tilfeldig blant alle, både fylkesvåpen og kommunevåpen.
 - **Flagg:** tilfeldig blant alle landene (uten Antarktis), også feilalternativene. Flagg → land eller
   land → flagg, tilfeldig.
+- **Hovedsteder:** tilfeldig blant alle landene med hovedstad, også feilalternativene. Land →
+  hovedstad eller hovedstad → land, tilfeldig.
 - **Regjeringen:** tilfeldig blant alle statsrådene. Statsråd → post eller post → statsråd, tilfeldig.
 - **MGP:** bare fra og med 2000 (`MG_MIX_FROM`), også feilalternativene, og det står i telleren
   («MGP fra og med 2000») og i teksten under kortet. År → artist eller artist → år, tilfeldig.
@@ -560,9 +565,10 @@ ikke under kvissen, så den ikke kan nullstille en runde midt i.
 
 - `FLAGG` (`data/flagg.js`) — én rad per land: `c` ISO-koden (gir bildet), `n` navnet (`L()` der
   bokmål og nynorsk er ulike), `w` verdensdelen (`af`, `as`, `eu`, `na`, `sa`, `oc`, `an`), eller en
-  liste for et land i to (`['eu','as']`), `k`
-  hovedstaden, som vises etter svaret, eller `kf` en hel setning i stedet der det trengs mer
-  (Nederland, Bolivia, Sør-Afrika …), og eventuelt `f` en merknad (flagg som ligner hverandre).
+  liste for et land i to (`['eu','as']`), `k` hovedstaden (svaret i Hovedsteder), som vises
+  etter svaret, og `kf` en hel setning i stedet der det trengs mer (Nederland, Bolivia, Sør-Afrika …),
+  `kx` byer som ofte tas for hovedstaden (se «Hovedsteder»), og eventuelt `f` en merknad (flagg
+  som ligner hverandre).
 - `FLAGG_LIKE` (samme fil) — grupper av ISO-koder for flagg som ligner (Tsjad og Romania, Norden,
   Union Jack i hjørnet …). Et land kan stå i flere grupper. Er gruppa større enn antallet
   alternativer, trekkes noen av dem.
@@ -576,6 +582,29 @@ ikke under kvissen, så den ikke kan nullstille en runde midt i.
 
 I Dagens kviss er det ett flagg per runde (`MIX.flagg`). Det finnes ikke noe skript: endrer et land navn eller flagg,
 rett `FLAGG` for hånd (et nytt flagg kommer av seg selv fra flagcdn).
+
+Startsida, kvissen, tilbakeknappen og arket, «Auto» og «Pugg» lages av `fgMakeMode()` i `flagg.js`,
+som både Flagg og Hovedsteder bruker (med prefiksene `fg` og `hs` på id-ene i markupen). Arket
+`#fgLeaveSheet` er felles. Verdensdelene regnes ut av `fgParts()`.
+
+## Hovedsteder
+
+Kviss om hovedstedene til landene i `FLAGG`, bygd akkurat som Flagg (`fgMakeMode()`, se over): en
+startside med retning og verdensdel, kvissen på en egen side, og «Pugg» med en rad per land (flagg,
+navn og hovedstaden, som skjules med «Skjul hovedstedene»).
+
+- **Retning:** «Land → hovedstad» (velg blant seks hovedsteder) eller «Hovedstad → land» (velg blant
+  seks land). Feilalternativene er hovedstedene eller landene i den samme verdensdelen.
+- **Lurealternativer:** `kx` i `FLAGG` er byer som ofte tas for hovedstaden (Sydney, Istanbul,
+  Zürich, Lagos …). I «Land → hovedstad» kommer opptil to av dem først blant feilalternativene, og
+  velger man en, står det at den ikke er hovedstaden. Bare byer som ikke er hovedstad noe sted.
+- **Utvalget:** bare land med `k`. Israel, Palestina og Nauru har bare `kf` (omstridt eller ingen
+  hovedstad) og er ikke med, og heller ikke Antarktis, så det finnes ingen Antarktis-knapp. Der
+  kildene er uenige, er svaret den offisielle hovedstaden, og `kf` forklarer resten: Amsterdam,
+  Sucre, Pretoria og Sri Jayawardenepura Kotte. Bystatene (Monaco, Singapore …) er med selv om
+  svaret er det samme som spørsmålet.
+
+I Dagens kviss er det én hovedstad per runde (`MIX.hovedsteder`), etter flagget.
 
 ## Regjeringen
 
@@ -827,7 +856,7 @@ eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjen
 |---|---|---|
 | Sidekolonner (`side`) | Én høy annonse fast på hver side av innholdet, på alle sidene | Fra 1100 px |
 | Toppbanner (`#adTop`, `banner`) | Rett under nedtellingen; `goMode()` flytter den med | Under 1100 px |
-| «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp, Dagens kviss og stripene (Anagram, Bommedatabasen og Flagg), og under raden med Regjeringen og Våpenskjold | Alle |
+| «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp, Dagens kviss og stripene (Anagram og Bommedatabasen), og under raden med Regjeringen og Våpenskjold | Alle |
 | I preppen (`box`) | Mellom hver `##`-del, lagt inn av `renderPrep()` | Alle |
 | «Anbefalt for deg» (`tile`) | Fire småsaker nederst i preppen | Alle |
 
@@ -879,7 +908,7 @@ Etter en endring, fra reporoten:
 for f in js/*.js js/modes/*.js data/*.js tools/*.mjs tools/regression/*.mjs; do node --check "$f" || echo "FEIL i $f"; done
 ```
 
-Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle elleve modusene, innstillingene (og gjerne debug-sida), både
+Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle tolv modusene, innstillingene (og gjerne debug-sida), både
 bokmål og nynorsk, både lys og mørk modus (følger `prefers-color-scheme`, eller valget i innstillingene), og gjerne et par fargetemaer. Knappen for hjemskjermen vises bare
 med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes både
 smalt (under 1100 px) og bredt (utenom onsdag 19–22).
@@ -889,7 +918,7 @@ smalt (under 1100 px) og bredt (utenom onsdag 19–22).
 `tools/regression/` er et Playwright-oppsett som kjører gjennom hele sida bare via grensesnittet
 (ingen interne funksjonsnavn), og lagrer et øyeblikksbilde etter hvert steg: markup, synlig tekst,
 fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene med alle
-spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), Flagg (begge retninger, flere verdensdeler og tilbakegesten), «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
+spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), Flagg (begge retninger, flere verdensdeler og tilbakegesten), Hovedsteder, «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
 og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også fargetemaet og en runde uten automatisk videre),
 stengt onsdag kveld, uten nett og som lokal fil, reklamen, hele sida på nynorsk (valgt i innstillingene),
 captchaen før preppen, Bommedatabasen, og at nedtellingen og preppen følger
