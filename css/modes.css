@@ -197,10 +197,13 @@
 /* ---------- Kvisslagets offisielle bommedatabase ---------- */
 /* One quiz per section, newest first, with a rule between them; each question folds open (<details>) */
 .boweek+.boweek{border-top:3px solid var(--edge);margin-top:24px;padding-top:20px}
+.boplace{margin:-6px 0 12px 4px;color:var(--muted);font-weight:700}
 .bolist{display:grid;gap:10px}
 .boitem{background:var(--paper);border-radius:20px;box-shadow:0 3px 0 var(--edge)}
 .boitem summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 16px;cursor:pointer;list-style:none;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:.94rem;line-height:1.35}
 .boitem summary::-webkit-details-marker{display:none}
+.boplay{margin-left:6px;padding:3px 10px;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:inherit;font-size:.82rem;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 var(--edge-strong);vertical-align:1px}
+.boplay:active{transform:translateY(2px);box-shadow:none}
 .bosee{flex:none;padding:4px 10px;border-radius:999px;background:var(--tint);color:var(--ink);font-family:"Figtree",system-ui,sans-serif;font-size:.85rem;font-weight:700;white-space:nowrap}
 .bosee::after{content:"";display:inline-block;width:.42em;height:.42em;margin:0 1px .2em 7px;border-right:2px solid;border-bottom:2px solid;transform:rotate(45deg)}
 .boitem[open] .bosee::after{transform:rotate(-135deg);margin-bottom:-.12em}

@@ -34,6 +34,7 @@ prep/                 arkivet over ukas prepp, én markdown-fil per kviss og spr
 manifest.webmanifest, icons/   for hjemskjermen — se «Hjemskjermen»
 .github/workflows/tag-version.yml   tagger hver push til main med versjonen — se «Versjon»
 ads/                  fotoer til annonsene — se «Reklame»
+bom/                  lydfiler til Bommedatabasen — se «Kvisslagets offisielle bommedatabase»
 ```
 
 Skriptene lastes i rekkefølgen nederst i `index.html`: `core.js`, `ui.js` og `quiz.js`, så alle
@@ -542,6 +543,12 @@ har ingen faner og er ikke med i Dagens kviss.
   `a` riktig svar, `t` hva laget svarte (`''` om vi ikke svarte noe — vises som «Ingenting»), og
   eventuelt `n` en merknad (gjerne årstall og bakgrunn, sjekket mot en kilde). Tekst skrives med
   `L()` der bokmål og nynorsk er ulike.
+- `audio` (valgfritt) er en lydfil i `bom/` for et spørsmål som ble lest opp: spørsmålet får knappen
+  «▶ Hør» (`.boplay`), som spiller den uten å åpne spørsmålet. Lyden er laget med talesyntese
+  ([Piper](https://github.com/rhasspy/piper), den norske stemmen `no_NO-talesyntese-medium`) og
+  gjort om til MP3 med `ffmpeg`. Hold filene små.
+- `BOM_PLACE` (samme fil) — plasseringen vår per kviss (`'ÅÅÅÅ-MM-DD':3`), som står under datoen
+  («Resultat: 3. plass»).
 - Bilde- og lydoppgaver har `m:'pic'` eller `m:'sound'` og trenger ingen `q` (eventuelt en kort
   beskrivelse av klippet eller bildet); de havner i registeret under dagens spørsmål.
 
