@@ -1,11 +1,11 @@
 // ---------- The captcha before Ukas prepp ----------
 // For two weeks, Ukas prepp asks for a captcha first, once per week: from Wednesday 21 October
-// 10:00 the distorted text, from Wednesday 28 October 10:00 the checkbox («Jeg er ikke en
+// 10:00 the distorted text, from Wednesday 28 October 09:00 the checkbox («Jeg er ikke en
 // kvissmaster»), and from 4 November nothing. Oslo time, by the server's clock. The one solved
 // last is kept in localStorage ('captcha'), so each is asked once, and whoever skipped the first
 // week gets just the second. ?captcha=text or ?captcha=robot in the address pretends it is that
 // week, so they can be tested any day (the answer is still kept).
-const CAPTCHAS=[['text','2026-10-21 10:00'],['robot','2026-10-28 10:00']], CAPTCHA_END='2026-11-04 10:00';
+const CAPTCHAS=[['text','2026-10-21 10:00'],['robot','2026-10-28 09:00']], CAPTCHA_END='2026-11-04 10:00';
 const CAPTCHA_TEST=new URLSearchParams(location.search).get('captcha');
 const CAPTCHA_WORD='kokkekult';
 function captchaDue(now){

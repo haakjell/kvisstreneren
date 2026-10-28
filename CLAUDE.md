@@ -360,7 +360,7 @@ Sida viser bare den nyeste prepen; `prep/`-mappa er arkivet.
 I to uker må man løse en falsk captcha før preppen åpnes, én gang per uke (`js/captcha.js`,
 `css/captcha.css`, `#captchaSheet` i markupen). Fra onsdag 21. oktober 2026 kl. 10 er det forvrengt
 tekst («kokkekult», tegnet som SVG i `capDraw()` med nye skjevheter for hvert forsøk), der svaret
-må være riktig (uansett store bokstaver og mellomrom). Fra onsdag 28. oktober kl. 10 er det en kopi
+må være riktig (uansett store bokstaver og mellomrom). Fra onsdag 28. oktober kl. 9 er det en kopi
 av Googles reCAPTCHA-boks, «Jeg er ikke en kvissmaster»; den spinner litt, får en grønn hake og
 slipper deg inn. Begge har logoen og «kvissCAPTCHA». Fra 4. november kl. 10 er det ingenting. Tidene står i `CAPTCHAS` og
 `CAPTCHA_END`, i norsk tid etter serverens klokke (se «Tid»).
