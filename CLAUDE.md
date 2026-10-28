@@ -57,7 +57,7 @@ noen få ny `index.html` med gamle skript; en oppdatering av sida retter det.
 
 ## Struktur
 
-Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og tolv
+Sida har en forside (`#home`) med nedtelling til neste kviss og én knapp per modus, og tretten
 moduser. I tillegg er det innstillingene (`#settings`), som åpnes med tannhjulet til høyre for
 tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølge som knappene på forsida.
 
@@ -69,6 +69,7 @@ tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølg
 | `bom` | `js/modes/bom.js` | `data/bom.js` | Kvisslagets offisielle bommedatabase: spørsmålene vi har bomma på — se under |
 | `flagg` | `js/modes/flagg.js` | `data/flagg.js` | Flagg: alle landene i verden, per verdensdel, og Antarktis — se under |
 | `hovedsteder` | `js/modes/hovedsteder.js` | `data/flagg.js` | Hovedsteder: landene i Flagg og hovedstedene deres — se under |
+| `elver` | `js/modes/elver.js` | `data/elver.js` | Elver: byene elvene renner gjennom, og hvor de renner ut — se under |
 | `bydel` | `js/modes/bydel.js` | `data/bydeler.js` | Bydelene: Oslos bydeler (`BSETS`) |
 | `tbane` | `js/modes/tbane.js` | `data/tbane.js`, `data/ruter-map.js` | T-banen: «neste stopp»-kviss og kart — se under |
 | `regjering` | `js/modes/regjering.js` | `data/statsrad.js` | Regjeringen: statsrådene og postene deres — se under |
@@ -103,7 +104,8 @@ fast tidspunkt: `addMode('<navn>', open, {newUntil:'2026-10-14 19:00'})` — nor
 `modes.css`) hver gang forsida vises og når klokka er spurt på nytt, etter serverens klokke (se
 «Tid»). Merket forsvinner av seg selv; `newUntil` kan bli stående, men rydd den gjerne bort
 neste gang du er i fila. Nå: Bommedatabasen, til onsdag 4. november 2026 kl. 19, Flagg,
-til onsdag 11. november 2026 kl. 19, og Hovedsteder, til onsdag 18. november 2026 kl. 19.
+til onsdag 11. november 2026 kl. 19, Hovedsteder, til onsdag 18. november 2026 kl. 19, og Elver, til onsdag
+25. november 2026 kl. 19.
 
 ### Spillmotoren
 
@@ -118,7 +120,7 @@ En modus gir motoren spørsmål på én felles form, beskrevet øverst i `quiz.j
 HTML i boksen (`prompt()`), eventuelt ny HTML etter svaret (`reveal()`), alternativene som
 `{label, ok, info}`, faktateksten og raden i lista over bom. Hver
 modus har én funksjon som lager et spørsmål — `vQuestion()`, `bQuestion()`, `tQuestion()`,
-`rgQuestion()`, `cQuestion()`, `mgQuestion()`, `fgQuestion()`, `hsQuestion()` — og den brukes både av modusens egen kviss (via
+`rgQuestion()`, `cQuestion()`, `mgQuestion()`, `fgQuestion()`, `hsQuestion()`, `elQuestion()` — og den brukes både av modusens egen kviss (via
 `ask`) og av kilden i `MIX`. Det modusen selv gjør, er å lage stokken (`newDeck`), valgene øverst
 og «Pugg».
 
@@ -225,6 +227,7 @@ hver hovedfeature etter den, og PATCH for hver commit mellom dem:
 | 2.4.4 | | Versjonen i innstillingene, den første med tagg fra workflowen |
 | 2.5.0 | | Flagg |
 | 2.6.0 | | Hovedsteder, og hovedstaden som det åttende spørsmålet i Dagens kviss |
+| 2.7.0 | | Elver |
 
 Tagger finnes bare fra 2.4.4. Får MINOR et nytt nummer, legg det til i tabellen.
 
@@ -241,7 +244,7 @@ Sida er tegnet som «bento»: store, runde flater i fargetemaets farger, uten st
 faner og fliser har ingen ramme, men en mørkere kant under seg (`box-shadow: 0 4px 0 var(--edge)`;
 fargede flater `--edge-strong`), og knappene synker ned på kanten når de trykkes. Forsida er et
 rutenett med to kolonner: Ukas prepp (i `--accent2`) og Dagens kviss (i `--ink`) som store fliser
-øverst, Anagram og Bommedatabasen som lave striper over hele bredden under dem, så de andre modusene (fra Flagg og Hovedsteder) som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
+øverst, Anagram og Bommedatabasen som lave striper over hele bredden under dem, så de andre modusene (fra Flagg, Hovedsteder og Elver) som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
 tegnet i temaets farger (`--ink`, `--accent`, `--paper`, på `--tint`), også bydelskartet og
 Hotel Cæsar-logoen, som tegnes i skriptene. Ny CSS: bruk fargevariablene, aldri faste farger.
 
@@ -609,6 +612,36 @@ navn og hovedstaden, som skjules med «Skjul hovedstedene»).
 
 I Dagens kviss er det én hovedstad per runde (`MIX.hovedsteder`), etter flagget.
 
+## Elver
+
+Kviss om de viktigste elvene i verden, med litt ekstra fra Europa og Norge: hvilke byer de renner
+gjennom, og hvor de renner ut. Bygd som Regjeringen og MGP, med «Kviss» og «Pugg» og tre
+spørsmålstyper øverst:
+
+- **By → elv:** byen vises, velg blant seks elver. Ingen av feilalternativene renner gjennom byen
+  (Koblenz ligger ved både Rhinen og Mosel).
+- **Elv → by:** elva vises, velg blant seks byer. Ingen av feilbyene ligger ved elva.
+- **Elv → utløp:** elva vises, velg blant seks steder elver renner ut (hav, fjorder, innsjøer eller
+  en annen elv — Mosel renner ut i Rhinen). Elva selv er aldri et alternativ.
+
+Chipene under velger del av verden: Hele verden, Europa (med Norge), Norge og Resten av verden.
+Valget huskes i `localStorage` under `elverPart` (ingen = Hele verden). Feilalternativene kommer
+fra den samme delen av verden først (Norge, resten av Europa, Afrika …), så de er troverdige.
+Alle elvene i utvalget kommer før noen gjentas. «Pugg» viser elvene per del av verden, lengst
+først, med byene (som skjules med «Skjul byene»), utløpet og lengden.
+
+- `ELVER` (`data/elver.js`) — én rad per elv: `n` navnet slik det står på no.wikipedia, `w`
+  delen av verden (`no`, `eu`, `af`, `as`, `na`, `sa`), `c` byene den renner gjennom, øverst
+  først (bare byer den faktisk renner gjennom — Praha ligger ved Vltava, ikke Elben), `m` hvor den
+  renner ut (leses etter «ut i»), `l` lengden i km, og eventuelt `f` en merknad. Tekst med `L()`
+  der bokmål og nynorsk er ulike.
+- Byer med samme navn skrives likt i alle radene (det er slik «By → elv» vet hvilke elver som
+  renner gjennom byen), og en by som finnes flere steder, skrives entydig («Frankfurt am Main»).
+
+Lista er satt sammen for hånd og sjekket mot no.wikipedia (oktober 2026); der den er taus eller
+åpenbart feil, mot en.wikipedia. Det finnes ikke noe skript. Modusen er ikke med i Dagens kviss
+(ennå), men `elQuestion()` er laget slik at en kilde i `MIX` kan bruke den.
+
 ## Regjeringen
 
 Kviss om hvem som har hvilken post i regjeringen. To spørsmålstyper, valgt med knappene øverst:
@@ -859,7 +892,7 @@ eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjen
 |---|---|---|
 | Sidekolonner (`side`) | Én høy annonse fast på hver side av innholdet, på alle sidene | Fra 1100 px |
 | Toppbanner (`#adTop`, `banner`) | Rett under nedtellingen; `goMode()` flytter den med | Under 1100 px |
-| «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp, Dagens kviss og stripene (Anagram og Bommedatabasen), og under raden med Regjeringen og Våpenskjold | Alle |
+| «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp, Dagens kviss og stripene (Anagram og Bommedatabasen), og under raden med T-banen og Regjeringen (foran Våpenskjold) | Alle |
 | I preppen (`box`) | Mellom hver `##`-del, lagt inn av `renderPrep()` | Alle |
 | «Anbefalt for deg» (`tile`) | Fire småsaker nederst i preppen | Alle |
 
@@ -911,7 +944,7 @@ Etter en endring, fra reporoten:
 for f in js/*.js js/modes/*.js data/*.js tools/*.mjs tools/regression/*.mjs; do node --check "$f" || echo "FEIL i $f"; done
 ```
 
-Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle tolv modusene, innstillingene (og gjerne debug-sida), både
+Det fanger syntaksfeil. Kjør også regresjonstesten under, og se selv i nettleseren: forsida, alle tretten modusene, innstillingene (og gjerne debug-sida), både
 bokmål og nynorsk, både lys og mørk modus (følger `prefers-color-scheme`, eller valget i innstillingene), og gjerne et par fargetemaer. Knappen for hjemskjermen vises bare
 med mobilemulering (berøring) i utviklerverktøyene. Reklamen og knappen for risting testes både
 smalt (under 1100 px) og bredt (utenom onsdag 19–22).
@@ -921,7 +954,7 @@ smalt (under 1100 px) og bredt (utenom onsdag 19–22).
 `tools/regression/` er et Playwright-oppsett som kjører gjennom hele sida bare via grensesnittet
 (ingen interne funksjonsnavn), og lagrer et øyeblikksbilde etter hvert steg: markup, synlig tekst,
 fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene med alle
-spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), Flagg (begge retninger, flere verdensdeler og tilbakegesten), Hovedsteder, «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
+spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), Flagg (begge retninger, flere verdensdeler og tilbakegesten), Hovedsteder, Elver (alle delene av verden), «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
 og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også fargetemaet og en runde uten automatisk videre),
 stengt onsdag kveld, uten nett og som lokal fil, reklamen, hele sida på nynorsk (valgt i innstillingene),
 captchaen før preppen, Bommedatabasen, og at nedtellingen og preppen følger

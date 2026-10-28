@@ -236,7 +236,7 @@ for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900
 }
 
 // Each quiz mode: every radio, a round each, retry, restart, extra switches, the study tab
-const MODES = ['bydel', 'tbane', 'regjering', 'vapen', 'mgp', 'caesar'];
+const MODES = ['bydel', 'tbane', 'regjering', 'vapen', 'mgp', 'caesar', 'elver'];
 for (const m of MODES) for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900, mobile: false }]]) {
   tests[`mode-${m}-${cfg}`] = async () => {
     const rec = new Rec(`mode-${m}-${cfg}`), page = await newPage(rec.name, { ...opt, url: BASE + '#' + m });
@@ -262,6 +262,14 @@ for (const m of MODES) for (const [cfg, opt] of [['mobile', {}], ['desktop', { w
       }
       await page.evaluate(() => __T.click('.mgfrom .chips button', 3));
       await playRound(page, rec, 'from2000');
+    }
+    if (m === 'elver') {
+      const chips = await page.evaluate(() => __T.texts('.elparts .chips button'));
+      for (let c = chips.length - 1; c >= 0; c--) {
+        await page.evaluate(c => __T.click('.elparts .chips button', c), c); await page.waitForTimeout(50);
+        await rec.snap(page, `part:${chips[c]}`);
+        if (c) await playRound(page, rec, `part${c}`);
+      }
     }
     if (m === 'tbane') {
       await page.evaluate(() => __T.click('.setswitch [role=radio]', 0)); await page.waitForTimeout(80);   // Geografisk
