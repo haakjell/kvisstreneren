@@ -349,7 +349,10 @@ og forsideknappen sier «Kommer snart». Begge blokkene tømmes. Ingen andre end
 
 **Kjøres quizprep herfra, hører dette med til jobben.** Skriv rapporten til `prep/<dato>.md` og
 nynorsken til `prep/<dato>-nn.md`, kjør `set-prep.mjs` med `--nn`, sjekk sida i nettleseren på
-begge språk, og commit begge rapportene og `index.html`. Ikke
+begge språk, og commit begge rapportene og `index.html`. Alle egennavn (personer, steder, lag,
+programmer, merkevarer …) skal lenkes inline til artikkelen på bokmåls-Wikipedia (`no.wikipedia.org`),
+én gang per sak, når artikkelen finnes — sjekket, ikke gjettet; finnes den ikke på bokmål, står
+navnet uten lenke. Den nynorske rapporten får de samme lenkene. Skillen beskriver hvordan. Ikke
 lim rapporten inn for hånd, og ikke forhåndsformater markdownen — skriptet og rendreren tar den
 som den er.
 
