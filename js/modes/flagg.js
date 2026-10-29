@@ -122,8 +122,7 @@ fgMakeMode('fg',{mode:'flagg', parts:FG_PARTS, question:fgQuestion, count:fgCoun
   dirs:{flag:['Flagg → land','fgDirFlag'], land:['Land → flagg','fgDirLand']},
   sub:[L('Velg retning og verdensdel','Vel retning og verdsdel'),L('Alle flaggene, etter verdensdel','Alle flagga, etter verdsdel')],
   study:list=>`<div class="study fgstudy">${list.map(f=>`<figure tabindex="0"><img src="${FG_IMG(f)}" alt="" loading="lazy"><figcaption class="ans"><strong>${f.n}</strong>${f.k?`<span>${f.k}</span>`:''}</figcaption></figure>`).join('')}</div>`,
-  toggle:L(['Skjul navn','Vis navn'],['Skjul namn','Vis namn']),
-  addMode:{newUntil:'2026-11-11 19:00'}});
+  toggle:L(['Skjul navn','Vis navn'],['Skjul namn','Vis namn'])});
 
 // Mixed quiz: any country in the world (not Antarctica), either way round, wrong options from all of them
 MIX.flagg={label:'Flagg', deal(n){

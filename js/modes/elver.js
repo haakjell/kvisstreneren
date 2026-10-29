@@ -93,6 +93,6 @@ $('elParts').addEventListener('click',e=>{
   elRenderParts(); elRenderStudy(); elUse(elMode);
 });
 function elOpen(){ if(!elQuiz.started()){ elRenderParts(); elRenderStudy(); elUse('city'); } }
-addMode('elver',elOpen,{newUntil:'2026-11-25 19:00'});
+addMode('elver',elOpen,{newUntil:'2026-11-04 19:00'});
 $('elNote').textContent=L(`${ELVER.length} elver: de viktigste i verden, med litt ekstra fra Europa og Norge. Kilde: Wikipedia.`,
   `${ELVER.length} elvar: dei viktigaste i verda, med litt ekstra frå Europa og Noreg. Kjelde: Wikipedia.`);

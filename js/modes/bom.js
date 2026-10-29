@@ -1,4 +1,4 @@
-// ---------- Kvisslagets offisielle bommedatabase ----------
+// ---------- Bommedatabasen ----------
 // The questions we got wrong at the Wednesday quiz (BOM in data/bom.js), one closed <details> per
 // question, grouped by quiz with the newest first. «Se svar» opens it to the right answer and what
 // the team answered. Picture and sound questions (m in BOM) are only a record for the team: one
@@ -32,4 +32,4 @@ $('boList').addEventListener('click',ev=>{
 const boQuizzes=new Set(BOM.map(e=>e.d)).size;
 $('boSub').textContent=boQuizzes===1?L(`${BOM.length} spørsmål fra 1 kviss`,`${BOM.length} spørsmål frå 1 kviss`)
   :L(`${BOM.length} spørsmål fra ${boQuizzes} kvisser`,`${BOM.length} spørsmål frå ${boQuizzes} kvissar`);
-addMode('bom',()=>{},{newUntil:'2026-11-04 19:00'});
+addMode('bom');

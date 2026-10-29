@@ -27,8 +27,7 @@ fgMakeMode('hs',{mode:'hovedsteder', parts:HS_PARTS, question:hsQuestion, count:
   dirs:{cap:[L('Land → hovedstad','Land → hovudstad'),'hsDirCap'], land:[L('Hovedstad → land','Hovudstad → land'),'hsDirLand']},
   sub:[L('Velg retning og verdensdel','Vel retning og verdsdel'),L('Alle hovedstedene, etter verdensdel','Alle hovudstadene, etter verdsdel')],
   study:list=>`<ul class="hslist">${list.map(f=>`<li tabindex="0"><img src="${FG_IMG(f)}" alt="" loading="lazy"><div><strong>${f.n}</strong><span class="ans">${f.k}</span></div></li>`).join('')}</ul>`,
-  toggle:L(['Skjul hovedstedene','Vis hovedstedene'],['Skjul hovudstadene','Vis hovudstadene']),
-  addMode:{newUntil:'2026-11-18 19:00'}});
+  toggle:L(['Skjul hovedstedene','Vis hovedstedene'],['Skjul hovudstadene','Vis hovudstadene'])});
 
 // Mixed quiz: any country in the world with a capital, either way round, wrong options from all of them
 MIX.hovedsteder={label:L('Hovedsteder','Hovudstader'), deal(n){

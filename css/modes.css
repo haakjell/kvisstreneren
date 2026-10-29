@@ -194,7 +194,7 @@
 .prepsoon{text-align:center;color:var(--muted);padding:26px 6px 22px}
 .prepsoon strong{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.4rem;color:var(--ink);margin-bottom:8px}
 
-/* ---------- Kvisslagets offisielle bommedatabase ---------- */
+/* ---------- Bommedatabasen ---------- */
 /* One quiz per section, newest first, with a rule between them; each question folds open (<details>) */
 .boweek+.boweek{border-top:3px solid var(--edge);margin-top:24px;padding-top:20px}
 .boplace{margin:-6px 0 12px 4px;color:var(--muted);font-weight:700}

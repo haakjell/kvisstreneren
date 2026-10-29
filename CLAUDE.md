@@ -34,7 +34,7 @@ prep/                 arkivet over ukas prepp, én markdown-fil per kviss og spr
 manifest.webmanifest, icons/   for hjemskjermen — se «Hjemskjermen»
 .github/workflows/tag-version.yml   tagger hver push til main med versjonen — se «Versjon»
 ads/                  fotoer til annonsene — se «Reklame»
-bom/                  lydfiler til Bommedatabasen — se «Kvisslagets offisielle bommedatabase»
+bom/                  lydfiler til Bommedatabasen — se «Bommedatabasen™»
 ```
 
 Skriptene lastes i rekkefølgen nederst i `index.html`: `core.js`, `ui.js` og `quiz.js`, så alle
@@ -67,7 +67,7 @@ tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølg
 | `prep` | `js/prep.js` | `#prepSource` i `index.html` | Ukas prepp — se under |
 | `dagens` | `js/dagens.js` | — | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`) — se under |
 | `anagram` | `js/modes/anagram.js` | `data/anagram.js` | Anagram: kjendiser med bokstavene stokket om, på et kart med skattekister der alle går samme vei — se under |
-| `bom` | `js/modes/bom.js` | `data/bom.js` | Kvisslagets offisielle bommedatabase: spørsmålene vi har bomma på — se under |
+| `bom` | `js/modes/bom.js` | `data/bom.js` | Bommedatabasen™: spørsmålene vi har bomma på — se under |
 | `flagg` | `js/modes/flagg.js` | `data/flagg.js` | Flagg: alle landene i verden, per verdensdel, og Antarktis — se under |
 | `hovedsteder` | `js/modes/hovedsteder.js` | `data/flagg.js` | Hovedsteder: landene i Flagg og hovedstedene deres — se under |
 | `elver` | `js/modes/elver.js` | `data/elver.js` | Elver: byene elvene renner gjennom, og hvor de renner ut — se under |
@@ -104,9 +104,7 @@ fast tidspunkt: `addMode('<navn>', open, {newUntil:'2026-10-14 19:00'})` — nor
 `ÅÅÅÅ-MM-DD TT:MM`. `renderNewTags()` i `app.js` setter inn eller fjerner merket (`.newtag` i
 `modes.css`) hver gang forsida vises og når klokka er spurt på nytt, etter serverens klokke (se
 «Tid»). Merket forsvinner av seg selv; `newUntil` kan bli stående, men rydd den gjerne bort
-neste gang du er i fila. Nå: Bommedatabasen, til onsdag 4. november 2026 kl. 19, Flagg,
-til onsdag 11. november 2026 kl. 19, Hovedsteder, til onsdag 18. november 2026 kl. 19, og Elver, til onsdag
-25. november 2026 kl. 19.
+neste gang du er i fila. Nå: Elver, til onsdag 4. november 2026 kl. 19.
 
 ### Spillmotoren
 
@@ -528,15 +526,14 @@ viste stoppene ikke avgjør svaret, droppes (linje 5 passerer Tøyen og Carl Ber
 ganger). Er det skjulte stoppet en endestasjon, spørres det etter endestasjonen i stedet, siden
 «mot X» ellers ville røpet svaret.
 
-## Kvisslagets offisielle bommedatabase
+## Bommedatabasen™
 
-Spørsmålene vi har bommet på i onsdagskvissen (på nynorsk «Den offisielle bommedatabasen til
-kvisslaget»). Modusen er ingen kviss, bare en liste: én del per
+Spørsmålene vi har bommet på i onsdagskvissen. Modusen er ingen kviss, bare en liste: én del per
 kviss, nyeste øverst, skilt med en vannrett strek (`.boweek`). Hvert spørsmål er en lukket
 `<details>` med «Se svar» til høyre, og åpnet viser den det riktige svaret og hva kvisslaget
 svarte. Lyd- og bildeoppgaver står bare som et register for laget, siden oppgaven selv ikke er med:
 én liten lukket «Bilde- og lydoppgaver (N)» under de andre spørsmålene den dagen (`.boextra`), med
-én linje per oppgave. Navnet har «™» på slutten, både på forsideknappen og i overskriften. Modusen
+én linje per oppgave. Navnet er «Bommedatabasen™», likt på begge språk, både på forsideknappen og i overskriften. Modusen
 har ingen faner og er ikke med i Dagens kviss.
 
 - `BOM` (`data/bom.js`) — én rad per spørsmål: `d` kvissdatoen (`'ÅÅÅÅ-MM-DD'`), `q` spørsmålet,
