@@ -395,6 +395,17 @@ til i kveld kommer snart». Forsideknappen sier det samme i stedet for «Klar ti
 prepen (og når klokka er spurt på nytt), og forsvinner av seg selv når `set-prep.mjs` legger inn
 en ny rapport. «Dagen etter» regnes i norsk tid etter serverens klokke (se «Tid»).
 
+### Avisvisningen
+
+Øverst i preppen velger man «Vanlig» eller «Avis» (`#prepView`), og valget huskes i `localStorage`
+under `prepView` (`'paper'`; ingen = vanlig). «Avis» er den samme rapporten satt som en avis,
+*Kvissposten* (`#prepPaper`, `prepPaper()` i `prep.js`, `.paper` i `modes.css`): avishodet lages av
+`#`-tittelen (datoen, ukenummeret og «årgang» regnet fra 2026), hver `##`-del blir en seksjon med
+navnet uten «Del N:», hver `###` en artikkel i spalter, og den første artikkelen i den første delen
+blir hovedsaken over hele bredden. Linjer som begynner med «**Kilde:**» settes som byline. Begge
+visningene lages ved oppstart fra den samme markdownen, så `set-prep.mjs` trenger ikke vite om
+avisa. Avisnavnet står i UnifrakturMaguntia (Google Fonts), resten i Georgia; fargene følger temaet.
+
 ### Hva rendreren støtter
 
 Rapporten fra quizprep bruker bare dette, og rendreren dekker akkurat det:

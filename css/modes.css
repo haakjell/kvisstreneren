@@ -99,6 +99,37 @@
 .prose a{color:var(--accent);font-weight:600;word-break:break-word}
 .prose hr{border:0;border-top:2px solid var(--line);margin:22px 0}
 .prose code{font-size:.9em;background:var(--tint);border-radius:6px;padding:1px 5px}
+/* «Avis»: the same report as a newspaper, Kvissposten. Serif type, thin rules in the ink colour,
+   the text in columns as wide as there is room for (one on a phone), the lead story across them. */
+.paper{padding:18px 16px 22px;font-family:Georgia,"Times New Roman",Times,serif;line-height:1.45;border-radius:6px}
+.paper[hidden]{display:none}
+.paper a{color:inherit;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:2px;word-break:break-word}
+.paper .mast{display:block;text-align:center;border-bottom:3px double var(--ink);padding-bottom:8px;margin-bottom:12px}
+.paper .meta,.paper .date{display:flex;justify-content:space-between;gap:10px;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.paper .meta{color:var(--muted)}
+.paper .name{font-family:"UnifrakturMaguntia",Georgia,serif;font-size:clamp(2.6rem,12vw,4.6rem);line-height:1;margin:8px 0 2px}
+.paper .tag{font-style:italic;font-size:.9rem;color:var(--muted);margin-bottom:8px}
+.paper .date{border-top:1px solid var(--ink);padding-top:6px;font-weight:700}
+.paper .ear{font-size:.85rem;font-style:italic;color:var(--muted);border-bottom:1px solid var(--ink);padding-bottom:8px}
+.paper .ear p{margin:2px 0}
+.paper .ear strong{font-style:normal;color:var(--ink)}
+.paper section{margin-top:18px}
+.paper h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:.85rem;text-transform:uppercase;letter-spacing:.12em;margin:0 0 10px;padding:4px 0;border-top:3px solid var(--ink);border-bottom:1px solid var(--ink)}
+.paper h3{font-weight:700;font-size:1.2rem;line-height:1.15;margin:0 0 6px;break-after:avoid}
+.paper h4{font-size:1rem;margin:10px 0 2px;break-after:avoid}
+.paper .lead{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
+.paper .lead h3{font-size:clamp(1.7rem,6vw,2.5rem);line-height:1.05;letter-spacing:-.01em}
+.paper .lead ul{font-size:1.05rem}
+.paper .cols{columns:17rem;column-gap:24px;column-rule:1px solid var(--line);hyphens:auto}
+.paper .art{padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+.paper .art:last-child{border-bottom:0}
+@media (min-width:700px){.paper .cols p,.paper .cols li{text-align:justify}}
+.paper ul{list-style:none;margin:0;padding:0}
+.paper li{margin:0 0 6px}
+.paper .cols li.src,.paper li.src{font-size:.8rem;font-style:italic;color:var(--muted);text-align:left}
+.paper p{margin:4px 0}
+.paper .cols p:has(> strong:only-child){break-after:avoid}
+.paper .adslot{margin:18px 0 0}
 /* ---------- T-banen ---------- */
 /* Ruter's own line colours, on the map and the line buttons: they are the same in every theme */
 :root{--l1:#00A9EE;--l2:#E74D14;--l3:#B800F1;--l4:#004296;--l5:#4AAC30}

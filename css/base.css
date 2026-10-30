@@ -49,6 +49,7 @@ body{
   body[data-mode="prep"]{--wrapw:clamp(560px,60vw,960px)}
   body[data-mode="home"]{--wrapw:min(1080px,100vw - 64px)}
   .wrap.wide .prose{padding:30px 40px 34px}
+  .wrap.wide .paper{padding:26px 32px 30px}
 }
 @media (min-width:1100px){body.ads[data-mode="home"]{--wrapw:clamp(560px,100vw - 480px,1080px)}}
 .wrap{container:wrap/inline-size;max-width:var(--wrapw);margin:0 auto;padding:20px 16px 40px}

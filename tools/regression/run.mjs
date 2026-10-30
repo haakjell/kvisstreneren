@@ -206,6 +206,12 @@ for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900
     await rec.snap(page, 'home-full', true); await rec.shoot(page, 'home');
     await page.goto(BASE + '#prep'); await page.waitForTimeout(150);
     await rec.snap(page, 'prep'); await rec.shoot(page, 'prep');
+    // «Avis»: the same report as a newspaper, remembered after a reload
+    await page.click('#prepViewPaper'); await page.waitForTimeout(150);
+    await rec.snap(page, 'prep-paper'); await rec.shoot(page, 'prep-paper');
+    await page.reload(); await page.waitForTimeout(150);
+    await rec.snap(page, 'prep-paper-reload');
+    await page.click('#prepViewPlain'); await page.waitForTimeout(150);
     // Every home button, then back via «← Alle kvisser»
     await page.goto(BASE); await page.waitForTimeout(100);
     const n = await page.evaluate(() => document.querySelectorAll('#home .mode').length);

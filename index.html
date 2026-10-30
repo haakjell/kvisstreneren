@@ -15,7 +15,7 @@
 <meta name="theme-color" content="#120E1B" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;700;800&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 <script src="js/theme.js"></script>
 <link rel="stylesheet" href="css/themes.css">
 <link rel="stylesheet" href="css/base.css">
@@ -269,7 +269,12 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
 </script>
     <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
     <div class="prepstale" id="prepStale" role="status" hidden></div>
+    <div class="setswitch" id="prepView" role="radiogroup" aria-label="Velg visning" data-nn-aria-label="Vel vising" hidden>
+      <button role="radio" id="prepViewPlain" aria-checked="true" data-nn="Vanleg">Vanlig</button>
+      <button role="radio" id="prepViewPaper" aria-checked="false">Avis</button>
+    </div>
     <article class="card prose" id="prepBody"></article>
+    <article class="card paper" id="prepPaper" hidden></article>
     <section class="adrecs" aria-labelledby="adRecsTitle">
       <h2 id="adRecsTitle" data-nn="Tilrådd for deg <span>Sponset</span>">Anbefalt for deg <span>Sponset</span></h2>
       <div class="adrecgrid">
