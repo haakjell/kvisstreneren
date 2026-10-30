@@ -618,33 +618,40 @@ I Dagens kviss er det én hovedstad per runde (`MIX.hovedsteder`), etter flagget
 
 ## Elver
 
-Kviss om de viktigste elvene i verden, med litt ekstra fra Europa og Norge: hvilke byer de renner
-gjennom, og hvor de renner ut. Bygd som Regjeringen og MGP, med «Kviss» og «Pugg» og tre
+Kviss om de viktigste elvene i verden, med litt ekstra fra Europa og Norge: hvilke byer og land de
+renner gjennom, og hvor de renner ut. Bygd som Regjeringen og MGP, med «Kviss» og «Pugg» og fire
 spørsmålstyper øverst:
 
-- **By → elv:** byen vises, velg blant seks elver. Ingen av feilalternativene renner gjennom byen
-  (Koblenz ligger ved både Rhinen og Mosel).
-- **Elv → by:** elva vises, velg blant seks byer. Ingen av feilbyene ligger ved elva.
+- **By → elv:** byen vises, velg blant seks elver. Bare kjente byer spørres om (`cq`): hovedsteder,
+  og byer omtrent like kjent (Genève, Lyon, Hamburg, Kraków …), og flere av de norske. Ingen av
+  feilalternativene renner gjennom byen (Beograd ligger ved både Donau og Sava).
+- **Elv → by:** elva vises, velg blant seks byer, alle byene i `c`. Ingen av feilbyene ligger ved elva.
+- **Elv → land:** elva vises, velg blant seks land. Riktig er ett av landene den renner gjennom
+  (`k`); feilalternativene er ingen av dem, og heller ikke landene i `kx`. Elvene som bare renner
+  i Norge, er ikke med.
 - **Elv → utløp:** elva vises, velg blant seks steder elver renner ut (hav, fjorder, innsjøer eller
   en annen elv — Mosel renner ut i Rhinen). Elva selv er aldri et alternativ.
 
-Chipene under velger del av verden: Hele verden, Europa (med Norge), Norge og Resten av verden.
-Valget huskes i `localStorage` under `elverPart` (ingen = Hele verden). Feilalternativene kommer
-fra den samme delen av verden først (Norge, resten av Europa, Afrika …), så de er troverdige.
-Alle elvene i utvalget kommer før noen gjentas. «Pugg» viser elvene per del av verden, lengst
-først, med byene (som skjules med «Skjul byene»), utløpet og lengden.
+Chipene under velger del av verden: Hele verden, Europa (med Norge) og Resten av verden. Valget
+huskes i `localStorage` under `elverPart` (ingen = Hele verden). Feilalternativene kommer fra den
+samme delen av verden først (Norge, resten av Europa, Afrika …), så de er troverdige. Alle elvene
+i utvalget kommer før noen gjentas. «Pugg» viser elvene per del av verden, lengst først, med alle
+byene (som skjules med «Skjul byene»), landene, utløpet og lengden.
 
 - `ELVER` (`data/elver.js`) — én rad per elv: `n` navnet slik det står på no.wikipedia, `w`
   delen av verden (`no`, `eu`, `af`, `as`, `na`, `sa`), `c` byene den renner gjennom, øverst
-  først (bare byer den faktisk renner gjennom — Praha ligger ved Vltava, ikke Elben), `m` hvor den
-  renner ut (leses etter «ut i»), `l` lengden i km, og eventuelt `f` en merknad. Tekst med `L()`
-  der bokmål og nynorsk er ulike.
+  først (bare byer den faktisk renner gjennom — Praha ligger ved Vltava, ikke Elben), `cq` de av
+  dem som spørres om i «By → elv» (uten `cq` er elva ikke med der), `k` landene den renner gjennom
+  som ISO-koder i `FLAGG` (navnet hentes derfra), `kx` land som aldri er feilalternativ for den
+  (den renner langs dem, eller kildeelvene gjør det), `m` hvor den renner ut (leses etter «ut i»),
+  `l` lengden i km, og eventuelt `f` en merknad. Tekst med `L()` der bokmål og nynorsk er ulike.
 - Byer med samme navn skrives likt i alle radene (det er slik «By → elv» vet hvilke elver som
-  renner gjennom byen), og en by som finnes flere steder, skrives entydig («Frankfurt am Main»).
+  renner gjennom byen), og ingen by står for to ulike steder (Frankfurt er Frankfurt am Main).
 
 Lista er satt sammen for hånd og sjekket mot no.wikipedia (oktober 2026); der den er taus eller
-åpenbart feil, mot en.wikipedia. Det finnes ikke noe skript. Modusen er ikke med i Dagens kviss
-(ennå), men `elQuestion()` er laget slik at en kilde i `MIX` kan bruke den.
+åpenbart feil, mot en.wikipedia. Eieren har tatt ut de mindre kjente elvene og valgt hvor kjente
+byene i `cq` skal være. Det finnes ikke noe skript. Modusen er ikke med i Dagens kviss (ennå),
+men `elQuestion()` er laget slik at en kilde i `MIX` kan bruke den.
 
 ## Regjeringen
 
