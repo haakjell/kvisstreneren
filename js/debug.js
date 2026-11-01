@@ -1,5 +1,5 @@
 // ---------- Debug ----------
-// An overview of the test switches in the address (?captcha=…), with links, plus the
+// An overview of the test switches in the address (none at the moment), with links, plus the
 // modes, the clocks and what is in localStorage. It only exists behind a secret query parameter:
 // only its hash (seedOf() in core.js) is here, so the name isn't in the source. Without it, #debug
 // is an unknown hash and gives the home page. With it and no hash, the page opens on #debug.
@@ -7,14 +7,7 @@ const DB_KEY=4181429119;
 const DEBUG=[...new URLSearchParams(location.search).keys()].some(k=>seedOf(k)===DB_KEY);
 
 // Each test switch the page reads from the address: the query, what it does, and links to try it
-const DB_FLAGS=[
-  {q:'captcha=text', what:L('Later som det er den første captcha-uka: den forvrengte teksten (captcha.js).',
-                            'Lèt som det er den første captcha-veka: den forvrengde teksten (captcha.js).'),
-   links:['?captcha=text#prep']},
-  {q:'captcha=robot', what:L('Later som det er den andre captcha-uka: «Jeg er ikke en kvissmaster» (captcha.js).',
-                             'Lèt som det er den andre captcha-veka: «Eg er ikkje ein kvissmaster» (captcha.js).'),
-   links:['?captcha=robot#prep']},
-];
+const DB_FLAGS=[];
 
 const dbEsc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const dbTime=t=>new Date(osloWall(t)).toISOString().slice(0,19).replace('T',' ');
@@ -32,8 +25,9 @@ function dbStore(){
 
 function dbOpen(){
   // Just the links; what the switch does folds out from the arrow
-  $('dbFlags').innerHTML=DB_FLAGS.map(f=>`<li><details><summary>
-    <span class="dblinks">${f.links.map(h=>`<a href="${h}">${h}</a>`).join('')}</span></summary><p>${f.what}</p></details></li>`).join('');
+  $('dbFlags').innerHTML=DB_FLAGS.length ? DB_FLAGS.map(f=>`<li><details><summary>
+    <span class="dblinks">${f.links.map(h=>`<a href="${h}">${h}</a>`).join('')}</span></summary><p>${f.what}</p></details></li>`).join('')
+    : `<li class="dbnone">${L('Ingen nå','Ingen no')}</li>`;
   $('dbModes').innerHTML=Object.keys(MODES).filter(k=>k!=='debug').map(k=>`<li><a href="#${k}">#${k}</a></li>`).join('');
   const now=serverNow();
   const rows=[
@@ -41,7 +35,6 @@ function dbOpen(){
     [L('Enhetens klokke','Klokka til eininga'), dbTime(Date.now())],
     ['Avvik', serverClock ? Math.round((Date.now()-now)/1000)+' s' : '–'],
     [L('Kvissen pågår','Kvissen er i gang'), quizLive(now) ? 'ja' : 'nei'],
-    ['Captcha', captchaDue(now) || 'ingen'],
     ['Språk', LANG],
   ];
   $('dbStatus').innerHTML=rows.map(([k,v])=>`<dt>${k}</dt><dd>${dbEsc(v)}</dd>`).join('');

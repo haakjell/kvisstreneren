@@ -17,14 +17,14 @@ index.html            markupen: forsida, alle modusene, innstillingene, arkene �
 css/themes.css        fargetemaene, hvert med en lys og en mørk utgave — se «Utseende»
 css/base.css          lys/mørk modus, layout, kort, knapper, faner, alternativer, brytere, «Skjul navn»
 css/modes.css         forsida, hver modus og innstillingene, i hver sin bolk
-css/countdown.css · install.css · captcha.css · ads.css
+css/countdown.css · install.css · ads.css
 js/core.js            versjonen (VERSION) og felles hjelpere: $(), store, språket (L()), navn (normName()), tilfeldighet (rnd()),
                       tid (serverNow(), osloWall(), quizLive() …), modusregisteret (addMode()) og MIX
-js/ui.js              felles grensesnitt: tabs(), radios(), hideAnswers(), dropBrokenPics()
+js/ui.js              felles grensesnitt: tabs(), radios(), hideAnswers(), dropBrokenPics(), «Auto»
 js/quiz.js            spillmotoren, makeQuiz(): spørsmåls- og resultatkortet for alle kvissene
 js/modes/<modus>.js   hver kvissmodus: spørsmålene, valgene øverst, «Pugg» og kilden i MIX
 js/theme.js           lys/mørk modus og fargetema fra innstillingene — lastes i <head>, se «Utseende»
-js/prep.js · captcha.js · dagens.js · ads.js · countdown.js · install.js
+js/prep.js · dagens.js · ads.js · countdown.js · install.js
 js/settings.js        Innstillinger — se under
 js/debug.js           den skjulte debug-sida — se «Debug-sida»
 js/app.js             modusbytte og ruting (goMode()) og oppstart
@@ -111,9 +111,17 @@ neste gang du er i fila. Nå: Elver, til onsdag 4. november 2026 kl. 19.
 Alle kvissene, også Dagens kviss, kjøres av `makeQuiz()` i `js/quiz.js`. Den skriver
 spørsmålskortet og resultatkortet inn i modusens `<main>` og står for alt som er likt:
 telleren, poengene, fremdriftslinja, alternativene, «Riktig!» /
-«Det var X», videre etter 1000 ms ved riktig svar (`QUIZ_AUTO`; kan skrus av i innstillingene,
-`quizAuto()`), lista over bom, «Øv på dem du
+«Det var X», videre etter 1000 ms ved riktig svar (`QUIZ_AUTO`; kan skrus av i innstillingene og
+med «Auto» i hver kviss, `quizAuto()`), lista over bom, «Øv på dem du
 bommet på» og «Ti nye spørsmål», og tastene 1–6 og Enter (én lytter for alle).
+
+**«Auto».** Øverst til høyre i hver kviss, på linje med tilbakeknappen (`.topbar`), står en liten
+bryter med en klokke og «Auto» (`button.qauto`): «Gå videre av seg selv ved riktig svar», den samme
+innstillingen som i innstillingene. Av er den bare et omriss med strek over klokka. Knappene er tomme
+i markupen og fylles av `ui.js`; `syncAuto()` (kalt fra `goMode()`) holder dem i takt med
+innstillingen, og `tabs()` skjuler knappen i «Pugg»/«Kart». Ny kviss: legg tilbakeknappen og en
+`<button type="button" class="qauto" role="switch"></button>` i en `<div class="topbar">`. Den
+står bevisst ikke ved fanene: der blir det for trangt på telefon med lange titler.
 
 En modus gir motoren spørsmål på én felles form, beskrevet øverst i `quiz.js`: spørsmålstekst,
 HTML i boksen (`prompt()`), eventuelt ny HTML etter svaret (`reveal()`), alternativene som
@@ -173,7 +181,7 @@ tabellen over og ikke i Dagens kviss. Alt lagres i `localStorage` på enheten.
 
 | Innstilling | Nøkkel | Bor i |
 |---|---|---|
-| Gå videre av seg selv ved riktig svar (standard på; også som «Auto»-knapp i Flagg) | `autoNext` (`'0'` = av) | `quizAuto()`/`setQuizAuto()` i `quiz.js` |
+| Gå videre av seg selv ved riktig svar (standard på; også som «Auto»-knapp i hver kviss) | `autoNext` (`'0'` = av) | `quizAuto()`/`setQuizAuto()` i `quiz.js` |
 | Språk: Bokmål / Nynorsk | `lang` (`'nn'`; ingen = bokmål) | `LANG` i `core.js` — se «Språk» |
 | Bilder i Hotel Cæsar (standard på) | `cPics` | `cSetPics()` i `caesar.js` |
 | T-banekartet: Geografisk / Linjekart | `tMapKind` | `tSetKind()` i `tbane.js` |
@@ -246,6 +254,12 @@ rutenett med to kolonner: Ukas prepp (i `--accent2`) og Dagens kviss (i `--ink`)
 øverst, Anagram og Bommedatabasen som lave striper over hele bredden under dem, så de andre modusene (fra Flagg, Hovedsteder og Elver) som små fliser, og nedtellingen i `--accent` over. Ikonene på forsida er
 tegnet i temaets farger (`--ink`, `--accent`, `--paper`, på `--tint`), også bydelskartet og
 Hotel Cæsar-logoen, som tegnes i skriptene. Ny CSS: bruk fargevariablene, aldri faste farger.
+
+**Smale skjermer.** Når `.wrap` er under 440 px (container-spørring i `base.css`), er titlene i
+modusene litt mindre (`header h1`) og fanene litt smalere, så en lang tittel («Hovedsteder») og
+fanene står side om side ned til 360 px; på enda smalere skjermer går fanene ned under tittelen.
+Svaralternativene deler lange ord med bindestrek (`hyphens:auto`) i stedet for å gjøre rutenettet
+bredere enn skjermen. Sjekk nye moduser på 320 og 360 px.
 
 **Forsida på desktop.** Når sida får minst 760 px (en container-spørring på `.wrap`, så det går etter
 bredden sida faktisk får, også med sidekolonnene med reklame), blir forsida ett rutenett med tolv
@@ -359,26 +373,6 @@ lim rapporten inn for hånd, og ikke forhåndsformater markdownen — skriptet o
 som den er.
 
 Sida viser bare den nyeste prepen; `prep/`-mappa er arkivet.
-
-### Captchaen
-
-I to uker må man løse en falsk captcha før preppen åpnes, én gang per uke (`js/captcha.js`,
-`css/captcha.css`, `#captchaSheet` i markupen). Fra onsdag 21. oktober 2026 kl. 10 er det forvrengt
-tekst («kokkekult», tegnet som SVG i `capDraw()` med nye skjevheter for hvert forsøk), der svaret
-må være riktig (uansett store bokstaver og mellomrom). Fra onsdag 28. oktober kl. 9 er det en kopi
-av Googles reCAPTCHA-boks, «Jeg er ikke en kvissmaster»; den spinner litt, får en grønn hake og
-slipper deg inn. Begge har logoen og «kvissCAPTCHA». Fra 4. november kl. 10 er det ingenting. Tidene står i `CAPTCHAS` og
-`CAPTCHA_END`, i norsk tid etter serverens klokke (se «Tid»).
-
-Den som er løst sist, lagres i `localStorage` under `captcha` (`'robot'`/`'text'`), så hver blir
-spurt én gang, og den som ikke var innom første uke, får bare den andre. Captchaen legger seg over
-sida man står på: `openMode('prep')` og `syncMode()` i `app.js` spør `captchaAsk()` først
-(`prepGated()`), så en lenke rett til `#prep` gir forsida med captchaen over, og Esc eller et trykk utenfor boksen
-lar en bli på forsida. Viser serveren at enhetens klokke gikk for sakte, sendes man tilbake til forsida
-fra preppen (`refreshClock()`). Captchaboksene har reCAPTCHAs faste farger og skrift, også i mørk
-modus, som annonsene. **Testbryter:** `?captcha=text` eller `?captcha=robot` later som det er den
-uka (svaret lagres likevel; fjern `captcha` i `localStorage` for å prøve igjen). Når perioden er over,
-kan `captcha.js`, `captcha.css`, `#captchaSheet`, `prepGated()`, testen i regresjonstesten og de to radene i `DB_FLAGS` (`debug.js`) fjernes.
 
 På desktop (fra 900 px) er preppen bredere enn resten av sida, siden den bare er tekst: den får
 `clamp(560px, 60vw, 960px)` — omtrent halve skjermen på en vanlig 1920-skjerm. Bredden står i
@@ -566,8 +560,8 @@ ikke under kvissen, så den ikke kan nullstille en runde midt i.
   Flagg som ligner (`FLAGG_LIKE`), kommer først blant feilalternativene, så tilfeldige.
   Antarktis har bare ett flagg og ett alternativ (det er vitsen). Etter runden: «Øv på dem du bommet
   på», «Start på nytt med alle N» og «Velg en annen verdensdel».
-- **Underveis:** øverst til høyre i kvissen er «Gå videre av seg selv ved riktig svar» en rund
-  knapp med en klokke med pil rundt og «Auto» (`#fgAuto`; av: bare omriss og strek over klokka), den samme innstillingen som i innstillingene (`setQuizAuto()`). Prøver man å gå
+- **Underveis:** øverst til høyre i kvissen står «Auto» (`#fgAuto`), som i de andre kvissene (se
+  «Spillmotoren»). Prøver man å gå
   tilbake midt i en runde (minst ett svar, ikke på resultatet), med «← Verdensdelene» eller
   tilbakegesten, spør arket `#fgLeaveSheet` først, siden runden går tapt. Tilbakegesten har da
   allerede gått ut av kvissens historikkoppføring, så den legges inn igjen mens arket spør.
@@ -593,7 +587,7 @@ ikke under kvissen, så den ikke kan nullstille en runde midt i.
 I Dagens kviss er det ett flagg per runde (`MIX.flagg`). Det finnes ikke noe skript: endrer et land navn eller flagg,
 rett `FLAGG` for hånd (et nytt flagg kommer av seg selv fra flagcdn).
 
-Startsida, kvissen, tilbakeknappen og arket, «Auto» og «Pugg» lages av `fgMakeMode()` i `flagg.js`,
+Startsida, kvissen, tilbakeknappen og arket og «Pugg» lages av `fgMakeMode()` i `flagg.js`,
 som både Flagg og Hovedsteder bruker (med prefiksene `fg` og `hs` på id-ene i markupen). Arket
 `#fgLeaveSheet` er felles. Verdensdelene regnes ut av `fgParts()`.
 
@@ -915,8 +909,8 @@ som er bredere når preppen eller forsida vises.
 ## Debug-sida
 
 En skjult side (`#debugApp`, `js/debug.js`, bolken «Debug» i `modes.css`) med alle testbryterne i
-adressen (nå `?captcha=text` og `?captcha=robot`) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
-modusene, klokkene (serverens og enhetens), om kvissen pågår, hvilken captcha som venter, og alt som er
+adressen (ingen nå) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
+modusene, klokkene (serverens og enhetens), om kvissen pågår, og alt som er
 lagret i `localStorage`, med en knapp for å slette hver nøkkel eller alt.
 
 Den finnes bare med en hemmelig query-parameter som eieren kjenner. Navnet står ikke i koden, bare
@@ -925,7 +919,7 @@ ikke i regresjonstesten. Med parameteren registreres `addMode('debug', …)`, og
 på `#debug`. Uten den er `#debug` en ukjent hash og gir forsida. Ingen knapp på forsida.
 
 **Ny testbryter:** legg den inn i `DB_FLAGS` øverst i `debug.js` (og fjern den når den fjernes fra
-koden, som `?captcha` når captcha-perioden er over).
+koden).
 
 ## Hjemskjermen
 
@@ -968,7 +962,7 @@ fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene 
 spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), Flagg (begge retninger, flere verdensdeler og tilbakegesten), Hovedsteder, Elver (alle delene av verden), «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
 og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også fargetemaet og en runde uten automatisk videre),
 stengt onsdag kveld, uten nett og som lokal fil, reklamen, hele sida på nynorsk (valgt i innstillingene),
-captchaen før preppen, Bommedatabasen, og at nedtellingen og preppen følger
+«Auto» i kvissene, Bommedatabasen, og at nedtellingen og preppen følger
 serverens klokke når enheten tar feil. `Math.random`, klokka, serverdatoen og alle eksterne bilder
 og fonter er låst, så to kjøringer av samme kode gir identisk resultat. Trenger Playwright (Chromium), og
 Python med Pillow for å sammenligne skjermbilder.

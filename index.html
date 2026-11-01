@@ -22,7 +22,6 @@
 <link rel="stylesheet" href="css/modes.css">
 <link rel="stylesheet" href="css/countdown.css">
 <link rel="stylesheet" href="css/install.css">
-<link rel="stylesheet" href="css/captcha.css">
 <link rel="stylesheet" href="css/ads.css">
 </head>
 <body>
@@ -283,7 +282,10 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
   </div>
 
   <div id="dagensApp" hidden>
-  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <div class="topbar">
+    <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+    <button type="button" class="qauto" role="switch"></button>
+  </div>
   <header>
     <div>
       <h1>Dagens kviss</h1>
@@ -304,7 +306,10 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
   </div>
 
   <div id="tbaneApp" hidden>
-  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <div class="topbar">
+    <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+    <button type="button" class="qauto" role="switch"></button>
+  </div>
   <header>
     <div>
       <h1>T-banen</h1>
@@ -336,7 +341,10 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
   </div>
 
   <div id="regjeringApp" hidden>
-  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <div class="topbar">
+    <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+    <button type="button" class="qauto" role="switch"></button>
+  </div>
   <header>
     <div>
       <h1 data-nn="Regjeringa">Regjeringen</h1>
@@ -363,7 +371,10 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
   </div>
 
   <div id="vapenApp" hidden>
-  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <div class="topbar">
+    <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+    <button type="button" class="qauto" role="switch"></button>
+  </div>
   <header>
     <div>
       <h1>Fylkesvåpen</h1>
@@ -420,13 +431,15 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
   </main>
   </div>
   <div id="fgPlayView" hidden>
-  <button class="back" id="fgBack" data-nn="← Verdsdelane">← Verdensdelene</button>
+  <div class="topbar">
+    <button class="back" id="fgBack" data-nn="← Verdsdelane">← Verdensdelene</button>
+    <button type="button" class="qauto" role="switch" id="fgAuto"></button>
+  </div>
   <header>
     <div>
       <h1 id="fgTitle"></h1>
       <div class="sub" id="fgPlaySub"></div>
     </div>
-    <button type="button" class="fgauto" role="switch" id="fgAuto" aria-checked="true" aria-label="Gå videre av seg selv ved riktig svar" title="Gå videre av seg selv ved riktig svar" data-nn-aria-label="Gå vidare av seg sjølv ved rett svar" data-nn-title="Gå vidare av seg sjølv ved rett svar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/><path d="M12 8v4l2.5 2"/><path class="off" d="M3 3l18 18"/></svg><span aria-hidden="true">Auto</span></button>
   </header>
   <main id="fgQuiz"><!-- the quiz card, from makeQuiz() in js/quiz.js --></main>
   </div>
@@ -461,20 +474,25 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
   </main>
   </div>
   <div id="hsPlayView" hidden>
-  <button class="back" id="hsBack" data-nn="← Verdsdelane">← Verdensdelene</button>
+  <div class="topbar">
+    <button class="back" id="hsBack" data-nn="← Verdsdelane">← Verdensdelene</button>
+    <button type="button" class="qauto" role="switch" id="hsAuto"></button>
+  </div>
   <header>
     <div>
       <h1 id="hsTitle"></h1>
       <div class="sub" id="hsPlaySub"></div>
     </div>
-    <button type="button" class="fgauto" role="switch" id="hsAuto" aria-checked="true" aria-label="Gå videre av seg selv ved riktig svar" title="Gå videre av seg selv ved riktig svar" data-nn-aria-label="Gå vidare av seg sjølv ved rett svar" data-nn-title="Gå vidare av seg sjølv ved rett svar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/><path d="M12 8v4l2.5 2"/><path class="off" d="M3 3l18 18"/></svg><span aria-hidden="true">Auto</span></button>
   </header>
   <main id="hsQuiz"><!-- the quiz card, from makeQuiz() in js/quiz.js --></main>
   </div>
   </div>
 
   <div id="elverApp" hidden>
-  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <div class="topbar">
+    <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+    <button type="button" class="qauto" role="switch"></button>
+  </div>
   <header>
     <div>
       <h1 data-nn="Elvar">Elver</h1>
@@ -517,7 +535,10 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
   </div>
 
   <div id="bydelApp" hidden>
-  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <div class="topbar">
+    <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+    <button type="button" class="qauto" role="switch"></button>
+  </div>
   <header>
     <div>
       <h1 data-nn="Bydelane">Bydelene</h1>
@@ -543,7 +564,10 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
   </div>
 
   <div id="caesarApp" hidden>
-  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <div class="topbar">
+    <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+    <button type="button" class="qauto" role="switch"></button>
+  </div>
   <header>
     <div>
       <h1>Hotel Cæsar</h1>
@@ -623,7 +647,10 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
   </div>
 
   <div id="mgpApp" hidden>
-  <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+  <div class="topbar">
+    <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+    <button type="button" class="qauto" role="switch"></button>
+  </div>
   <header>
     <div>
       <h1>Melodi Grand Prix</h1>
@@ -798,26 +825,6 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
   </div>
 </dialog>
 
-<dialog class="captcha" id="captchaSheet" aria-label="Ukas prepp" data-nn-aria-label="Vekas prepp">
-  <div class="cap" id="capRobot" hidden>
-    <button class="cap-check" id="capCheck" role="checkbox" aria-checked="false"><span class="cap-box"></span><span data-nn="Eg er ikkje ein kvissmaster">Jeg er ikke en kvissmaster</span></button>
-    <div class="cap-logo" aria-hidden="true">
-      <svg viewBox="0 0 32 32"><g fill="none" stroke-width="4.5"><path d="M16 4.5A11.5 11.5 0 0 1 27.2 13.5" stroke="#4a90e2"/><path d="M26.6 20.4A11.5 11.5 0 0 1 9.3 25.4" stroke="#1c3aa9"/><path d="M5.2 20A11.5 11.5 0 0 1 10.3 6" stroke="#ababab"/></g><path fill="#4a90e2" d="M23 13.8h9.2l-4.6 5.6z"/><path fill="#1c3aa9" d="M12.4 21.6l-4.9 8.4-2.2-6.7z"/><path fill="#ababab" d="M14.6 3.6l-8.1 7.5-.6-7z"/></svg>
-      <span class="cap-name">kvissCAPTCHA</span><span class="cap-terms">Personvern - Vilkår</span>
-    </div>
-  </div>
-  <form class="cap-chal" id="capText" hidden>
-    <div class="cap-head"><span>Skriv inn teksten du ser</span><small data-nn="Er du usikker, trykk på pila for ein ny tekst">Er du usikker, trykk på pilen for en ny tekst</small></div>
-    <div class="cap-img" id="capImg" role="img" aria-label="Forvrengt tekst" data-nn-aria-label="Forvrengd tekst"></div>
-    <input id="capInput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Teksten du ser">
-    <p class="cap-err" id="capErr" role="alert" hidden>Prøv igjen.</p>
-    <div class="cap-foot">
-      <div class="cap-tools"><button type="button" class="cap-icon" id="capNew" aria-label="Ny tekst"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button><span class="cap-brand" aria-hidden="true"><svg viewBox="0 0 32 32"><g fill="none" stroke-width="4.5"><path d="M16 4.5A11.5 11.5 0 0 1 27.2 13.5" stroke="#4a90e2"/><path d="M26.6 20.4A11.5 11.5 0 0 1 9.3 25.4" stroke="#1c3aa9"/><path d="M5.2 20A11.5 11.5 0 0 1 10.3 6" stroke="#ababab"/></g><path fill="#4a90e2" d="M23 13.8h9.2l-4.6 5.6z"/><path fill="#1c3aa9" d="M12.4 21.6l-4.9 8.4-2.2-6.7z"/><path fill="#ababab" d="M14.6 3.6l-8.1 7.5-.6-7z"/></svg><span class="cap-name">kvissCAPTCHA</span></span></div>
-      <button class="cap-verify" id="capVerify" data-nn="Stadfest">Bekreft</button>
-    </div>
-  </form>
-</dialog>
-
 <dialog class="adfull" id="adFull" aria-label="Annonse">
   <button class="adfullx" id="adFullClose" aria-label="Lukk annonsen">✕</button>
   <div id="adFullBody"></div>
@@ -851,7 +858,6 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
 <script src="js/modes/hovedsteder.js"></script>
 <script src="js/modes/elver.js"></script>
 <script src="js/prep.js"></script>
-<script src="js/captcha.js"></script>
 <script src="js/dagens.js"></script>
 <script src="js/ads.js"></script>
 <script src="js/countdown.js"></script>

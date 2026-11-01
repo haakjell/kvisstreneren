@@ -14,6 +14,7 @@ function goMode(m){
     renderPrep();   // the button's text; the page may have been open since before the quiz
     renderNewTags();
   } else MODES[m].open();
+  syncAuto();
   $('countdown').after($('adTop'));
   if(adsOn()) fillAds();   // new ads on every page
   window.scrollTo(0,0);
@@ -32,11 +33,7 @@ function renderNewTags(){
   }
 }
 function hashMode(){ const h=location.hash.slice(1); return h in MODES ? h : 'home'; }
-// Ukas prepp may ask for a captcha first (captcha.js): then the page stays where it is, with the
-// captcha on top, and the prep opens once it is solved
-const prepGated=m=>m==='prep'&&captchaAsk(()=>openMode('prep'));
 function openMode(m){   // from a button on the home page: a new history entry
-  if(prepGated(m)) return;
   history.pushState({fromHome:true},'','#'+m);
   goMode(m);
 }
@@ -48,8 +45,7 @@ function goHome(){
   goMode('home');
 }
 function syncMode(){   // back/forward, or a hash typed into the address bar
-  let m=hashMode();
-  if(prepGated(m)) m='home';   // straight to #prep: the home page, with the captcha over it
+  const m=hashMode();
   if(location.hash && m==='home') history.replaceState(null,'',location.pathname+location.search);
   if(m!==curMode) goMode(m);
 }
@@ -65,7 +61,6 @@ renderPrep();
 async function refreshClock(){
   if(curMode==='dagens'){ mxOpen(); return; }
   if(!await syncClock()) return;
-  if(curMode==='prep'&&prepGated('prep')){ history.replaceState(null,'',location.pathname+location.search); goMode('home'); }   // the device's clock was behind
   renderCountdown();
   if(curMode==='home'||curMode==='prep') renderPrep();
   if(curMode==='home') renderNewTags();

@@ -84,7 +84,7 @@ function fgMakeMode(p, o){
     id('Title').textContent=o.parts[k].n;
     id('PlaySub').textContent=`${o.dirs[dir][0]} · ${o.count(n)}`;
     quiz.button('restart').textContent=n===1?'Start på nytt':`Start på nytt med alle ${n}`;
-    view(true); id('Auto').setAttribute('aria-checked',quizAuto());
+    view(true);
     history.pushState({fgPlay:true},'',location.href);
     quiz.start(all());
   }
@@ -105,8 +105,6 @@ function fgMakeMode(p, o){
     if(midway()&&!leaving){ history.pushState({fgPlay:true},'',location.href); ask(); return; }
     leaving=false; view(false);
   });
-  // «Gå videre av seg selv», the same setting as in Innstillinger, as «Auto» in the quiz's header
-  id('Auto').addEventListener('click',()=>{ setQuizAuto(!quizAuto()); id('Auto').setAttribute('aria-checked',quizAuto()); });
 
   // Study list: by part of the world
   id('StudyGrid').innerHTML=['eu','as','af','na','sa','oc','an'].filter(k=>o.parts[k]).map(k=>
