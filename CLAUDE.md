@@ -28,7 +28,7 @@ js/prep.js · dagens.js · ads.js · countdown.js · install.js
 js/settings.js        Innstillinger — se under
 js/debug.js           den skjulte debug-sida — se «Debug-sida»
 js/app.js             modusbytte og ruting (goMode()) og oppstart
-data/<navn>.js        dataene, én fil per tema — se tabellen under
+data/<navn>.js        dataene, én fil per tema — se tabellen under (og data/paper-logo.js, avishodet i preppen)
 tools/                skript som oppdaterer data og prepp, og regresjonstesten — se «Verktøy»
 prep/                 arkivet over ukas prepp, én markdown-fil per kviss og språk
 manifest.webmanifest, icons/   for hjemskjermen — se «Hjemskjermen»
@@ -388,6 +388,31 @@ til i kveld kommer snart». Forsideknappen sier det samme i stedet for «Klar ti
 år («onsdag 7. oktober 2026»). Varselet regnes ut på nytt hver gang man går til forsida eller
 prepen (og når klokka er spurt på nytt), og forsvinner av seg selv når `set-prep.mjs` legger inn
 en ny rapport. «Dagen etter» regnes i norsk tid etter serverens klokke (se «Tid»).
+
+### Avisvisningen
+
+Oppe til høyre i preppen, på linje med «← Alle kvisser» (`.topbar`), slår en knapp med en avis
+og «Avis» avisa av og på (`#prepPaperBtn`, `button.paperbtn`, `role="switch"`, med samme utseende som
+«Auto» i kvissene).
+Avis er standard; skrur man den av, huskes det i `localStorage` under `prepView` (`'plain'`;
+ingen = avis). «Avis» er den
+samme rapporten satt som en avis, *Kvissposten* (`#prepPaper`, `prepPaper()` i `prep.js`, `.paper` i
+`modes.css`): avishodet lages av `#`-tittelen (datoen, ukenummeret og «årgang» regnet fra 2026), hver
+`##`-del blir en seksjon med navnet uten «Del N:», hver `###` en artikkel i spalter, og den første
+artikkelen i den første delen blir hovedsaken over hele bredden. Linjer som begynner med «**Kilde:**»
+settes som byline. Begge visningene lages ved oppstart fra den samme markdownen, så `set-prep.mjs`
+trenger ikke vite om avisa. Avishodet, «Kvisspoſten» med lang s i den siste s-en som i gamle norske
+avishoder (Aftenpoſten), er en SVG med omrisset av bokstavene i `currentColor` (`PAPER_LOGO` i
+`data/paper-logo.js`), så det følger temaet; skjermlesere får `aria-label="Kvissposten"`. Den er
+generert av `tools/make-paper-logo.py` fra den originale UnifrakturMaguntia (SIL Open Font License) —
+utgaven på Google Fonts har ingen lang s — og skal ikke redigeres for hånd; se toppen av skriptet. Resten står i Georgia, og fargene følger temaet. På desktop er avisa
+bredere enn den vanlige preppen, opptil 1320 px (klassen `paperview` på `<body>`, i `base.css`).
+
+**Lanseringen:** avisa finnes bare med en prepp til onsdag 4. november 2026 eller senere
+(`PREP_PAPER_FROM`, regnet fra `data-uke` eller tittelen). Med en eldre prepp er det ingen knapp og
+bare den vanlige visningen, så avisa dukker opp av seg selv når `set-prep.mjs` legger inn preppen til
+4. november. **Testbryter:** `?avis` viser den med hvilken som helst prepp. Når lanseringen er
+passert, kan `PREP_PAPER_FROM`, `?avis` og raden i `DB_FLAGS` fjernes.
 
 ### Hva rendreren støtter
 
@@ -800,8 +825,8 @@ Modusen er ikke med i Dagens kviss: den har ingen svaralternativer, og rekkeføl
 ## Nedtellingen
 
 Øverst på forsida (`#countdown`) står en nedtelling til neste kviss, onsdag kl. 19. Den vises
-også øverst i Ukas prepp (under «← Alle kvisser»), men ikke i de andre modusene. Det er ett og
-samme element, som flyttes mellom forsida (`goMode()`) og preppen (preppens `open()`). Mens kvissen
+bare der (og på kistesida i Anagram, som låner den; `goMode()` flytter den tilbake til forsida).
+Til 1. november 2026 sto den også øverst i Ukas prepp; det ble tatt bort. Mens kvissen
 pågår, onsdag 19–22, står det i stedet at man ikke har lov til å være her, og at juks er strengt
 forbudt. Fra kl. 22 teller den ned til neste onsdag. Den går etter serverens klokke, i norsk tid
 (se «Tid»). Dag og klokkeslett står i `QUIZ_DAY`, `QUIZ_START` og `QUIZ_END` i `core.js`;
@@ -896,7 +921,7 @@ eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjen
 | Plass | Hvor | Skjerm |
 |---|---|---|
 | Sidekolonner (`side`) | Én høy annonse fast på hver side av innholdet, på alle sidene | Fra 1100 px |
-| Toppbanner (`#adTop`, `banner`) | Rett under nedtellingen; `goMode()` flytter den med | Under 1100 px |
+| Toppbanner (`#adTop`, `banner`) | Rett under nedtellingen på forsida (og på kistesida i Anagram) | Under 1100 px |
 | «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp, Dagens kviss og stripene (Anagram og Bommedatabasen), og under raden med T-banen og Regjeringen (foran Våpenskjold) | Alle |
 | I preppen (`box`) | Mellom hver `##`-del, lagt inn av `renderPrep()` | Alle |
 | «Anbefalt for deg» (`tile`) | Fire småsaker nederst i preppen | Alle |
@@ -909,7 +934,7 @@ som er bredere når preppen eller forsida vises.
 ## Debug-sida
 
 En skjult side (`#debugApp`, `js/debug.js`, bolken «Debug» i `modes.css`) med alle testbryterne i
-adressen (ingen nå) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
+adressen (nå `?avis`) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
 modusene, klokkene (serverens og enhetens), om kvissen pågår, og alt som er
 lagret i `localStorage`, med en knapp for å slette hver nøkkel eller alt.
 
@@ -1006,9 +1031,10 @@ Alle kjøres fra reporoten med `node`. Ingen av dem trengs for at sida skal virk
 | `tools/update-tbane.mjs` | Henter linjene fra Entur og skriver `data/tbane.js` | «T-banen» |
 | `tools/update-ruter-map.mjs` | Finner navnene på Ruters linjekart og skriver `data/ruter-map.js` | «T-banen» |
 | `tools/update-caesar-images.mjs` | Henter bilder fra Hotel Cæsar-wikien og skriver `data/caesar-img.js` | «Hotel Cæsar» |
+| `tools/make-paper-logo.py` | Tegner avishodet «Kvisspoſten» og skriver `data/paper-logo.js` (Python, med fonttools og uharfbuzz) | «Avisvisningen» |
 | `tools/regression/` | Regresjonstesten (Playwright) | «Testing» |
 
-De tre `update-`skriptene skriver datafila si helt på nytt; ikke rediger de filene for hånd.
+De tre `update-`skriptene og `make-paper-logo.py` skriver datafila si helt på nytt; ikke rediger de filene for hånd.
 
 ## Konvensjoner
 

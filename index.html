@@ -266,9 +266,13 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
 - **1962:** [Erik Thorstvedt](https://no.wikipedia.org/wiki/Erik_Thorstvedt), keepar på landslaget og i [Tottenham](https://no.wikipedia.org/wiki/Tottenham_Hotspur_FC), blir fødd.
 - **2023:** [Matthew Perry](https://no.wikipedia.org/wiki/Matthew_Perry) døyr.
 </script>
-    <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+    <div class="topbar">
+      <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+      <button type="button" class="paperbtn" role="switch" id="prepPaperBtn" aria-checked="true" aria-label="Vis som avis" title="Vis som avis" data-nn-aria-label="Vis som avis" data-nn-title="Vis som avis" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h12v14H6a2 2 0 0 1-2-2z"/><path d="M16 9h4v8a2 2 0 0 1-2 2h-2"/><path d="M7 9h6M7 12h6M7 15h4"/><path class="off" d="M3 3l18 18"/></svg><span aria-hidden="true">Avis</span></button>
+    </div>
     <div class="prepstale" id="prepStale" role="status" hidden></div>
     <article class="card prose" id="prepBody"></article>
+    <article class="card paper" id="prepPaper" hidden></article>
     <section class="adrecs" aria-labelledby="adRecsTitle">
       <h2 id="adRecsTitle" data-nn="Tilrådd for deg <span>Sponset</span>">Anbefalt for deg <span>Sponset</span></h2>
       <div class="adrecgrid">
@@ -846,6 +850,7 @@ Nyheitsvindauget er komplett, men mesteparten av dekninga er frå 25. til 28. ok
 <script src="data/flagg.js"></script>
 <script src="data/elver.js"></script>
 <script src="data/ads.js"></script>
+<script src="data/paper-logo.js"></script>
 <script src="js/modes/vapen.js"></script>
 <script src="js/modes/tbane.js"></script>
 <script src="js/modes/caesar.js"></script>

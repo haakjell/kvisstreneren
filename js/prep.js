@@ -37,6 +37,40 @@ function prepDate(t){
   const mon = m ? MONTHS.indexOf(m[2]) : -1;
   return mon < 0 ? null : new Date(Date.UTC(+m[3], mon, +m[1])).toISOString().slice(0,10);
 }
+// The ISO week number of a 'YYYY-MM-DD' date
+function prepWeek(ymd){
+  const d = new Date(ymd); d.setUTCDate(d.getUTCDate() + 3 - (d.getUTCDay() + 6) % 7);   // the Thursday of its week
+  return Math.ceil(((d - Date.UTC(d.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7);
+}
+// The same report as a newspaper, «Kvissposten» (with a long s in the last one, «Kvisspoſten», as in
+// the old Norwegian mastheads; the masthead is PAPER_LOGO): a masthead from the # title, each ## part a
+// section under a kicker, each ### an article, set in columns, and the first article of the first
+// part as the lead story across the page. The markdown itself is rendered by prepMarkdown().
+function prepPaper(md){
+  const lines = md.split(/\r?\n/), title = (lines[0].match(/^#\s+(.*)$/) || [])[1] || '';
+  const body = (title ? lines.slice(1) : lines).join('\n');
+  const parts = body.split(/^##(?!#)\s*/m), front = parts.shift();
+  const day = prepDate($('prepSource').dataset.uke) || prepDate(title);
+  const date = (title.split(':').pop().trim() || $('prepSource').dataset.uke || '');
+  const md2 = t => prepMarkdown(t).replace(/<li><strong>(Kilde|Kjelde):<\/strong>/g, '<li class="src"><strong>$1:</strong>');
+  let ads = 0;
+  const sections = parts.map((part, i) => {
+    const [head, ...rest] = part.split('\n'), arts = rest.join('\n').split(/^###\s*/m), intro = arts.shift();
+    const art = (a, lead) => { const [h, ...b] = a.split('\n');
+      return '<article class="' + (lead ? 'lead' : 'art') + '"><h3>' + prepInline(h.replace(/^\d+\.\s*/, '')) + '</h3>' + md2(b.join('\n')) + '</article>'; };
+    const lead = i === 0 && arts.length > 1 ? art(arts.shift(), true) : '';
+    return (ads++ ? '<div class="adslot ad-all" data-fmt="box"></div>' : '')
+      + '<section><h2>' + prepInline(head.replace(/^Del\s+\d+:\s*/i, '')) + '</h2>' + lead
+      + '<div class="cols">' + md2(intro) + arts.map(a => art(a)).join('') + '</div></section>';
+  });
+  const week = day ? prepWeek(day) : null, year = day ? +day.slice(0, 4) : null;
+  return '<header class="mast"><div class="meta"><span>' + (week ? 'Nr. ' + week + ' · ' + L(`${year - 2025}. årgang`, `${year - 2025}. årgang`) : '') + '</span><span>'
+    + L('Løssalg kr 0,–', 'Laussal kr 0,–') + '</span></div><div class="name">' + PAPER_LOGO + '</div>'
+    + '<div class="tag">' + L('Uavhengig, upartisk og helt uten fasit', 'Uavhengig, upartisk og heilt utan fasit') + '</div>'
+    + '<div class="date"><span>' + prepInline(date.charAt(0).toUpperCase() + date.slice(1)) + '</span>'
+    + (week ? '<span>' + L(`Uke ${week}`, `Veke ${week}`) + '</span>' : '') + '</div></header>'
+    + (front.trim() ? '<div class="ear">' + md2(front) + '</div>' : '') + sections.join('');
+}
 // The report in the language picked; the bokmål one if there is no nynorsk one
 const prepSource=()=>((LANG==='nn'&&$('prepSourceNn').textContent.trim())||$('prepSource').textContent||'').trim();
 // Once the quiz day is over (in Oslo, by the server's clock), the report is last week's: say so,
@@ -56,7 +90,32 @@ function prepStale(md, uke){
   $('prepBody').innerHTML = md ? prepMarkdown(md).replace(/<h2>/g, m => h2++ ? '<div class="adslot ad-all" data-fmt="box"></div>' + m : m)
     : L('<div class="prepsoon"><strong>Ukas prepp kommer snart</strong><p>Her dukker ferske nyhetssaker, navnedagene for uka og «på denne dagen» opp så snart ukas quizprep er kjørt.</p></div>',
         '<div class="prepsoon"><strong>Vekas prepp kjem snart</strong><p>Her dukkar ferske nyheitssaker, namnedagane for veka og «på denne dagen» opp så snart vekas quizprep er køyrd.</p></div>');
+  if(md) $('prepPaper').innerHTML = prepPaper(md);
 }
+// The newspaper, or the plain page: a switch with a newspaper on it, top right. The newspaper comes
+// with the prep for Wednesday 4 November 2026 (PREP_PAPER_FROM): older reports have no switch and
+// only the page, so it turns up by itself when set-prep.mjs puts in that report. ?avis shows it with
+// any report, for testing. The newspaper is the default; turning it off is remembered under prepView.
+const PREP_PAPER_FROM = '2026-11-04';
+const prepPaperOn = (() => {
+  const md = prepSource(); if(!md) return false;
+  if(new URLSearchParams(location.search).has('avis')) return true;
+  const day = prepDate($('prepSource').dataset.uke) || prepDate(md.split('\n')[0]);
+  return !!day && day >= PREP_PAPER_FROM;
+})();
+$('prepPaperBtn').hidden = !prepPaperOn;
+function prepSetPaper(on){
+  const paper = prepPaperOn && on;
+  $('prepBody').hidden = paper; $('prepPaper').hidden = !paper;
+  document.body.classList.toggle('paperview', paper);   // wider on desktop (base.css)
+  $('prepPaperBtn').setAttribute('aria-checked', paper);
+}
+$('prepPaperBtn').addEventListener('click', () => {
+  const on = $('prepPaperBtn').getAttribute('aria-checked') !== 'true';
+  store.set('prepView', on ? null : 'plain'); prepSetPaper(on);
+  if(adsOn()) fillAds();   // the ad slots of the view just hidden are left out
+});
+prepSetPaper(store.get('prepView') !== 'plain');
 // What goes by the date: the notice that the prep is out of date, and the text on its button
 function renderPrep(){
   const md = prepSource(), uke = $('prepSource').dataset.uke;
@@ -68,5 +127,4 @@ function renderPrep(){
     : stale ? (stale.isToday ? L('Ny prepp til i kveld kommer snart','Ny prepp til i kveld kjem snart') : L(`Ny prepp kommer ${stale.next}`,`Ny prepp kjem ${stale.next}`))
     : uke ? 'Klar til ' + uke : L('Nyheter, navnedager og datoen','Nyheiter, namnedagar og datoen');
 }
-// The countdown sits at the top of the prep too: it is one element, moved here from the home page
-addMode('prep',()=>{ $('prepStale').before($('countdown')); renderPrep(); },{wide:true});
+addMode('prep',renderPrep,{wide:true});

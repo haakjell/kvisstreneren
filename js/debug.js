@@ -7,7 +7,11 @@ const DB_KEY=4181429119;
 const DEBUG=[...new URLSearchParams(location.search).keys()].some(k=>seedOf(k)===DB_KEY);
 
 // Each test switch the page reads from the address: the query, what it does, and links to try it
-const DB_FLAGS=[];
+const DB_FLAGS=[
+  {q:'avis', what:L('Viser avisvisningen i preppen også med en prepp fra før 4. november (prep.js).',
+                    'Viser avisvisinga i preppen òg med ein prepp frå før 4. november (prep.js).'),
+   links:['?avis#prep']},
+];
 
 const dbEsc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const dbTime=t=>new Date(osloWall(t)).toISOString().slice(0,19).replace('T',' ');
