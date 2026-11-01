@@ -99,10 +99,51 @@
 .prose a{color:var(--accent);font-weight:600;word-break:break-word}
 .prose hr{border:0;border-top:2px solid var(--line);margin:22px 0}
 .prose code{font-size:.9em;background:var(--tint);border-radius:6px;padding:1px 5px}
-/* «Avis»: the same report as a newspaper, Kvissposten. Serif type, thin rules in the ink colour,
-   the text in columns as wide as there is room for (one on a phone), the lead story across them. */
-.paper{padding:18px 16px 22px;font-family:Georgia,"Times New Roman",Times,serif;line-height:1.45;border-radius:6px}
+/* «Avis»: the same report as a newspaper, Kvissposten, with pages to turn (prep.js). Serif type, thin
+   rules in the ink colour, the text in columns as wide as there is room for (one on a phone). */
+.paper{font-family:Georgia,"Times New Roman",Times,serif;line-height:1.45;overflow-x:clip}
 .paper[hidden]{display:none}
+/* The book: leaves in a stack on the right half (all of it on a phone), each turned about its left
+   edge, the spine. Its height is set by prep.js to the pages in view. */
+.book{position:relative;perspective:5000px;perspective-origin:50% 400px;transform:translateX(var(--shift,0%));transition:transform .9s cubic-bezier(.45,.05,.25,1),height .3s ease}
+.leaf{position:absolute;top:0;left:0;width:100%;height:100%;transform-origin:left center;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.45,.05,.25,1)}
+/* Newsprint: off-white with a touch of yellow and near-black ink, easy to read, in dark mode too (a
+   fixed colour, like the ads). The links keep the colour theme, in its light version. */
+.book{--paper:#F6F0DF;--ink:#1F1C16;--muted:#5C5647;--line:#DCD3BC;--tint:#E9E0C8;--edge:rgba(60,48,20,.18);--accent:var(--l-accent);color:var(--ink)}
+.book.spread .leaf{left:50%;width:50%}
+.leaf.turned{transform:rotateY(-180deg)}
+.book.still,.book.still .leaf{transition:none}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:var(--paper);border-radius:4px;box-shadow:0 4px 0 var(--edge)}
+.face.verso{transform:rotateY(180deg)}
+.pg{padding:18px 16px 26px}
+.pg.blank{padding:0}
+.book:not(.spread) .leaf.turned{visibility:hidden;transition:transform .9s cubic-bezier(.45,.05,.25,1),visibility 0s .9s}
+/* The spine: the pages darken a little towards the fold */
+.book.spread .face.recto{border-radius:0 4px 4px 0;background-image:linear-gradient(to right,color-mix(in srgb,var(--ink) 12%,transparent),transparent 28px)}
+.book.spread .face.verso{border-radius:4px 0 0 4px;background-image:linear-gradient(to left,color-mix(in srgb,var(--ink) 12%,transparent),transparent 28px)}
+/* A shadow passes over the page as it turns */
+.face::after{content:"";position:absolute;inset:0;pointer-events:none;background:var(--ink);opacity:0}
+.leaf.moving .face::after{animation:ppshade .9s ease}
+@keyframes ppshade{50%{opacity:.18}}
+/* The folded corners, top and bottom, that turn the page (a corner of the page turned over, with an
+   arrow on it), on the outer edge: tr/br forward, tl/bl back. They grow a little under the pointer. */
+.curl{position:absolute;width:46px;height:46px;border:0;cursor:pointer;font:700 1.25rem/1 Georgia,serif;color:var(--ink);
+  --fold:#D9CBA4;filter:drop-shadow(0 0 2px rgba(60,48,20,.5));transition:width .2s,height .2s;display:flex;padding:5px 7px}
+.curl:hover,.curl:focus-visible{width:58px;height:58px}
+.curl:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.curl.br{bottom:0;right:0;background:linear-gradient(135deg,transparent 50%,var(--fold) 50%);align-items:flex-end;justify-content:flex-end}
+.curl.tr{top:0;right:0;background:linear-gradient(45deg,transparent 50%,var(--fold) 50%);align-items:flex-start;justify-content:flex-end}
+.curl.bl{bottom:0;left:0;background:linear-gradient(225deg,transparent 50%,var(--fold) 50%);align-items:flex-end;justify-content:flex-start}
+.curl.tl{top:0;left:0;background:linear-gradient(315deg,transparent 50%,var(--fold) 50%);align-items:flex-start;justify-content:flex-start}
+.curl.tr::after,.curl.br::after{content:"›"}
+.curl.tl::after,.curl.bl::after{content:"‹"}
+.paper .runhead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:3px double var(--ink);padding-bottom:6px;margin-bottom:6px}
+.paper .runhead .mini svg{display:block;height:22px;width:auto}
+.paper .runhead span{white-space:nowrap}
+@container wrap (max-width:520px){.paper .runhead .rdate{display:none}}
+/* On a phone the page has little margin, so the top lines move in from under the folded corners */
+@container wrap (max-width:640px){.paper .runhead,.paper .mast .meta{padding-inline:32px}}
+@media (prefers-reduced-motion:reduce){.book,.leaf{transition:none!important}}
 .paper a{color:inherit;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:2px;word-break:break-word}
 .paper .mast{display:block;text-align:center;border-bottom:3px double var(--ink);padding-bottom:8px;margin-bottom:12px}
 .paper .meta,.paper .date{display:flex;justify-content:space-between;gap:10px;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
@@ -115,8 +156,9 @@
 .paper .ear p{margin:2px 0}
 .paper .ear strong{font-style:normal;color:var(--ink)}
 .paper section{margin-top:18px}
+.paper .runhead + section{margin-top:12px}
 .paper h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:.85rem;text-transform:uppercase;letter-spacing:.12em;margin:0 0 10px;padding:4px 0;border-top:3px solid var(--ink);border-bottom:1px solid var(--ink)}
-.paper h3{font-weight:700;font-size:1.2rem;line-height:1.15;margin:0 0 6px;break-after:avoid}
+.paper h3{font-weight:700;font-size:1.2rem;line-height:1.15;margin:0 0 6px;break-after:avoid;break-inside:avoid}
 .paper h4{font-size:1rem;margin:10px 0 2px;break-after:avoid}
 .paper .lead{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
 .paper .lead h3{font-size:clamp(1.7rem,6vw,2.5rem);line-height:1.05;letter-spacing:-.01em}

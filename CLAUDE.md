@@ -235,6 +235,7 @@ hver hovedfeature etter den, og PATCH for hver commit mellom dem:
 | 2.5.0 | | Flagg |
 | 2.6.0 | | Hovedsteder, og hovedstaden som det åttende spørsmålet i Dagens kviss |
 | 2.7.0 | | Elver |
+| 2.8.0 | | Kvissposten: avisvisningen av preppen, med sider å bla i |
 
 Tagger finnes bare fra 2.4.4. Får MINOR et nytt nummer, legg det til i tabellen.
 
@@ -287,7 +288,7 @@ nettleserlinja (`theme-color`) etter tema og modus; standardfargene i `<head>` o
 `manifest.webmanifest` er Lyngs.
 
 **Faste farger**, som ikke følger temaet: grønt og rødt for riktig og feil (`--ok`, `--bad`, og
-`--ok-text`/`--bad-text` for tekst), gull-nedtellingen (se «Anagram»), Ruters linjefarger (`--l1`…`--l5`) og linjekartet,
+`--ok-text`/`--bad-text` for tekst), gull-nedtellingen (se «Anagram»), avispapiret i avisvisningen av preppen (lyst og gulaktig også i mørk modus, i `.book`), Ruters linjefarger (`--l1`…`--l5`) og linjekartet,
 våpenskjoldene og bildene, og annonsene, som skal se ut som ekte reklame (se «Reklame»).
 
 ## Språk
@@ -396,17 +397,33 @@ og «Avis» avisa av og på (`#prepPaperBtn`, `button.paperbtn`, `role="switch"`
 «Auto» i kvissene).
 Avis er standard; skrur man den av, huskes det i `localStorage` under `prepView` (`'plain'`;
 ingen = avis). «Avis» er den
-samme rapporten satt som en avis, *Kvissposten* (`#prepPaper`, `prepPaper()` i `prep.js`, `.paper` i
-`modes.css`): avishodet lages av `#`-tittelen (datoen, ukenummeret og «årgang» regnet fra 2026), hver
-`##`-del blir en seksjon med navnet uten «Del N:», hver `###` en artikkel i spalter, og den første
-artikkelen i den første delen blir hovedsaken over hele bredden. Linjer som begynner med «**Kilde:**»
-settes som byline. Begge visningene lages ved oppstart fra den samme markdownen, så `set-prep.mjs`
+samme rapporten satt som en avis, *Kvissposten* (`#prepPaper`, `prepPaperPages()` i `prep.js`, `.paper`
+i `modes.css`), med sider å bla i. Den første `##`-delen, nyhetene, deles i to: forsida har avishodet,
+laget av `#`-tittelen (datoen, ukenummeret og «årgang» regnet fra 2026), og første halvdel av sakene,
+med den første som hovedsak over hele bredden, og side 2 resten («Ferske nyheter, forts.»). Hver av de
+andre delene får en side for seg: navnedagene på side 3 og «På denne dagen» på baksida, side 4. De
+indre sidene har en topplinje (avisnavnet, datoen og sidetallet; datoen skjules på smale skjermer).
+`##`-delene står uten «Del N:»; hver `###` er en artikkel i spalter, og en del uten `###` (en liste,
+som «På denne dagen») står i én spalte. Alle sidene er like høye som den lengste. Nederst på baksida
+står en annonse (`box`) når reklamen er på. Alt dette følger av overskriftene i rapporten, så quizprep
+og `set-prep.mjs` trenger ikke vite noe om avisa. Linjer som begynner med «**Kilde:**» settes som byline. Begge visningene lages ved oppstart fra den samme markdownen, så `set-prep.mjs`
 trenger ikke vite om avisa. Avishodet, «Kvisspoſten» med lang s i den siste s-en som i gamle norske
 avishoder (Aftenpoſten), er en SVG med omrisset av bokstavene i `currentColor` (`PAPER_LOGO` i
 `data/paper-logo.js`), så det følger temaet; skjermlesere får `aria-label="Kvissposten"`. Den er
 generert av `tools/make-paper-logo.py` fra den originale UnifrakturMaguntia (SIL Open Font License) —
-utgaven på Google Fonts har ingen lang s — og skal ikke redigeres for hånd; se toppen av skriptet. Resten står i Georgia, og fargene følger temaet. På desktop er avisa
-bredere enn den vanlige preppen, opptil 1320 px (klassen `paperview` på `<body>`, i `base.css`).
+utgaven på Google Fonts har ingen lang s — og skal ikke redigeres for hånd; se toppen av skriptet. Resten står i Georgia. Papiret er fast: off-white med et snev av gult og nesten svart trykk, også i mørk modus, så det er lett å lese (fargevariablene settes på nytt i `.book`); bare lenkene følger fargetemaet, i den lyse utgaven. På desktop er avisa
+bredere enn den vanlige preppen, opptil 1848 px, og så bred skjermen tillater (minus 32 px på hver side, og plass til sidekolonnene med reklame når de vises, 160 px hver; klassen `paperview` på `<body>`, i `base.css`).
+
+**Bladingen.** Sidene er trykt på blad (`.leaf`) med en side på hver side (`.face.recto` foran og
+`.face.verso` bak; ikke `.front`/`.back`, `.back` er tilbakeknappen), og et blad vendes rundt ryggen
+med en 3D-rotasjon (`rotateY`, 0,9 s), med en skygge som glir over. Når avisa får minst 840 px
+(`ppSpread`, målt med en `ResizeObserver`), er den som en ekte avis: forsida alene, midt på, og «Bla
+om» åpner den til et oppslag med side 2 til venstre og side 3 til høyre, og så baksida alene. Smalere vises én side om
+gangen, og bladet vendes bort fra den neste. Man blar med brettene i hjørnene (`.curl`, knapper med
+en pil og `aria-label` «Bla om»/«Bla tilbake»), øverst og nederst på yttersiden: til høyre for å bla
+om, til venstre for å bla tilbake (på mobil har den ene sida begge), og med piltastene. Det er ingen
+egne knapper under avisa. Bladene bygges av `ppBuild()` og vises av `ppShow()`; høyden er den lengste sida (`ppHeight()`), og følger med om en side vokser (en annonse kommer inn). Sidene som ikke
+vises, er `inert`. Med `prefers-reduced-motion` blas det uten animasjon. Avisa åpner alltid på forsida.
 
 **Lanseringen:** avisa finnes bare med en prepp til onsdag 4. november 2026 eller senere
 (`PREP_PAPER_FROM`, regnet fra `data-uke` eller tittelen). Med en eldre prepp er det ingen knapp og
@@ -923,7 +940,7 @@ eieren** — kom gjerne med forslag, men ikke implementer dem før de er godkjen
 | Sidekolonner (`side`) | Én høy annonse fast på hver side av innholdet, på alle sidene | Fra 1100 px |
 | Toppbanner (`#adTop`, `banner`) | Rett under nedtellingen på forsida (og på kistesida i Anagram) | Under 1100 px |
 | «Sponset» i lista (`card`) | På forsida, over hele bredden: under Ukas prepp, Dagens kviss og stripene (Anagram og Bommedatabasen), og under raden med T-banen og Regjeringen (foran Våpenskjold) | Alle |
-| I preppen (`box`) | Mellom hver `##`-del, lagt inn av `renderPrep()` | Alle |
+| I preppen (`box`) | Mellom hver `##`-del, lagt inn av `renderPrep()`, og nederst på baksida i avisa | Alle |
 | «Anbefalt for deg» (`tile`) | Fire småsaker nederst i preppen | Alle |
 
 Kvissmodusene får ikke reklame inne i innholdet, bare sidekolonnene på desktop. Plassene som bare

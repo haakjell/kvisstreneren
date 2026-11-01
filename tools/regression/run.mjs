@@ -210,6 +210,12 @@ for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900
     // and turning it off is remembered after a reload
     await page.goto(BASE + '?avis#prep'); await page.waitForTimeout(150);
     await rec.snap(page, 'prep-paper'); await rec.shoot(page, 'prep-paper');
+    // Turn the pages: to the name days (and «på denne dagen» beside them on a wide screen), and back
+    // by the folded corners of the pages in view
+    for (const [dir, label] of [[1, 'prep-paper-next'], [1, 'prep-paper-next2'], [-1, 'prep-paper-prev']]) {
+      await page.evaluate(d => document.querySelector(`#ppBook .face:not([inert]) .curl[data-dir="${d}"]`).click(), dir); await page.waitForTimeout(1200);
+      await rec.snap(page, label); await rec.shoot(page, label);
+    }
     await page.click('#prepPaperBtn'); await page.waitForTimeout(150);
     await page.reload(); await page.waitForTimeout(150);
     await rec.snap(page, 'prep-plain-reload');
