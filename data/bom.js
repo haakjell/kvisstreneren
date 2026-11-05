@@ -29,7 +29,27 @@ const BOM=[
   a:'Aserbajdsjan',t:'Aserbadsjan'},
  {d:'2026-10-28',q:L('Det finnes ett selvstendig land i verden som i sin helhet ligger over 1000 meter over havet. Hvilket?','Det finst eitt sjølvstendig land i verda som i heilskap ligg over 1000 meter over havet. Kva for eitt?'),
   a:'Lesotho',t:'Bolivia',
-  n:L('Det laveste punktet i Lesotho er rundt 1400 meter over havet. Bolivia har store lavland i øst.','Det lågaste punktet i Lesotho er rundt 1400 meter over havet. Bolivia har store låglandsområde i aust.')}
+  n:L('Det laveste punktet i Lesotho er rundt 1400 meter over havet. Bolivia har store lavland i øst.','Det lågaste punktet i Lesotho er rundt 1400 meter over havet. Bolivia har store låglandsområde i aust.')},
+ {d:'2026-11-04',q:L('Hvilke to bydeler i Oslo har lavest snittalder?','Kva for to bydelar i Oslo har lågast snittalder?'),
+  a:'Sagene og Grünerløkka',t:'Gamle Oslo og Grünerløkka'},
+ {d:'2026-11-04',q:L('Hvem er Terje Brofos bedre kjent som?','Kven er Terje Brofos betre kjend som?'),
+  a:'Pushwagner',t:'Bamsegutt',
+  n:L('Terje Brofos (1943–2018) var popkunstner, kjent for de mørke byscenene i «Soft City».','Terje Brofos (1943–2018) var popkunstnar, kjend for dei mørke byscenene i «Soft City».')},
+ {d:'2026-11-04',q:L('Nevn fire andre land som begynner på N og har de samme fargene i flagget som Norge.','Nemn fire andre land som byrjar på N og har dei same fargane i flagget som Noreg.'),
+  a:'Nederland, Nepal, New Zealand og Nord-Korea',t:'',
+  n:L('Alle fire har flagg i rødt, hvitt og blått.','Alle fire har flagg i raudt, kvitt og blått.')},
+ {d:'2026-11-04',q:L('Hva betyr «røyndom» på nynorsk?','Kva tyder «røyndom» på nynorsk?'),
+  a:L('Virkelighet','Verkelegheit'),t:L('Hemmelighet','Hemmelegheit')},
+ {d:'2026-11-04',q:L('Hvilket dyr er Timon?','Kva dyr er Timon?'),
+  a:'Surikat',t:'Lemur',
+  n:L('Timon er surikaten i «Løvenes konge» (1994), og vennen Pumba er et vortesvin.','Timon er surikaten i «Løvenes konge» (1994), og venen Pumba er eit vortesvin.')},
+ {d:'2026-11-04',q:'Er Elsa Lystad død?',
+  a:'Ja',t:'Nei',
+  n:L('Elsa Lystad døde 26. desember 2023, 93 år gammel.','Elsa Lystad døydde 26. desember 2023, 93 år gammal.')},
+ {d:'2026-11-04',m:'pic',q:'Barnebilde',a:'Karsten Warholm',t:'Espen Abrahamsen'},
+ {d:'2026-11-04',m:'pic',q:'Barnebilde',a:'Vegard Harm',t:'Odd Magnus Williamson'},
+ {d:'2026-11-04',m:'pic',q:L('Gammel nettside','Gammal nettside'),a:'jippi.no',t:'chat.no'},
+ {d:'2026-11-04',m:'sound',q:'Intro til TV-serie',a:'House of Cards',t:'Prison Break'}
 ];
 // Where the team placed at each quiz ('YYYY-MM-DD' → place), shown under the date
-const BOM_PLACE={'2026-10-21':3,'2026-10-28':3};
+const BOM_PLACE={'2026-10-21':3,'2026-10-28':3,'2026-11-04':13};
