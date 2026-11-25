@@ -288,7 +288,7 @@ nettleserlinja (`theme-color`) etter tema og modus; standardfargene i `<head>` o
 `manifest.webmanifest` er Lyngs.
 
 **Faste farger**, som ikke følger temaet: grønt og rødt for riktig og feil (`--ok`, `--bad`, og
-`--ok-text`/`--bad-text` for tekst), gull-nedtellingen (se «Anagram»), avispapiret i avisvisningen av preppen (lyst og gulaktig også i mørk modus, i `.book`), Ruters linjefarger (`--l1`…`--l5`) og linjekartet,
+`--ok-text`/`--bad-text` for tekst), gull-nedtellingen (se «Anagram»), gnistene fra den ødelagte nedtellingen, avispapiret i avisvisningen av preppen (lyst og gulaktig også i mørk modus, i `.book`), Ruters linjefarger (`--l1`…`--l5`) og linjekartet,
 våpenskjoldene og bildene, og annonsene, som skal se ut som ekte reklame (se «Reklame»).
 
 ## Språk
@@ -859,7 +859,7 @@ igjen. Markupen bygges bare på nytt når oppsettet endres; ellers skrives bare 
 
 **Sesongpause.** Etter sesongens siste kviss (`SEASON_OFF` i `core.js`, nå onsdag 25. november 2026
 kl. 22) er nedtellingen ødelagt (`cdBroken()` i `countdown.js`, `.broken` i `countdown.css`): den
-står på skrå med en sprekk tvers gjennom (fylt med bakgrunnsfargen, så det ser ut som man ser gjennom) og røyk som stiger opp fra den, og har hengt seg på «999 dager 99 timer 99
+står på skrå med en sprekk tvers gjennom (fylt med bakgrunnsfargen, så det ser ut som man ser gjennom) og en jevn strøm av røyk som stiger opp fra den. Et par sekunder etter at sida åpnes, og så hvert tiende sekund, spruter det gnister ut av sprekken som faller ned over sida og ut av skjermen (`cdSparks()`, i et fast lag over hele sida, `#cdSparkLayer`; ikke med `prefers-reduced-motion`), og har hengt seg på «999 dager 99 timer 99
 minutter 99 sekunder» og «Onsdag ??. ??? kl. ??». Med risting på hakker den til nå og da; reklamen går
 som vanlig. I pausen pågår ingen kviss (`quizLive()` er usann, så Dagens kviss er åpen onsdag
 kveld), og preppen sier «Ny prepp kommer når neste sesong begynner». **Når neste kvissdato er
