@@ -1,10 +1,11 @@
 // The questions we got wrong at the Wednesday quiz, one entry per question: d = the date of the
 // quiz ('YYYY-MM-DD'), q = the question, a = the right answer, t = what our team answered ('' if
-// nothing), n = a note shown with the answer (optional), and
+// nothing, null if we don't remember), n = a note shown with the answer (optional), and
 // audio = a sound file in bom/ that is played with a button by the question, for a question that was read
 // aloud (optional). Picture and sound questions have
 // m:'pic' or m:'sound' and no q (q, if given, says what the clip or picture was); they are only kept
-// as a record (t:null if we don't remember what we answered), in a small accordion of their own under the quiz's other questions. Write the text with L('bokmål','nynorsk') where the two differ; an answer that is a name or
+// as a record (t:null if we don't remember what we answered; x = a line of its own instead of the answer, for
+// a batch of them, like «4 of 6 wrong»), in a small accordion of their own under the quiz's other questions. Write the text with L('bokmål','nynorsk') where the two differ; an answer that is a name or
 // a number is written once.
 const BOM=[
  {d:'2026-10-21',q:L('Ranger fra først til sist etter når produktet ble lansert: Grandiosa, Hapå, Nugatti.','Ranger frå først til sist etter når produktet vart lansert: Grandiosa, Hapå, Nugatti.'),
@@ -49,7 +50,33 @@ const BOM=[
  {d:'2026-11-04',m:'pic',q:'Barnebilde',a:'Karsten Warholm',t:'Espen Abrahamsen'},
  {d:'2026-11-04',m:'pic',q:'Barnebilde',a:'Vegard Harm',t:'Odd Magnus Williamson'},
  {d:'2026-11-04',m:'pic',q:L('Gammel nettside','Gammal nettside'),a:'jippi.no',t:'chat.no'},
- {d:'2026-11-04',m:'sound',q:'Intro til TV-serie',a:'House of Cards',t:'Prison Break'}
+ {d:'2026-11-04',m:'sound',q:'Intro til TV-serie',a:'House of Cards',t:'Prison Break'},
+ {d:'2026-11-11',q:L('Hva er en uekte brøk?','Kva er ein uekte brøk?'),
+  a:L('En brøk der telleren er større enn eller lik nevneren, som 7/4','Ein brøk der teljaren er større enn eller lik nemnaren, som 7/4'),t:null},
+ {d:'2026-11-11',q:L('Hva er avbildet på 1000-lappen?','Kva er avbilda på 1000-lappen?'),
+  a:L('En bølge','Ei bølgje'),t:null,
+  n:L('Dagens 1000-lapp kom i 2019 og har en bølge på åpent hav, under temaet «Havet som bringer oss videre». Den forrige hadde Edvard Munch.','Dagens 1000-lapp kom i 2019 og har ei bølgje på ope hav, under temaet «Havet som bringer oss vidare». Den førre hadde Edvard Munch.')},
+ {d:'2026-11-11',q:L('Hva ligger i Brynjulf Bulls plass 3, 0250 Oslo?','Kva ligg i Brynjulf Bulls plass 3, 0250 Oslo?'),
+  a:'Nasjonalmuseet',t:null,
+  n:L('Nasjonalmuseet åpnet der, ved Aker brygge, i 2022.','Nasjonalmuseet opna der, ved Aker brygge, i 2022.')},
+ {d:'2026-11-11',q:L('Hva slags fisk er en sjødjevel?','Kva slags fisk er ein sjødjevel?'),
+  a:'Breiflabb',t:null,
+  n:L('Breiflabben har mange navn: sjødjevel, marulk, havtaske og storkjeft.','Breiflabben har mange namn: sjødjevel, marulk, havtaske og storkjeft.')},
+ {d:'2026-11-11',q:L('Hva står J.R.R. for i J.R.R. Tolkien?','Kva står J.R.R. for i J.R.R. Tolkien?'),
+  a:'John Ronald Reuel',t:null},
+ {d:'2026-11-11',m:'sound',a:'Peter Pan',t:'Snøhvit'},
+ {d:'2026-11-11',m:'pic',a:'Astri Aas-Hansen',t:'Sigrun Aasland'},
+ {d:'2026-11-18',q:L('Hvilket land har Sør-Amerikas vestligste punkt på fastlandet?','Kva land har det vestlegaste punktet i Sør-Amerika på fastlandet?'),
+  a:'Peru',t:'Ecuador',
+  n:L('Punta Pariñas, ved Talara i Peru. Vi har svart Ecuador på dette før også.','Punta Pariñas, ved Talara i Peru. Vi har svart Ecuador på dette før òg.')},
+ {d:'2026-11-18',q:L('Hvor gikk den første strekningen av undergrunnsbanen i Oslo da den åpnet?','Kvar gjekk den første strekninga av undergrunnsbanen i Oslo då han opna?'),
+  a:'Nationaltheatret–Majorstuen',t:'Nationaltheatret–Frognerseteren',
+  n:L('Tunnelen fra Majorstuen til Nationaltheatret åpnet i 1928, som en forlengelse av Holmenkollbanen. Den var den første undergrunnsbanen i Norden.','Tunnelen frå Majorstuen til Nationaltheatret opna i 1928, som ei forlenging av Holmenkollbanen. Han var den første undergrunnsbanen i Norden.')},
+ {d:'2026-11-18',q:L('Hva ligger i Sonja Henies plass 3?','Kva ligg i Sonja Henies plass 3?'),
+  a:'Oslo Plaza',t:'Munchmuseet'},
+ {d:'2026-11-18',m:'sound',q:'Intro til TV-serie',a:'Alle elsker Raymond',t:'Frasier'},
+ {d:'2026-11-18',m:'sound',q:L('Julesanger: hvem synger coveret?','Julesongar: kven syng coveret?'),
+  x:L('Fire av seks feil (5a–c i begge rundene)','Fire av seks feil (5a–c i begge rundane)')}
 ];
 // Where the team placed at each quiz ('YYYY-MM-DD' → place), shown under the date
-const BOM_PLACE={'2026-10-21':3,'2026-10-28':3,'2026-11-04':13};
+const BOM_PLACE={'2026-10-21':3,'2026-10-28':3,'2026-11-04':13,'2026-11-11':5,'2026-11-18':4};

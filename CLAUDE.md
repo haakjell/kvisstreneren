@@ -583,7 +583,9 @@ har ingen faner og er ikke med i Dagens kviss.
 - `BOM_PLACE` (samme fil) — plasseringen vår per kviss (`'ÅÅÅÅ-MM-DD':3`), som står under datoen
   («Resultat: 3. plass»).
 - Bilde- og lydoppgaver har `m:'pic'` eller `m:'sound'` og trenger ingen `q` (eventuelt en kort
-  beskrivelse av klippet eller bildet); de havner i registeret under dagens spørsmål.
+  beskrivelse av klippet eller bildet); de havner i registeret under dagens spørsmål. `t:null` betyr
+  at vi ikke husker hva vi svarte (også på vanlige spørsmål: «Husker ikke»). En samlepost for flere
+  oppgaver («Fire av seks feil» på julesangene) har `x`, en linje som står i stedet for svaret.
 
 ## Flagg
 
@@ -1066,10 +1068,6 @@ De tre `update-`skriptene og `make-paper-logo.py` skriver datafila si helt på n
 - **Commit-meldinger skrives alltid på engelsk**, selv om sida og denne fila er på norsk. De skal ikke
   ha `Claude-Session:`-linja (lenken til Claude-økta): commit-meldingen blir notatet i releasen, som er
   offentlig. `Co-Authored-By:` kan stå.
-- **Branchene skal ha navn som sier hva de gjør**, på engelsk med bindestreker, f.eks.
-  `claude/bom-database-icon` eller `claude/fix-countdown-dst` — ikke tilfeldige navn som
-  `claude/pensive-sagan-1o21l0`. Har økta fått et tilfeldig navn, lag en ny branch med et
-  beskrivende navn før du committer.
 - **Før push til main:** øk `VERSION` i `core.js` hvis endringen når sida (PATCH, med mindre eieren
   har sagt ja til MINOR — se «Versjon»), squash alle commits i branchen til én, rebase den på nyeste
   `origin/main`, og fast-forward main til den (`git push origin HEAD:main`, aldri force-push

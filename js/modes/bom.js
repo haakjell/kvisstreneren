@@ -12,10 +12,10 @@ function boDate(iso){
 function boRender(){
   const days=[...new Set(BOM.map(e=>e.d))].sort().reverse();
   const item=e=>`<details class="boitem"><summary><span>${e.q}${e.audio?` <button type="button" class="boplay" data-src="${e.audio}">${L('▶ Hør','▶ Høyr')}</button>`:''}</span><span class="bosee" aria-hidden="true"><span class="boshow">${L('Se svar','Sjå svar')}</span><span class="bohide">Skjul svar</span></span></summary>
-    <div class="bobody"><p class="boright"><small>${L('Riktig svar','Rett svar')}</small><strong>${e.a}</strong></p><p class="boteam"><small>Kvisslaget svarte</small><strong>${e.t||'Ingenting'}</strong></p>${e.n?`<p class="bonote">${e.n}</p>`:''}</div></details>`;
+    <div class="bobody"><p class="boright"><small>${L('Riktig svar','Rett svar')}</small><strong>${e.a}</strong></p><p class="boteam"><small>Kvisslaget svarte</small><strong>${e.t===null?L('Husker ikke','Hugsar ikkje'):e.t||'Ingenting'}</strong></p>${e.n?`<p class="bonote">${e.n}</p>`:''}</div></details>`;
   const kind=e=>e.m==='pic'?L('Bildeoppgave','Bildeoppgåve'):L('Lydoppgave','Lydoppgåve');
   const media=list=>!list.length?'':`<details class="boextra"><summary>${L(`Bilde- og lydoppgaver (${list.length})`,`Bilde- og lydoppgåver (${list.length})`)}</summary>
-    <ul>${list.map(e=>`<li><small>${kind(e)}${e.q?` · ${e.q}`:''}</small>${L('Riktig','Rett')}: <strong>${e.a}</strong> · ${e.t===null?L('husker ikke hva vi svarte, men det var uansett feil','hugsar ikkje kva vi svarte, men det var uansett feil'):`vi svarte ${e.t||'ingenting'}`}</li>`).join('')}</ul></details>`;
+    <ul>${list.map(e=>`<li><small>${kind(e)}${e.q?` · ${e.q}`:''}</small>${e.x?e.x:`${L('Riktig','Rett')}: <strong>${e.a}</strong> · ${e.t===null?L('husker ikke hva vi svarte, men det var uansett feil','hugsar ikkje kva vi svarte, men det var uansett feil'):`vi svarte ${e.t||'ingenting'}`}`}</li>`).join('')}</ul></details>`;
   $('boList').innerHTML=days.map(d=>{
     const all=BOM.filter(e=>e.d===d);
     return `<section class="boweek"><h2 class="chead">${boDate(d)}</h2>${BOM_PLACE[d]?`<p class="boplace">Resultat: ${BOM_PLACE[d]}. plass</p>`:''}<div class="bolist">${all.filter(e=>!e.m).map(item).join('')}${media(all.filter(e=>e.m))}</div></section>`;
