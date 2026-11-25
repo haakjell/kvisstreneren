@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 
 // The version, shown at the bottom of the settings. Raise it in every push to main; the workflow in
 // .github/workflows/tag-version.yml reads this line and tags the commit v<VERSION>.
-const VERSION='2.8.8';
+const VERSION='2.8.9';
 const REPO_URL='https://github.com/haakjell/kvisstreneren';
 
 // localStorage can be missing or refuse (private mode, blocked site data): reads then give null
@@ -82,8 +82,19 @@ function osloInstant(w,now){ const g=w-(osloWall(now)-now); return w-(osloWall(g
 const osloAt=(s,now)=>osloInstant(Date.parse(s.replace(' ','T')+'Z'),now);
 // The date in Oslo at instant t, as 'YYYY-MM-DD'
 const osloDay=t=>new Date(osloWall(t)).toISOString().slice(0,10);
+// The break between seasons. From SEASON_OFF (Oslo time, after the last quiz of the season) the
+// countdown is broken (countdown.js) until SEASON_ON, the date of the first quiz of the new season
+// ('YYYY-MM-DD', at QUIZ_START), is set: then it counts down to that, and runs as usual from there.
+// No quiz is on during the break. Next season's end: a new SEASON_OFF, and SEASON_ON back to null.
+const SEASON_OFF='2026-11-25 22:00', SEASON_ON=null;
+// Test switch: ?pause puts the page in the break now, broken; ?pause=YYYY-MM-DD as if that were SEASON_ON
+const SEASON_TEST=new URLSearchParams(location.search).get('pause');
+const SEASON_NEXT=SEASON_TEST===null?SEASON_ON:/^\d{4}-\d\d-\d\d$/.test(SEASON_TEST)?SEASON_TEST:null;
+const seasonOnAt=now=>osloAt(SEASON_NEXT+' '+String(QUIZ_START).padStart(2,'0')+':00',now);
+// 'on' (the weekly quiz), 'broken' (break, next date unknown) or 'waiting' (break, next date set)
+function seasonState(t){ return SEASON_TEST===null&&t<osloAt(SEASON_OFF,t)?'on':!SEASON_NEXT?'broken':t<seasonOnAt(t)?'waiting':'on'; }
 // Wednesday 19–22 in Oslo: the quiz is on
-function quizLive(t){ const d=new Date(osloWall(t)), h=d.getUTCHours(); return d.getUTCDay()===QUIZ_DAY&&h>=QUIZ_START&&h<QUIZ_END; }
+function quizLive(t){ const d=new Date(osloWall(t)), h=d.getUTCHours(); return d.getUTCDay()===QUIZ_DAY&&h>=QUIZ_START&&h<QUIZ_END&&seasonState(t)==='on'; }
 
 // ---------- Language ----------
 // Bokmål or nynorsk, as picked in Innstillinger (localStorage 'lang'; none = bokmål). It is fixed

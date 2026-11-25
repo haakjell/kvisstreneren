@@ -857,6 +857,17 @@ hver frame (`requestAnimationFrame`) — men bare mens nedtellingen vises; eller
 igjen. Markupen bygges bare på nytt når oppsettet endres; ellers skrives bare tallene
 (`cdShow()`), så det koster nesten ingenting.
 
+**Sesongpause.** Etter sesongens siste kviss (`SEASON_OFF` i `core.js`, nå onsdag 25. november 2026
+kl. 22) er nedtellingen ødelagt (`cdBroken()` i `countdown.js`, `.broken` i `countdown.css`): den
+står på skrå med en sprekk tvers gjennom (fylt med bakgrunnsfargen, så det ser ut som man ser gjennom) og røyk som stiger opp fra den, og har hengt seg på «999 dager 99 timer 99
+minutter 99 sekunder» og «Onsdag ??. ??? kl. ??». Med risting på hakker den til nå og da; reklamen går
+som vanlig. I pausen pågår ingen kviss (`quizLive()` er usann, så Dagens kviss er åpen onsdag
+kveld), og preppen sier «Ny prepp kommer når neste sesong begynner». **Når neste kvissdato er
+kjent**, sett `SEASON_ON` til datoen (`'ÅÅÅÅ-MM-DD'`, kl. 19): da teller nedtellingen ned til den,
+og fra da går alt som før. Ved neste sesongslutt: ny `SEASON_OFF` og `SEASON_ON` tilbake til `null`.
+`seasonState()` gir `'on'`, `'broken'` eller `'waiting'`. **Testbryter:** `?pause` viser pausen nå, med
+den ødelagte nedtellingen, og `?pause=ÅÅÅÅ-MM-DD` som om `SEASON_ON` var satt til den datoen.
+
 I ristetida (se «Reklame») dirrer boksen kort (0,3 s, klassen `tick`) hver gang sekundet teller
 ned; den siste timen før kvissen rister den kraftigere hele tiden (klassen `rumble`). Begge slås av med
 `prefers-reduced-motion`. Ristingen kan skrus av — se «Reklame».
@@ -953,7 +964,7 @@ som er bredere når preppen eller forsida vises.
 ## Debug-sida
 
 En skjult side (`#debugApp`, `js/debug.js`, bolken «Debug» i `modes.css`) med alle testbryterne i
-adressen (nå `?avis`) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
+adressen (nå `?avis` og `?pause`) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
 modusene, klokkene (serverens og enhetens), om kvissen pågår, og alt som er
 lagret i `localStorage`, med en knapp for å slette hver nøkkel eller alt.
 

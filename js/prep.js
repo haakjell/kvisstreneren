@@ -158,9 +158,11 @@ const prepSource=()=>((LANG==='nn'&&$('prepSourceNn').textContent.trim())||$('pr
 function prepStale(md, uke){
   const quiz = prepDate(uke) || prepDate(md.split('\n')[0]), today = osloDay(serverNow());
   if(!quiz || today <= quiz) return null;
-  const t = Date.parse(today), next = new Date(t + (QUIZ_DAY - new Date(t).getUTCDay() + 7) % 7 * 864e5);
+  const t = Date.parse(today), season = seasonState(serverNow());
+  // Between seasons the next quiz is the first of the new season, or not known yet (null)
+  const next = season === 'broken' ? null : new Date(season === 'waiting' ? Date.parse(SEASON_NEXT) : t + (QUIZ_DAY - new Date(t).getUTCDay() + 7) % 7 * 864e5);
   const fmt = d => (d.getUTCDay()===QUIZ_DAY ? 'onsdag ' : '') + d.getUTCDate() + '. ' + MONTHS[d.getUTCMonth()];
-  return { was: fmt(new Date(quiz)), next: fmt(next), isToday: +next === t };
+  return { was: fmt(new Date(quiz)), next: next && fmt(next), isToday: !!next && +next === t };
 }
 // The report doesn't change while the page is open, so it is rendered once, here. Rendering it again
 // would throw away what has been filled into it since.
@@ -220,9 +222,9 @@ function renderPrep(){
   const stale = md ? prepStale(md, uke) : null;
   $('prepStale').hidden = !stale;
   if(stale) $('prepStale').innerHTML = '<strong>Denne preppen er utdatert</strong><p>Den var til kvissen ' + stale.was + '. '
-    + (stale.isToday ? L('Ny prepp til i kveld kommer snart.','Ny prepp til i kveld kjem snart.') : L(`Ny prepp kommer ${stale.next}.`,`Ny prepp kjem ${stale.next}.`)) + '</p>';
+    + (stale.isToday ? L('Ny prepp til i kveld kommer snart.','Ny prepp til i kveld kjem snart.') : !stale.next ? L('Ny prepp kommer når neste sesong begynner.','Ny prepp kjem når neste sesong byrjar.') : L(`Ny prepp kommer ${stale.next}.`,`Ny prepp kjem ${stale.next}.`)) + '</p>';
   $('prepTeaser').textContent = !md ? L('Kommer snart','Kjem snart')
-    : stale ? (stale.isToday ? L('Ny prepp til i kveld kommer snart','Ny prepp til i kveld kjem snart') : L(`Ny prepp kommer ${stale.next}`,`Ny prepp kjem ${stale.next}`))
+    : stale ? (stale.isToday ? L('Ny prepp til i kveld kommer snart','Ny prepp til i kveld kjem snart') : !stale.next ? L('Ny prepp kommer neste sesong','Ny prepp kjem neste sesong') : L(`Ny prepp kommer ${stale.next}`,`Ny prepp kjem ${stale.next}`))
     : uke ? 'Klar til ' + uke : L('Nyheter, navnedager og datoen','Nyheiter, namnedagar og datoen');
 }
 addMode('prep',renderPrep,{wide:true});

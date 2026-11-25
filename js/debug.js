@@ -1,5 +1,5 @@
 // ---------- Debug ----------
-// An overview of the test switches in the address (none at the moment), with links, plus the
+// An overview of the test switches in the address, with links, plus the
 // modes, the clocks and what is in localStorage. It only exists behind a secret query parameter:
 // only its hash (seedOf() in core.js) is here, so the name isn't in the source. Without it, #debug
 // is an unknown hash and gives the home page. With it and no hash, the page opens on #debug.
@@ -11,6 +11,9 @@ const DB_FLAGS=[
   {q:'avis', what:L('Viser avisvisningen i preppen også med en prepp fra før 4. november (prep.js).',
                     'Viser avisvisinga i preppen òg med ein prepp frå før 4. november (prep.js).'),
    links:['?avis#prep']},
+  {q:'pause', what:L('Sesongpausen nå: den ødelagte nedtellingen, og preppen og onsdagskvelden som i pausen. Med en dato telles det ned til den, som når SEASON_ON er satt (core.js).',
+                     'Sesongpausen no: den øydelagde nedteljinga, og preppen og onsdagskvelden som i pausen. Med ein dato blir det talt ned til den, som når SEASON_ON er sett (core.js).'),
+   links:['?pause','?pause=2027-01-13']},
 ];
 
 const dbEsc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
