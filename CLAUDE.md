@@ -606,6 +606,8 @@ har ingen faner og er ikke med i Dagens kviss.
   gjort om til MP3 med `ffmpeg`. Hold filene små.
 - `BOM_PLACE` (samme fil) — plasseringen vår per kviss (`'ÅÅÅÅ-MM-DD':3`), som står under datoen
   («Resultat: 3. plass»).
+- `BOM_NOTE` (samme fil) — en merknad om hele kvissen (`'ÅÅÅÅ-MM-DD':L(…)`), som står under
+  resultatet (`.bodaynote`), f.eks. at det var sesongens siste, eller at lista ikke er komplett.
 - Bilde- og lydoppgaver har `m:'pic'` eller `m:'sound'` og trenger ingen `q` (eventuelt en kort
   beskrivelse av klippet eller bildet); de havner i registeret under dagens spørsmål. `t:null` betyr
   at vi ikke husker hva vi svarte (også på vanlige spørsmål: «Husker ikke»). En samlepost for flere
