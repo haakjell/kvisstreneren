@@ -78,7 +78,13 @@ const BOM=[
   a:'Oslo Plaza',t:'Munchmuseet'},
  {d:'2026-11-18',m:'sound',q:'Intro til TV-serie',a:'Alle elsker Raymond',t:'Frasier'},
  {d:'2026-11-18',m:'sound',q:L('Julesanger: hvem synger coveret?','Julesongar: kven syng coveret?'),
-  x:L('Fire av seks feil (5a–c i begge rundene)','Fire av seks feil (5a–c i begge rundane)')}
+  x:L('Fire av seks feil (5a–c i begge rundene)','Fire av seks feil (5a–c i begge rundane)')},
+ {d:'2026-11-25',q:L('Hvilken produsent står bak Ifa?','Kva for ein produsent står bak Ifa?'),
+  a:'Nidar',t:'Brynhild'}
 ];
 // Where the team placed at each quiz ('YYYY-MM-DD' → place), shown under the date
-const BOM_PLACE={'2026-10-21':3,'2026-10-28':3,'2026-11-04':13,'2026-11-11':5,'2026-11-18':4};
+const BOM_PLACE={'2026-10-21':3,'2026-10-28':3,'2026-11-04':13,'2026-11-11':5,'2026-11-18':4,'2026-11-25':4};
+// A note about a whole quiz ('YYYY-MM-DD' → text), shown under the result
+const BOM_NOTE={
+ '2026-11-25':L('Sesongens siste kviss. Vi endte på 4. plass sammenlagt. Vi glemte å skrive ned hva vi bommet på, så her er bare det vi husker.','Siste kvissen i sesongen. Vi enda på 4. plass samanlagt. Vi gløymde å skrive ned kva vi bomma på, så her er berre det vi hugsar.')
+};

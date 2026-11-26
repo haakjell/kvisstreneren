@@ -306,6 +306,8 @@
 /* One quiz per section, newest first, with a rule between them; each question folds open (<details>) */
 .boweek+.boweek{border-top:3px solid var(--edge);margin-top:24px;padding-top:20px}
 .boplace{margin:-6px 0 12px 4px;color:var(--muted);font-weight:700}
+.bodaynote{margin:-6px 0 12px 4px;color:var(--muted);font-size:.9rem}
+.boplace+.bodaynote{margin-top:-8px}
 .bolist{display:grid;gap:10px}
 .boitem{background:var(--paper);border-radius:20px;box-shadow:0 3px 0 var(--edge)}
 .boitem summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 16px;cursor:pointer;list-style:none;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:.94rem;line-height:1.35}

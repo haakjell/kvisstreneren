@@ -18,7 +18,7 @@ function boRender(){
     <ul>${list.map(e=>`<li><small>${kind(e)}${e.q?` · ${e.q}`:''}</small>${e.x?e.x:`${L('Riktig','Rett')}: <strong>${e.a}</strong> · ${e.t===null?L('husker ikke hva vi svarte, men det var uansett feil','hugsar ikkje kva vi svarte, men det var uansett feil'):`vi svarte ${e.t||'ingenting'}`}`}</li>`).join('')}</ul></details>`;
   $('boList').innerHTML=days.map(d=>{
     const all=BOM.filter(e=>e.d===d);
-    return `<section class="boweek"><h2 class="chead">${boDate(d)}</h2>${BOM_PLACE[d]?`<p class="boplace">Resultat: ${BOM_PLACE[d]}. plass</p>`:''}<div class="bolist">${all.filter(e=>!e.m).map(item).join('')}${media(all.filter(e=>e.m))}</div></section>`;
+    return `<section class="boweek"><h2 class="chead">${boDate(d)}</h2>${BOM_PLACE[d]?`<p class="boplace">Resultat: ${BOM_PLACE[d]}. plass</p>`:''}${BOM_NOTE[d]?`<p class="bodaynote">${BOM_NOTE[d]}</p>`:''}<div class="bolist">${all.filter(e=>!e.m).map(item).join('')}${media(all.filter(e=>e.m))}</div></section>`;
   }).join('');
 }
 boRender();
