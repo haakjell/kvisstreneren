@@ -8,9 +8,6 @@ const DEBUG=[...new URLSearchParams(location.search).keys()].some(k=>seedOf(k)==
 
 // Each test switch the page reads from the address: the query, what it does, and links to try it
 const DB_FLAGS=[
-  {q:'avis', what:L('Viser avisvisningen i preppen også med en prepp fra før 4. november (prep.js).',
-                    'Viser avisvisinga i preppen òg med ein prepp frå før 4. november (prep.js).'),
-   links:['?avis#prep']},
   {q:'pause', what:L('Sesongpausen nå: den ødelagte nedtellingen, og preppen og onsdagskvelden som i pausen. Med en dato telles det ned til den, som når SEASON_ON er satt (core.js).',
                      'Sesongpausen no: den øydelagde nedteljinga, og preppen og onsdagskvelden som i pausen. Med ein dato blir det talt ned til den, som når SEASON_ON er sett (core.js).'),
    links:['?pause','?pause=2027-01-13']},

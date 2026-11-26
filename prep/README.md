@@ -4,3 +4,5 @@
 `2026-10-07-nn.md`. Rapporten legges her som quizprep-skillen skrev den, og settes inn på sida
 med `node tools/set-prep.mjs prep/<fil>.md "onsdag 7. oktober 2026" --nn prep/<fil>-nn.md`.
 Se CLAUDE.md.
+Skriptet skriver også `data/prep-archive.js` på nytt fra alle filene her, så de står i avishylla
+på sida (`node tools/set-prep.mjs --archive` gjør bare det).

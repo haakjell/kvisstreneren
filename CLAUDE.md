@@ -28,7 +28,8 @@ js/prep.js · dagens.js · ads.js · countdown.js · install.js
 js/settings.js        Innstillinger — se under
 js/debug.js           den skjulte debug-sida — se «Debug-sida»
 js/app.js             modusbytte og ruting (goMode()) og oppstart
-data/<navn>.js        dataene, én fil per tema — se tabellen under (og data/paper-logo.js, avishodet i preppen)
+data/<navn>.js        dataene, én fil per tema — se tabellen under (og data/paper-logo.js, avishodet i preppen, og
+                      data/prep-archive.js, alle preppene til avishylla)
 tools/                skript som oppdaterer data og prepp, og regresjonstesten — se «Verktøy»
 prep/                 arkivet over ukas prepp, én markdown-fil per kviss og språk
 manifest.webmanifest, icons/   for hjemskjermen — se «Hjemskjermen»
@@ -64,7 +65,7 @@ tittelen på forsida — se «Innstillinger». Tabellen står i samme rekkefølg
 
 | Modus | Kode | Data | Innhold |
 |---|---|---|---|
-| `prep` | `js/prep.js` | `#prepSource` i `index.html` | Ukas prepp — se under |
+| `prep` | `js/prep.js` | `#prepSource` i `index.html`, `data/prep-archive.js` | Ukas prepp og avishylla — se under |
 | `dagens` | `js/dagens.js` | — | Dagens kviss: blandede spørsmål fra de andre modusene (`MIX`) — se under |
 | `anagram` | `js/modes/anagram.js` | `data/anagram.js` | Anagram: kjendiser med bokstavene stokket om, på et kart med skattekister der alle går samme vei — se under |
 | `bom` | `js/modes/bom.js` | `data/bom.js` | Bommedatabasen™: spørsmålene vi har bomma på — se under |
@@ -236,6 +237,7 @@ hver hovedfeature etter den, og PATCH for hver commit mellom dem:
 | 2.6.0 | | Hovedsteder, og hovedstaden som det åttende spørsmålet i Dagens kviss |
 | 2.7.0 | | Elver |
 | 2.8.0 | | Kvissposten: avisvisningen av preppen, med sider å bla i |
+| 2.9.0 | | Avishylla: alle preppene som avisutgaver, etter kvissen til neste prepp |
 
 Tagger finnes bare fra 2.4.4. Får MINOR et nytt nummer, legg det til i tabellen.
 
@@ -335,8 +337,12 @@ To steder er involvert:
 - `#prepSource` i markupen (inne i `#prepApp`) — en `<script type="text/markdown">`-blokk som
   holder selve rapporten, ordrett. Attributtet `data-uke` holder quizdatoen. Rett under står
   `#prepSourceNn` med den samme rapporten på nynorsk.
-- `js/prep.js`: `prepMarkdown()` / `prepInline()` (en liten markdown-renderer) og
-  `renderPrep()`, som fyller `#prepBody` og teksten på forsideknappen ved oppstart.
+- `js/prep.js`: `prepMarkdown()` / `prepInline()` (en liten markdown-renderer), avisa og avishylla
+  (se under), og `renderPrep()`, som skriver det som går etter datoen: teksten på forsideknappen og
+  varselet på hylla.
+
+I tillegg er `data/prep-archive.js` alle preppene i `prep/`, til avishylla. Den skrives av
+`set-prep.mjs` og skal ikke redigeres for hånd.
 
 ### Slik legger du inn ny prep
 
@@ -350,7 +356,8 @@ fra reporoten:
 node tools/set-prep.mjs prep/2026-10-07.md "onsdag 7. oktober 2026" --nn prep/2026-10-07-nn.md
 ```
 
-Skriptet legger rapportene inn i `#prepSource` og `#prepSourceNn` og setter `data-uke`. Uten
+Skriptet legger rapportene inn i `#prepSource` og `#prepSourceNn`, setter `data-uke` og skriver
+`data/prep-archive.js` på nytt fra alle rapportene i `prep/` (bare det: `--archive`). Uten
 `--nn` tømmes den nynorske blokken, og nynorsk viser bokmålsrapporten. Åpne `index.html` i
 nettleseren etterpå og se over at det ser riktig ut. Datoargumentet er valgfritt, men det er
 det som gir teksten «Klar til onsdag 7. oktober 2026» på forsideknappen.
@@ -366,14 +373,32 @@ og forsideknappen sier «Kommer snart». Begge blokkene tømmes. Ingen andre end
 
 **Kjøres quizprep herfra, hører dette med til jobben.** Skriv rapporten til `prep/<dato>.md` og
 nynorsken til `prep/<dato>-nn.md`, kjør `set-prep.mjs` med `--nn`, sjekk sida i nettleseren på
-begge språk, og commit begge rapportene og `index.html`. Alle egennavn (personer, steder, lag,
+begge språk, og commit begge rapportene, `index.html` og `data/prep-archive.js`. Alle egennavn (personer, steder, lag,
 programmer, merkevarer …) skal lenkes inline til artikkelen på bokmåls-Wikipedia (`no.wikipedia.org`),
 én gang per sak, når artikkelen finnes — sjekket, ikke gjettet; finnes den ikke på bokmål, står
 navnet uten lenke. Den nynorske rapporten får de samme lenkene. Skillen beskriver hvordan. Ikke
 lim rapporten inn for hånd, og ikke forhåndsformater markdownen — skriptet og rendreren tar den
 som den er.
 
-Sida viser bare den nyeste prepen; `prep/`-mappa er arkivet.
+### Avishylla
+
+Alle preppene er utgaver av avisa, og står i avishylla (`#prepShelf`): én liten forside per utgave
+(avishodet, uka, datoen og de første overskriftene), nyeste først, delt i sesonger («Høsten 2026»,
+«Våren 2027»). Ukas utgave er merket «Denne uka» fram til kvissen er over. Har man skrudd av avisa,
+er hylla en vanlig liste («Alle preppene») med de samme utgavene som kort, og utgavene åpnes som den
+vanlige visningen; «Avis»-bryteren står både på hylla og i utgavene. Ukas utgave er rapporten i
+`#prepSource`; de andre kommer fra `data/prep-archive.js` (`PREP_ARCHIVE`), som lastes først når hylla
+eller en gammel utgave trengs (`prepLoadArchive()`, en `<script>` som legges inn da, så den virker fra
+`file://` også), så forsida ikke må hente alle preppene.
+
+Hva preppen åpner på, går etter serverens klokke (se «Tid»): **fra rapporten er lagt inn til kvissen er
+over, onsdag kl. 22** (`QUIZ_END`), ukas utgave, med «← Avishylla» (eller «← Alle preppene») oppe til
+venstre; **etterpå hylla**, med «← Alle kvisser», til `set-prep.mjs` legger inn den neste. Uten
+rapport (`--clear`) åpner den også på hylla. Har man ikke gjort noe siden preppen ble åpnet, velges
+visningen på nytt når klokka er spurt (`prepAuto`). En utgave som åpnes fra hylla, får sin egen
+historikkoppføring (`{ppIssue: dato}`), så tilbakegesten går tilbake til hylla, og en oppdatering blir
+stående på utgaven. Ukas utgave åpnet som standard har ingen egen oppføring; «← Avishylla» bytter da
+bare til hylla.
 
 På desktop (fra 900 px) er preppen bredere enn resten av sida, siden den bare er tekst: den får
 `clamp(560px, 60vw, 960px)` — omtrent halve skjermen på en vanlig 1920-skjerm. Bredden står i
@@ -382,17 +407,18 @@ desktop, preppen som over, og forsida så bred den kan (opptil 1080 px, og smale
 med reklame trenger plass, fra 1100 px) — se «Utseende». `goMode()` setter også klassen `wide` på
 `.wrap` når preppen vises (`addMode('prep', …, {wide:true})`), som gir teksten mer luft.
 
-Når kvissdagen er over (fra dagen etter datoen i `data-uke`, eller i rapportens første linje om
-attributtet mangler), viser `renderPrep()` et varsel øverst (`#prepStale`) om at preppen er
-utdatert («Denne preppen er utdatert») og at ny kommer neste onsdag — på selve onsdagen «Ny prepp
-til i kveld kommer snart». Forsideknappen sier det samme i stedet for «Klar til …». Datoen leses fra teksten, så den må ha dag, måned og
-år («onsdag 7. oktober 2026»). Varselet regnes ut på nytt hver gang man går til forsida eller
-prepen (og når klokka er spurt på nytt), og forsvinner av seg selv når `set-prep.mjs` legger inn
-en ny rapport. «Dagen etter» regnes i norsk tid etter serverens klokke (se «Tid»).
+Når kvissen er over (onsdag kl. 22 på datoen i `data-uke`, eller i rapportens første linje om
+attributtet mangler), viser `renderPrep()` et varsel øverst på hylla (`#prepStale`) om når ny prepp
+kommer («Ny prepp kommer onsdag 2. desember»; neste onsdag samme dag: «Ny prepp til i kveld kommer
+snart»; i sesongpausen: «… når neste sesong begynner»). Forsideknappen sier det samme i stedet for
+«Klar til …». Datoen leses fra teksten, så den må ha dag, måned og år («onsdag 7. oktober 2026»).
+Varselet regnes ut på nytt hver gang man går til forsida eller prepen (og når klokka er spurt på
+nytt), og forsvinner av seg selv når `set-prep.mjs` legger inn en ny rapport. Det regnes i norsk tid
+etter serverens klokke (se «Tid»).
 
 ### Avisvisningen
 
-Oppe til høyre i preppen, på linje med «← Alle kvisser» (`.topbar`), slår en knapp med en avis
+Oppe til høyre i preppen, på linje med tilbakeknappen (`#prepBack`, `.topbar`), slår en knapp med en avis
 og «Avis» avisa av og på (`#prepPaperBtn`, `button.paperbtn`, `role="switch"`, med samme utseende som
 «Auto» i kvissene).
 Avis er standard; skrur man den av, huskes det i `localStorage` under `prepView` (`'plain'`;
@@ -425,11 +451,9 @@ om, til venstre for å bla tilbake (på mobil har den ene sida begge), og med pi
 egne knapper under avisa. Bladene bygges av `ppBuild()` og vises av `ppShow()`; høyden er den lengste sida (`ppHeight()`), og følger med om en side vokser (en annonse kommer inn). Sidene som ikke
 vises, er `inert`. Med `prefers-reduced-motion` blas det uten animasjon. Avisa åpner alltid på forsida.
 
-**Lanseringen:** avisa finnes bare med en prepp til onsdag 4. november 2026 eller senere
-(`PREP_PAPER_FROM`, regnet fra `data-uke` eller tittelen). Med en eldre prepp er det ingen knapp og
-bare den vanlige visningen, så avisa dukker opp av seg selv når `set-prep.mjs` legger inn preppen til
-4. november. **Testbryter:** `?avis` viser den med hvilken som helst prepp. Når lanseringen er
-passert, kan `PREP_PAPER_FROM`, `?avis` og raden i `DB_FLAGS` fjernes.
+Alle preppene kan vises som avis, også de fra før avisa kom (4. november 2026), som har litt andre
+overskrifter («Quizprep — onsdag …», «Del 1 — Ferske nyheter»); datoen i avishodet kommer fra
+`data-uke` (eller datoen i arkivet), ikke fra tittelen.
 
 ### Hva rendreren støtter
 
@@ -964,7 +988,7 @@ som er bredere når preppen eller forsida vises.
 ## Debug-sida
 
 En skjult side (`#debugApp`, `js/debug.js`, bolken «Debug» i `modes.css`) med alle testbryterne i
-adressen (nå `?avis` og `?pause`) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
+adressen (nå `?pause`) og lenker til dem (hva de gjør, ligger bak en pil), lenker til alle
 modusene, klokkene (serverens og enhetens), om kvissen pågår, og alt som er
 lagret i `localStorage`, med en knapp for å slette hver nøkkel eller alt.
 
@@ -1014,7 +1038,7 @@ smalt (under 1100 px) og bredt (utenom onsdag 19–22).
 `tools/regression/` er et Playwright-oppsett som kjører gjennom hele sida bare via grensesnittet
 (ingen interne funksjonsnavn), og lagrer et øyeblikksbilde etter hvert steg: markup, synlig tekst,
 fokus, adresse og `localStorage`, pluss skjermbilder. Det spiller alle modusene med alle
-spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), Flagg (begge retninger, flere verdensdeler og tilbakegesten), Hovedsteder, Elver (alle delene av verden), «Pugg»-fanene og tastaturet, 78 runder av Dagens kviss på ulike datoer, skjermer
+spørsmålstypene, alle anagrammene på kartet (med feil svar og tilbakegesten), Flagg (begge retninger, flere verdensdeler og tilbakegesten), Hovedsteder, Elver (alle delene av verden), «Pugg»-fanene og tastaturet, avisa og avishylla (med og uten avis), 78 runder av Dagens kviss på ulike datoer, skjermer
 og karttyper (samme dato skal alltid gi samme spørsmål), fortsettelse etter oppdatering, rekke, innstillingene (også fargetemaet og en runde uten automatisk videre),
 stengt onsdag kveld, uten nett og som lokal fil, reklamen, hele sida på nynorsk (valgt i innstillingene),
 «Auto» i kvissene, Bommedatabasen, og at nedtellingen og preppen følger
@@ -1057,7 +1081,7 @@ Alle kjøres fra reporoten med `node`. Ingen av dem trengs for at sida skal virk
 
 | Skript | Gjør | Se |
 |---|---|---|
-| `tools/set-prep.mjs` | Legger ukas prepp inn i `index.html` (eller tømmer den) | «Ukas prepp» |
+| `tools/set-prep.mjs` | Legger ukas prepp inn i `index.html` (eller tømmer den), og skriver `data/prep-archive.js` | «Ukas prepp» |
 | `tools/update-tbane.mjs` | Henter linjene fra Entur og skriver `data/tbane.js` | «T-banen» |
 | `tools/update-ruter-map.mjs` | Finner navnene på Ruters linjekart og skriver `data/ruter-map.js` | «T-banen» |
 | `tools/update-caesar-images.mjs` | Henter bilder fra Hotel Cæsar-wikien og skriver `data/caesar-img.js` | «Hotel Cæsar» |

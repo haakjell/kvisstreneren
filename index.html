@@ -273,10 +273,15 @@ Dekninga går til morgonen 25. november; namnedagane 26. og 27. november ligg fr
 - Dagen er karimesse på primstaven.
 </script>
     <div class="topbar">
-      <button class="back" data-home data-nn="← Alle kvissar">← Alle kvisser</button>
+      <button class="back" id="prepBack" data-nn="← Alle kvissar">← Alle kvisser</button>
       <button type="button" class="paperbtn" role="switch" id="prepPaperBtn" aria-checked="true" aria-label="Vis som avis" title="Vis som avis" data-nn-aria-label="Vis som avis" data-nn-title="Vis som avis" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h12v14H6a2 2 0 0 1-2-2z"/><path d="M16 9h4v8a2 2 0 0 1-2 2h-2"/><path d="M7 9h6M7 12h6M7 15h4"/><path class="off" d="M3 3l18 18"/></svg><span aria-hidden="true">Avis</span></button>
     </div>
-    <div class="prepstale" id="prepStale" role="status" hidden></div>
+    <!-- The shelf of all the issues (prep.js): after the quiz, until the next prep is in -->
+    <section class="prepshelf" id="prepShelf" hidden>
+      <header><div><h1 id="prepShelfTitle">Avishylla</h1><div class="sub" id="prepShelfSub"></div></div></header>
+      <div class="prepstale" id="prepStale" role="status" hidden></div>
+      <div id="prepShelfList"></div>
+    </section>
     <article class="card prose" id="prepBody"></article>
     <div class="paper" id="prepPaper" hidden>
       <div class="book" id="ppBook"></div>

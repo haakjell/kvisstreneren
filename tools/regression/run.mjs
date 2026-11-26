@@ -206,9 +206,8 @@ for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900
     await rec.snap(page, 'home-full', true); await rec.shoot(page, 'home');
     await page.goto(BASE + '#prep'); await page.waitForTimeout(150);
     await rec.snap(page, 'prep'); await rec.shoot(page, 'prep');
-    // «Avis»: no switch for a prep from before 4 November; with ?avis the newspaper is the default,
-    // and turning it off is remembered after a reload
-    await page.goto(BASE + '?avis#prep'); await page.waitForTimeout(150);
+    // «Avis»: the newspaper is the default, and turning it off is remembered after a reload
+    await page.goto(BASE + '#prep'); await page.waitForTimeout(150);
     await rec.snap(page, 'prep-paper'); await rec.shoot(page, 'prep-paper');
     // Turn the pages: to the name days (and «på denne dagen» beside them on a wide screen), and back
     // by the folded corners of the pages in view
@@ -219,7 +218,24 @@ for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900
     await page.click('#prepPaperBtn'); await page.waitForTimeout(150);
     await page.reload(); await page.waitForTimeout(150);
     await rec.snap(page, 'prep-plain-reload');
+    // The shelf, plain: back from this week's issue, an old one opened, and back by the back gesture
+    await page.click('#prepBack'); await page.waitForTimeout(300);
+    await rec.snap(page, 'prep-shelf-plain'); await rec.shoot(page, 'prep-shelf-plain');
+    await page.evaluate(() => __T.click('.pcover', 3)); await page.waitForTimeout(200);
+    await rec.snap(page, 'prep-shelf-plain-issue');
+    await page.goBack(); await page.waitForTimeout(200);
+    await rec.snap(page, 'prep-shelf-plain-back');
+    // … and as newspapers: an old issue, reloaded on it, then back to the shelf and home
     await page.click('#prepPaperBtn'); await page.waitForTimeout(150);
+    await rec.snap(page, 'prep-shelf'); await rec.shoot(page, 'prep-shelf');
+    await page.evaluate(() => __T.click('.pcover', 8)); await page.waitForTimeout(200);
+    await rec.snap(page, 'prep-shelf-issue'); await rec.shoot(page, 'prep-shelf-issue');
+    await page.reload(); await page.waitForTimeout(400);
+    await rec.snap(page, 'prep-shelf-issue-reload');
+    await page.click('#prepBack'); await page.waitForTimeout(200);
+    await rec.snap(page, 'prep-shelf-again');
+    await page.click('#prepBack'); await page.waitForTimeout(150);
+    await rec.snap(page, 'prep-shelf-home');
     // Every home button, then back via «← Alle kvisser»
     await page.goto(BASE); await page.waitForTimeout(100);
     const n = await page.evaluate(() => document.querySelectorAll('#home .mode').length);
@@ -227,8 +243,12 @@ for (const [cfg, opt] of [['mobile', {}], ['desktop', { width: 1280, height: 900
       await page.evaluate(i => document.querySelectorAll('#home .mode')[i].click(), i);
       await page.waitForTimeout(150);
       await rec.snap(page, 'mode-button-' + i);
+      // From this week's prep, «← Avishylla» goes to the shelf first
       await page.evaluate(() => __T.click('.back'));
       await page.waitForTimeout(100);
+      if (await page.evaluate(() => document.getElementById('home').hidden)) {
+        await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(100);
+      }
       await rec.snap(page, 'back-' + i);
     }
     // History: open from home, browser back
@@ -797,6 +817,7 @@ tests.clock = async () => {
     // back on screen after a while: the server is asked again
     page.__head.date = Date.parse(server) + 7 * 864e5;
     await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange'))); await page.waitForTimeout(300);
+    await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(200);   // «← Avishylla»
     await page.evaluate(() => __T.click('.back')); await page.waitForTimeout(200);
     await rec.snap(page, label + ':week-later'); await cd(page, label + ':week-later');
     await page.context().close();

@@ -99,6 +99,40 @@
 .prose a{color:var(--accent);font-weight:600;word-break:break-word}
 .prose hr{border:0;border-top:2px solid var(--line);margin:22px 0}
 .prose code{font-size:.9em;background:var(--tint);border-radius:6px;padding:1px 5px}
+/* The shelf (prep.js): every issue of Kvissposten as a little front page on newsprint, a stack of
+   them under each, by season; this week's marked «Denne uka». With the newspaper off (.plain), the
+   same issues as plain cards. */
+.prepshelf[hidden]{display:none}
+.prepshelf .season{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.2rem;margin:22px 0 12px}
+.prepshelf .season:first-child{margin-top:4px}
+.pshelf{list-style:none;margin:0;padding:0 6px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(126px,1fr));gap:22px 16px}
+.prepshelf:not(.plain) .pcover{--paper:#F6F0DF;--ink:#1F1C16;--muted:#5C5647;--line:#DCD3BC;--accent:var(--l-accent);--accent-ink:var(--l-accent-ink)}
+.pcover{position:relative;display:flex;flex-direction:column;gap:6px;width:100%;aspect-ratio:3/4;overflow:hidden;padding:12px 11px;text-align:left;
+  font:13px/1.3 Georgia,"Times New Roman",Times,serif;color:var(--ink);background:var(--paper);border:0;border-radius:3px;cursor:pointer;
+  box-shadow:3px 3px 0 -1px #E9E0C8,3px 3px 0 0 rgba(60,48,20,.25),6px 6px 0 -1px #E2D8BC,6px 6px 0 0 rgba(60,48,20,.2),0 6px 10px rgba(0,0,0,.12);
+  transition:transform .15s ease}
+.pcover:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@media (hover:hover){.pcover:hover{transform:translateY(-4px) rotate(-.6deg)}}
+.pcmast svg{display:block;width:100%;height:auto}
+.pcdate{display:flex;justify-content:space-between;gap:6px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-top:1px solid var(--ink);border-bottom:3px double var(--ink);padding:3px 0}
+.pclead{font-weight:700;font-size:1.08rem;line-height:1.12;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden;flex:none}
+.pcmore{display:flex;flex-direction:column;gap:5px;min-height:0;overflow:hidden;color:var(--muted);font-size:.78rem;-webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent)}
+.pcmore span{border-top:1px solid var(--line);padding-top:4px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;flex:none}
+.pshelf>li{container-type:inline-size}
+.pcdate span{white-space:nowrap}
+@container (max-width:150px){.pcdate{font-size:.56rem;letter-spacing:.02em}.pclead{font-size:.95rem}}
+.pcplain,.pcnew{display:none}
+.pcover.now .pcnew{display:block;position:absolute;top:18px;right:-34px;transform:rotate(35deg);width:130px;padding:3px 0;text-align:center;
+  font:800 .62rem/1.2 "Figtree",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;background:var(--accent);color:var(--accent-ink)}
+.prepshelf.plain .pshelf{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;padding:0}
+.prepshelf.plain .pcover{aspect-ratio:auto;gap:4px;padding:14px 16px;font:inherit;font-size:.95rem;border-radius:22px;color:var(--ink);background:var(--paper);box-shadow:0 4px 0 var(--edge);overflow:visible}
+.prepshelf.plain .pcover:hover{background:var(--paper2);transform:none}
+.prepshelf.plain .pcmast,.prepshelf.plain .pcdate{display:none}
+.prepshelf.plain .pcplain{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:2px}
+.prepshelf.plain .pclead{font-size:inherit;font-weight:600;line-height:1.3}
+.prepshelf.plain .pcmore{color:var(--muted);font-size:.9rem;-webkit-mask-image:none;mask-image:none}
+.prepshelf.plain .pcmore span{border:0;padding:0}
+.prepshelf.plain .pcover.now .pcnew{position:static;transform:none;width:auto;align-self:flex-start;padding:3px 10px;border-radius:999px;font-family:inherit;order:-1;margin-bottom:4px}
 /* «Avis»: the same report as a newspaper, Kvissposten, with pages to turn (prep.js). Serif type, thin
    rules in the ink colour, the text in columns as wide as there is room for (one on a phone). */
 .paper{font-family:Georgia,"Times New Roman",Times,serif;line-height:1.45;overflow-x:clip}
