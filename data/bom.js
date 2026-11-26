@@ -80,7 +80,12 @@ const BOM=[
  {d:'2026-11-18',m:'sound',q:L('Julesanger: hvem synger coveret?','Julesongar: kven syng coveret?'),
   x:L('Fire av seks feil (5a–c i begge rundene)','Fire av seks feil (5a–c i begge rundane)')},
  {d:'2026-11-25',q:L('Hvilken produsent står bak Ifa?','Kva for ein produsent står bak Ifa?'),
-  a:'Nidar',t:'Brynhild'}
+  a:'Nidar',t:'Brynhild'},
+ {d:'2026-11-25',q:L('Hvilket fylke har lavest gjennomsnittsalder blant førstegangsfødende?','Kva fylke har lågast gjennomsnittsalder blant førstegongsfødande?'),
+  a:'Finnmark',t:'Agder'},
+ {d:'2026-11-25',q:L('Hvem har flest restauranter i Norge, McDonald’s eller Burger King?','Kven har flest restaurantar i Noreg, McDonald’s eller Burger King?'),
+  a:'Burger King',t:'McDonald’s',
+  n:L('Burger King åpnet restaurant nummer 110 i Norge, i Flekkefjord, høsten 2025. McDonald’s åpnet nummer 101, på Carl Berner i Oslo, i oktober 2026.','Burger King opna restaurant nummer 110 i Noreg, i Flekkefjord, hausten 2025. McDonald’s opna nummer 101, på Carl Berner i Oslo, i oktober 2026.')}
 ];
 // Where the team placed at each quiz ('YYYY-MM-DD' → place), shown under the date
 const BOM_PLACE={'2026-10-21':3,'2026-10-28':3,'2026-11-04':13,'2026-11-11':5,'2026-11-18':4,'2026-11-25':4};
